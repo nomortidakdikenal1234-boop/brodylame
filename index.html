@@ -164,6 +164,7 @@ footer{
 <section id="portfolio">
 <h2>Portfolio</h2>
 <div class="grid">
+
   <div class="card">SkyBridge Bot System</div>
 
   <div class="card" onclick="openAdmin()">
@@ -171,7 +172,19 @@ footer{
     <p style="margin-top:10px;color:var(--gold-soft)">Admin Only</p>
   </div>
 
-  <div class="card">Request ADD Bot To Your Server</div>
+  <!-- ✅ FIXED CARD -->
+  <a
+    href="https://bit.ly/SupportBotSkyBridge"
+    target="_blank"
+    class="card"
+    style="display:block; text-align:center;"
+  >
+    🤖 <strong>Request ADD Bot To Your Server</strong>
+    <p style="margin-top:10px;color:var(--gold-soft)">
+      Click to join Discord Support
+    </p>
+  </a>
+
 </div>
 </section>
 
@@ -197,7 +210,7 @@ footer{
 <script>
 const DASHBOARD_URL = "https://control.bot-hosting.net/server/bb8042f9";
 
-/* SHA256 dari password admin kamu */
+/* SHA256 dari password admin */
 const ADMIN_PASSWORD_HASH =
 "b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
 
