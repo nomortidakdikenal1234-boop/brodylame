@@ -201,10 +201,10 @@
       <p>Core automation & moderation system.</p>
     </div>
 
-    <a href="https://bit.ly/DashboardSkyBridge" target="_blank" class="card-link">
+    <a href="javascript:void(0)" onclick="openAdminDashboard()" class="card-link">
       <div class="card">
-        <h3>Admin Dashboard</h3>
-        <p>Admin Control Panel (Bot Hosting)</p>
+        <h3>🔒 Automation Dashboard</h3>
+        <p>Admin Only Control Panel</p>
       </div>
     </a>
 
@@ -237,6 +237,22 @@
 <footer>
   © 2025 SkyBridge Apps — All Rights Reserved
 </footer>
+
+<!-- ADMIN DASHBOARD SCRIPT -->
+<script>
+  function openAdminDashboard() {
+    const password = prompt("🔐 Admin Access Only\nMasukkan password:");
+
+    // GANTI PASSWORD INI
+    const ADMIN_PASSWORD = "ganti_password_kamu";
+
+    if (password === ADMIN_PASSWORD) {
+      window.open("https://bit.ly/DashboardSkyBridge", "_blank");
+    } else {
+      alert("❌ Akses ditolak. Kamu bukan admin.");
+    }
+  }
+</script>
 
 </body>
 </html>
