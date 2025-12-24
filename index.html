@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SkyBridge Apps | Official Website</title>
   <meta name="description" content="SkyBridge Apps – Automation, Innovation, Digital Systems." />
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -102,6 +103,7 @@
       grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
       gap:30px;
     }
+
     .card{
       background:#0f0f0f;
       border:1px solid rgba(212,175,55,.2);
@@ -110,12 +112,19 @@
       transition:.3s;
     }
     .card:hover{
-      transform:translateY(-5px);
+      transform:translateY(-8px);
       border-color:var(--gold);
+      box-shadow:0 10px 30px rgba(212,175,55,.15);
     }
     .card h3{
       color:var(--gold);
       margin-bottom:10px;
+    }
+
+    .card-link{
+      text-decoration:none;
+      color:inherit;
+      display:block;
     }
 
     footer{
@@ -150,7 +159,7 @@
   <h2>About</h2>
   <p>
     SkyBridge Apps adalah sistem dan aplikasi digital yang dikembangkan untuk
-    mendukung automasi, efisiensi, dan stabilitas platform.  
+    mendukung automasi, efisiensi, dan stabilitas platform.
     Fokus utama SkyBridge adalah menghadirkan solusi teknologi yang cepat,
     aman, dan dapat diandalkan untuk kebutuhan komunitas dan operasional digital.
   </p>
@@ -177,9 +186,24 @@
 <section id="portfolio">
   <h2>Portfolio</h2>
   <div class="grid">
-    <div class="card">SkyBridge Bot System</div>
-    <div class="card">Automation Dashboard</div>
-    <div class="card">Community Digital Tools</div>
+
+    <div class="card">
+      <h3>SkyBridge Bot System</h3>
+      <p>Core automation & moderation system.</p>
+    </div>
+
+    <a href="https://bit.ly/DashboardSkyBridge" target="_blank" class="card-link">
+      <div class="card">
+        <h3>Automation Dashboard</h3>
+        <p>Open Bot Control Panel</p>
+      </div>
+    </a>
+
+    <div class="card">
+      <h3>Community Digital Tools</h3>
+      <p>Tools untuk manajemen komunitas.</p>
+    </div>
+
   </div>
 </section>
 
@@ -197,5 +221,3 @@
 
 </body>
 </html>
-
-
