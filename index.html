@@ -1,11 +1,187 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Brody Lame</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brody Lame | Official Website</title>
+  <meta name="description" content="Brody Lame – Elegan, profesional, hitam & emas." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --black:#0b0b0b;
+      --gold:#d4af37;
+      --gold-soft:#f5e6a8;
+      --white:#ffffff;
+      --muted:#9ca3af;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:'Poppins',sans-serif;
+      background:var(--black);
+      color:var(--white);
+      line-height:1.6;
+    }
+    header{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:40px 20px;
+      background:radial-gradient(circle at top, #1a1a1a, #000);
+    }
+    header h1{
+      font-family:'Playfair Display',serif;
+      font-size:3.5rem;
+      letter-spacing:2px;
+      color:var(--gold);
+    }
+    header p{
+      margin-top:15px;
+      color:var(--gold-soft);
+      font-size:1.1rem;
+    }
+    .btn{
+      display:inline-block;
+      margin-top:35px;
+      padding:14px 38px;
+      border:1px solid var(--gold);
+      color:var(--gold);
+      text-decoration:none;
+      border-radius:999px;
+      transition:.3s;
+    }
+    .btn:hover{
+      background:var(--gold);
+      color:#000;
+    }
+    nav{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:#000;
+      border-bottom:1px solid rgba(212,175,55,.2);
+    }
+    nav ul{
+      max-width:1100px;
+      margin:auto;
+      padding:15px 20px;
+      list-style:none;
+      display:flex;
+      justify-content:center;
+      gap:35px;
+    }
+    nav a{
+      text-decoration:none;
+      color:var(--white);
+      font-weight:300;
+      letter-spacing:1px;
+    }
+    nav a:hover{color:var(--gold)}
+    section{
+      max-width:1100px;
+      margin:90px auto;
+      padding:0 20px;
+    }
+    section h2{
+      font-family:'Playfair Display',serif;
+      font-size:2.2rem;
+      margin-bottom:25px;
+      color:var(--gold);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:30px;
+    }
+    .card{
+      background:#0f0f0f;
+      border:1px solid rgba(212,175,55,.2);
+      border-radius:18px;
+      padding:35px;
+      transition:.3s;
+    }
+    .card:hover{
+      transform:translateY(-5px);
+      border-color:var(--gold);
+    }
+    .card h3{color:var(--gold);margin-bottom:10px}
+    footer{
+      text-align:center;
+      padding:40px 20px;
+      border-top:1px solid rgba(212,175,55,.2);
+      color:var(--muted);
+    }
+  </style>
 </head>
 <body>
-  <h1>Brody Lame</h1>
-  <p>Website berhasil online 🚀</p>
+
+<header>
+  <div>
+    <h1>Brody Lame</h1>
+    <p>Elegance • Authority • Digital Identity</p>
+    <a href="#contact" class="btn">Contact</a>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#about">ABOUT</a></li>
+    <li><a href="#services">SERVICES</a></li>
+    <li><a href="#portfolio">PORTFOLIO</a></li>
+    <li><a href="#contact">CONTACT</a></li>
+  </ul>
+</nav>
+
+<section id="about">
+  <h2>About</h2>
+  <p>
+    Brody Lame adalah identitas profesional yang mengedepankan eksklusivitas,
+    kepercayaan, dan kualitas tinggi dalam dunia digital.
+  </p>
+</section>
+
+<section id="services">
+  <h2>Services</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Brand Authority</h3>
+      <p>Membangun citra eksklusif dan kredibel.</p>
+    </div>
+    <div class="card">
+      <h3>Web Presence</h3>
+      <p>Website premium dengan performa optimal.</p>
+    </div>
+    <div class="card">
+      <h3>Creative Direction</h3>
+      <p>Konsep visual elegan dan berkelas.</p>
+    </div>
+  </div>
+</section>
+
+<section id="portfolio">
+  <h2>Portfolio</h2>
+  <div class="grid">
+    <div class="card">Project One</div>
+    <div class="card">Project Two</div>
+    <div class="card">Project Three</div>
+  </div>
+</section>
+
+<section id="contact">
+  <h2>Contact</h2>
+  <div class="card">
+    <p>Email: <strong>contact@brodylame.co.id</strong></p>
+    <p>Instagram: <strong>@brodylame</strong></p>
+  </div>
+</section>
+
+<footer>
+  © 2025 BrodyLame.co.id — All Rights Reserved
+</footer>
+
 </body>
 </html>
+
