@@ -122,9 +122,18 @@
     }
 
     .card-link{
+      display:block;
       text-decoration:none;
       color:inherit;
-      display:block;
+    }
+
+    .contact-link{
+      color:var(--gold);
+      text-decoration:none;
+      font-weight:500;
+    }
+    .contact-link:hover{
+      text-decoration:underline;
     }
 
     footer{
@@ -194,8 +203,8 @@
 
     <a href="https://bit.ly/DashboardSkyBridge" target="_blank" class="card-link">
       <div class="card">
-        <h3>Automation Dashboard</h3>
-        <p>Open Bot Control Panel</p>
+        <h3>Admin Dashboard</h3>
+        <p>Admin Control Panel (Bot Hosting)</p>
       </div>
     </a>
 
@@ -210,8 +219,18 @@
 <section id="contact">
   <h2>Contact</h2>
   <div class="card">
-    <p>Email: <strong>skybridgecompanyjgrp@gmail.com</strong></p>
-    <p>Discord: <strong>bit.ly/SupportBotSkyBridge</strong></p>
+    <p>
+      📧 Email:
+      <a href="mailto:skybridgecompanyjgrp@gmail.com" class="contact-link">
+        skybridgecompanyjgrp@gmail.com
+      </a>
+    </p>
+    <p>
+      💬 Discord:
+      <a href="https://bit.ly/SupportBotSkyBridge" target="_blank" class="contact-link">
+        bit.ly/SupportBotSkyBridge
+      </a>
+    </p>
   </div>
 </section>
 
