@@ -87,6 +87,7 @@ h2{
   padding:35px;
   border-radius:18px;
   transition:.3s;
+  cursor:pointer;
 }
 .card:hover{
   transform:translateY(-8px);
@@ -109,10 +110,7 @@ footer{
   display:none;
   justify-content:center;
   align-items:center;
-  animation:fade .4s ease;
 }
-@keyframes fade{from{opacity:0}to{opacity:1}}
-
 .login-box{
   background:#0f0f0f;
   border:1px solid rgba(212,175,55,.4);
@@ -121,10 +119,7 @@ footer{
   width:90%;
   max-width:380px;
   text-align:center;
-  animation:scale .4s ease;
 }
-@keyframes scale{from{transform:scale(.9)}to{transform:scale(1)}}
-
 .login-box h3{color:var(--gold);margin-bottom:15px}
 .login-box input{
   width:100%;
@@ -166,29 +161,12 @@ footer{
   </ul>
 </nav>
 
-<section id="about">
-<h2>About</h2>
-<p>
-SkyBridge Apps adalah sistem dan aplikasi digital untuk automasi,
-efisiensi, dan stabilitas platform berbasis teknologi modern.
-</p>
-</section>
-
-<section id="services">
-<h2>Services</h2>
-<div class="grid">
-  <div class="card">Automation Systems</div>
-  <div class="card">Application Development</div>
-  <div class="card">Platform Integration</div>
-</div>
-</section>
-
 <section id="portfolio">
 <h2>Portfolio</h2>
 <div class="grid">
   <div class="card">SkyBridge Bot System</div>
 
-  <div class="card" onclick="openAdmin()" style="cursor:pointer">
+  <div class="card" onclick="openAdmin()">
     🔒 <strong>Automation Dashboard</strong>
     <p style="margin-top:10px;color:var(--gold-soft)">Admin Only</p>
   </div>
@@ -205,11 +183,8 @@ efisiensi, dan stabilitas platform berbasis teknologi modern.
 </p>
 </section>
 
-<footer>
-© 2025 SkyBridge Apps — All Rights Reserved
-</footer>
+<footer>© 2025 SkyBridge Apps</footer>
 
-<!-- ADMIN LOGIN MODAL -->
 <div id="adminLogin">
   <div class="login-box">
     <h3>🔐 Admin Login</h3>
@@ -220,13 +195,11 @@ efisiensi, dan stabilitas platform berbasis teknologi modern.
 </div>
 
 <script>
-/* ================= CONFIG ================= */
-const DASHBOARD_URL = "https://bit.ly/DashboardSkyBridge";
+const DASHBOARD_URL = "https://control.bot-hosting.net/server/bb8042f9";
 
-/* password: ganti_password_kamu */
+/* SHA256 dari password admin kamu */
 const ADMIN_PASSWORD_HASH =
-"c2f6f3b8eab0c9c4b2a6e7a5b1cdb999b9c8c9e9b7a0f5d6b4f123456789abcd";
-/* ========================================= */
+"b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
 
 function openAdmin(){
   document.getElementById("adminLogin").style.display="flex";
@@ -235,18 +208,23 @@ function openAdmin(){
 async function sha256(text){
   const buf = new TextEncoder().encode(text);
   const hash = await crypto.subtle.digest("SHA-256", buf);
-  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+  return Array.from(new Uint8Array(hash))
+    .map(b=>b.toString(16).padStart(2,"0"))
+    .join("");
 }
 
 async function loginAdmin(){
   const input = document.getElementById("adminPass").value.trim();
   const error = document.getElementById("errorMsg");
 
-  if(!input){error.textContent="Password kosong";return;}
+  if(!input){
+    error.textContent="Password kosong";
+    return;
+  }
 
   const hash = await sha256(input);
-  if(hash === b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b){
-    window.location.href = https://control.bot-hosting.net/server/bb8042f9;
+  if(hash === ADMIN_PASSWORD_HASH){
+    window.location.href = DASHBOARD_URL;
   }else{
     error.textContent="Akses ditolak. Password salah.";
   }
