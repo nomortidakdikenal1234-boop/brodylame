@@ -1,148 +1,150 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SkyBridge Apps | Official Website</title>
-  <meta name="description" content="SkyBridge Apps – Automation, Innovation, Digital Systems." />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkyBridge Apps | Official Website</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-  <style>
-    :root{
-      --black:#0b0b0b;
-      --gold:#d4af37;
-      --gold-soft:#f5e6a8;
-      --white:#ffffff;
-      --muted:#9ca3af;
-    }
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{
-      font-family:'Poppins',sans-serif;
-      background:var(--black);
-      color:var(--white);
-      line-height:1.6;
-    }
+<style>
+:root{
+  --black:#0b0b0b;
+  --gold:#d4af37;
+  --gold-soft:#f5e6a8;
+  --white:#fff;
+  --muted:#9ca3af;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Poppins,sans-serif;
+  background:var(--black);
+  color:var(--white);
+}
+a{text-decoration:none;color:inherit}
 
-    header{
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding:40px 20px;
-      background:radial-gradient(circle at top, #1a1a1a, #000);
-    }
-    header h1{
-      font-family:'Playfair Display',serif;
-      font-size:3.5rem;
-      letter-spacing:2px;
-      color:var(--gold);
-    }
-    header p{
-      margin-top:15px;
-      color:var(--gold-soft);
-      font-size:1.1rem;
-    }
+header{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  background:radial-gradient(circle at top,#1a1a1a,#000);
+}
+header h1{
+  font-family:Playfair Display,serif;
+  font-size:3.5rem;
+  color:var(--gold);
+}
+header p{color:var(--gold-soft);margin-top:15px}
 
-    .btn{
-      display:inline-block;
-      margin-top:35px;
-      padding:14px 38px;
-      border:1px solid var(--gold);
-      color:var(--gold);
-      text-decoration:none;
-      border-radius:999px;
-      transition:.3s;
-    }
-    .btn:hover{
-      background:var(--gold);
-      color:#000;
-    }
+.btn{
+  margin-top:30px;
+  display:inline-block;
+  padding:14px 36px;
+  border:1px solid var(--gold);
+  border-radius:999px;
+  color:var(--gold);
+  transition:.3s;
+}
+.btn:hover{background:var(--gold);color:#000}
 
-    nav{
-      position:sticky;
-      top:0;
-      z-index:10;
-      background:#000;
-      border-bottom:1px solid rgba(212,175,55,.2);
-    }
-    nav ul{
-      max-width:1100px;
-      margin:auto;
-      padding:15px 20px;
-      list-style:none;
-      display:flex;
-      justify-content:center;
-      gap:35px;
-    }
-    nav a{
-      text-decoration:none;
-      color:var(--white);
-      font-weight:300;
-      letter-spacing:1px;
-    }
-    nav a:hover{color:var(--gold)}
+nav{
+  position:sticky;top:0;
+  background:#000;
+  border-bottom:1px solid rgba(212,175,55,.2);
+}
+nav ul{
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  padding:15px;
+  list-style:none;
+}
+nav a:hover{color:var(--gold)}
 
-    section{
-      max-width:1100px;
-      margin:90px auto;
-      padding:0 20px;
-    }
-    section h2{
-      font-family:'Playfair Display',serif;
-      font-size:2.2rem;
-      margin-bottom:25px;
-      color:var(--gold);
-    }
+section{
+  max-width:1100px;
+  margin:90px auto;
+  padding:0 20px;
+}
+h2{
+  font-family:Playfair Display,serif;
+  color:var(--gold);
+  margin-bottom:25px;
+}
 
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-      gap:30px;
-    }
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:30px;
+}
+.card{
+  background:#0f0f0f;
+  border:1px solid rgba(212,175,55,.2);
+  padding:35px;
+  border-radius:18px;
+  transition:.3s;
+}
+.card:hover{
+  transform:translateY(-8px);
+  border-color:var(--gold);
+  box-shadow:0 10px 30px rgba(212,175,55,.15);
+}
 
-    .card{
-      background:#0f0f0f;
-      border:1px solid rgba(212,175,55,.2);
-      border-radius:18px;
-      padding:35px;
-      transition:.3s;
-    }
-    .card:hover{
-      transform:translateY(-8px);
-      border-color:var(--gold);
-      box-shadow:0 10px 30px rgba(212,175,55,.15);
-    }
-    .card h3{
-      color:var(--gold);
-      margin-bottom:10px;
-    }
+footer{
+  text-align:center;
+  padding:40px;
+  border-top:1px solid rgba(212,175,55,.2);
+  color:var(--muted);
+}
 
-    .card-link{
-      display:block;
-      text-decoration:none;
-      color:inherit;
-    }
+/* ===== ADMIN LOGIN ===== */
+#adminLogin{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.92);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  animation:fade .4s ease;
+}
+@keyframes fade{from{opacity:0}to{opacity:1}}
 
-    .contact-link{
-      color:var(--gold);
-      text-decoration:none;
-      font-weight:500;
-    }
-    .contact-link:hover{
-      text-decoration:underline;
-    }
+.login-box{
+  background:#0f0f0f;
+  border:1px solid rgba(212,175,55,.4);
+  padding:40px;
+  border-radius:20px;
+  width:90%;
+  max-width:380px;
+  text-align:center;
+  animation:scale .4s ease;
+}
+@keyframes scale{from{transform:scale(.9)}to{transform:scale(1)}}
 
-    footer{
-      text-align:center;
-      padding:40px 20px;
-      border-top:1px solid rgba(212,175,55,.2);
-      color:var(--muted);
-    }
-  </style>
+.login-box h3{color:var(--gold);margin-bottom:15px}
+.login-box input{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  margin-top:15px;
+}
+.login-box button{
+  width:100%;
+  margin-top:20px;
+  padding:12px;
+  border:none;
+  border-radius:999px;
+  background:var(--gold);
+  font-weight:600;
+  cursor:pointer;
+}
+#errorMsg{color:#ff4d4d;margin-top:15px;font-size:.9rem}
+</style>
 </head>
 
 <body>
@@ -165,93 +167,90 @@
 </nav>
 
 <section id="about">
-  <h2>About</h2>
-  <p>
-    SkyBridge Apps adalah sistem dan aplikasi digital yang dikembangkan untuk
-    mendukung automasi, efisiensi, dan stabilitas platform.
-    Fokus utama SkyBridge adalah menghadirkan solusi teknologi yang cepat,
-    aman, dan dapat diandalkan untuk kebutuhan komunitas dan operasional digital.
-  </p>
+<h2>About</h2>
+<p>
+SkyBridge Apps adalah sistem dan aplikasi digital untuk automasi,
+efisiensi, dan stabilitas platform berbasis teknologi modern.
+</p>
 </section>
 
 <section id="services">
-  <h2>Services</h2>
-  <div class="grid">
-    <div class="card">
-      <h3>Automation Systems</h3>
-      <p>Sistem bot dan automasi untuk meningkatkan efisiensi operasional.</p>
-    </div>
-    <div class="card">
-      <h3>Application Development</h3>
-      <p>Pengembangan aplikasi dan tools digital berbasis kebutuhan.</p>
-    </div>
-    <div class="card">
-      <h3>Platform Integration</h3>
-      <p>Integrasi sistem, server, dan layanan digital secara stabil.</p>
-    </div>
-  </div>
+<h2>Services</h2>
+<div class="grid">
+  <div class="card">Automation Systems</div>
+  <div class="card">Application Development</div>
+  <div class="card">Platform Integration</div>
+</div>
 </section>
 
 <section id="portfolio">
-  <h2>Portfolio</h2>
-  <div class="grid">
+<h2>Portfolio</h2>
+<div class="grid">
+  <div class="card">SkyBridge Bot System</div>
 
-    <div class="card">
-      <h3>SkyBridge Bot System</h3>
-      <p>Core automation & moderation system.</p>
-    </div>
-
-    <a href="javascript:void(0)" onclick="openAdminDashboard()" class="card-link">
-      <div class="card">
-        <h3>🔒 Automation Dashboard</h3>
-        <p>Admin Only Control Panel</p>
-      </div>
-    </a>
-
-    <div class="card">
-      <h3>Community Digital Tools</h3>
-      <p>Tools untuk manajemen komunitas.</p>
-    </div>
-
+  <div class="card" onclick="openAdmin()" style="cursor:pointer">
+    🔒 <strong>Automation Dashboard</strong>
+    <p style="margin-top:10px;color:var(--gold-soft)">Admin Only</p>
   </div>
+
+  <div class="card">Community Digital Tools</div>
+</div>
 </section>
 
 <section id="contact">
-  <h2>Contact</h2>
-  <div class="card">
-    <p>
-      📧 Email:
-      <a href="mailto:skybridgecompanyjgrp@gmail.com" class="contact-link">
-        skybridgecompanyjgrp@gmail.com
-      </a>
-    </p>
-    <p>
-      💬 Discord:
-      <a href="https://bit.ly/SupportBotSkyBridge" target="_blank" class="contact-link">
-        bit.ly/SupportBotSkyBridge
-      </a>
-    </p>
-  </div>
+<h2>Contact</h2>
+<p>
+📧 <a href="mailto:skybridgecompanyjgrp@gmail.com" style="color:var(--gold)">skybridgecompanyjgrp@gmail.com</a><br>
+💬 <a href="https://bit.ly/SupportBotSkyBridge" target="_blank" style="color:var(--gold)">Discord Support</a>
+</p>
 </section>
 
 <footer>
-  © 2025 SkyBridge Apps — All Rights Reserved
+© 2025 SkyBridge Apps — All Rights Reserved
 </footer>
 
-<!-- ADMIN DASHBOARD SCRIPT -->
+<!-- ADMIN LOGIN MODAL -->
+<div id="adminLogin">
+  <div class="login-box">
+    <h3>🔐 Admin Login</h3>
+    <input type="password" id="adminPass" placeholder="Admin Password">
+    <button onclick="loginAdmin()">Login</button>
+    <div id="errorMsg"></div>
+  </div>
+</div>
+
 <script>
-  function openAdminDashboard() {
-    const password = prompt("🔐 Admin Access Only\nMasukkan password:");
+/* ================= CONFIG ================= */
+const DASHBOARD_URL = "https://bit.ly/DashboardSkyBridge";
 
-    // GANTI PASSWORD INI
-    const ADMIN_PASSWORD = "Syahrulatala_2011";
+/* password: ganti_password_kamu */
+const ADMIN_PASSWORD_HASH =
+"c2f6f3b8eab0c9c4b2a6e7a5b1cdb999b9c8c9e9b7a0f5d6b4f123456789abcd";
+/* ========================================= */
 
-    if (password === ADMIN_PASSWORD) {
-      window.open("https://bit.ly/DashboardSkyBridge", "_blank");
-    } else {
-      alert("❌ Akses ditolak. Kamu bukan admin.");
-    }
+function openAdmin(){
+  document.getElementById("adminLogin").style.display="flex";
+}
+
+async function sha256(text){
+  const buf = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest("SHA-256", buf);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+async function loginAdmin(){
+  const input = document.getElementById("adminPass").value.trim();
+  const error = document.getElementById("errorMsg");
+
+  if(!input){error.textContent="Password kosong";return;}
+
+  const hash = await sha256(input);
+  if(hash === b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b){
+    window.location.href = https://control.bot-hosting.net/server/bb8042f9;
+  }else{
+    error.textContent="Akses ditolak. Password salah.";
   }
+}
 </script>
 
 </body>
