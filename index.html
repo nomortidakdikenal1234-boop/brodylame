@@ -86,9 +86,9 @@ header > div {
 }
 
 header img {
-  width: 280px;
+  width: 180px;  /* lebih kecil */
   max-width: 90vw;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   filter: drop-shadow(0 0 10px var(--gold)) drop-shadow(0 0 20px var(--gold-soft));
   animation: fadeScaleIn 1.5s ease forwards;
 }
@@ -300,9 +300,9 @@ button:hover {
 
 <section id="contact">
   <h2>Contact</h2>
-  <p>
-    📧 skybridgecompanyjgrp@gmail.com<br />
-    💬 Discord Support
+  <p style="font-size:1.1rem; line-height:1.5;">
+    📧 <a href="mailto:skybridgecompanyjgrp@gmail.com" style="color:var(--gold); text-decoration:none;">skybridgecompanyjgrp@gmail.com</a><br />
+    💬 <a href="https://discord.gg/your-discord-link" target="_blank" rel="noopener noreferrer" style="color:var(--gold); text-decoration:none;">Discord Support</a>
   </p>
 </section>
 
@@ -320,7 +320,6 @@ button:hover {
     <div class="command">!purge — Menghapus pesan user</div>
     <div class="command">!advert — Menampilkan teks salinan advert</div>
     <div class="command">!fired — Untuk memecat karyawan</div>
-    <div class="command">!ping — Cek latency bot</div>
     <div class="close-btn" onclick="closeCommandHelp()">Close</div>
   </div>
 </div>
