@@ -1,191 +1,261 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>SkyBridge Apps | Official Website</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
 
 <style>
-:root{
-  --black:#0b0b0b;
-  --gold:#d4af37;
-  --gold-soft:#f5e6a8;
-  --white:#fff;
-  --muted:#9ca3af;
+:root {
+  --black: #0b0b0b;
+  --gold: #d4af37;
+  --gold-soft: #f5e6a8;
+  --white: #fff;
+  --muted: #9ca3af;
 }
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:Poppins,sans-serif;
-  background:var(--black);
-  color:var(--white);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-a{text-decoration:none;color:inherit}
+body {
+  font-family: Poppins, sans-serif;
+  background: var(--black);
+  color: var(--white);
+  overflow-x: hidden;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
 
-/* ===== HEADER ===== */
-header{
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-  background:radial-gradient(circle at top,#1a1a1a,#000);
+/* ===== HEADER FULLSCREEN ===== */
+header {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: radial-gradient(circle at top, #1a1a1a, #000);
+  overflow: hidden;
+  padding: 20px;
 }
-header img{width:130px;margin-bottom:25px}
-header h1{
-  font-family:Playfair Display,serif;
-  font-size:3.5rem;
-  color:var(--gold);
-}
-header p{color:var(--gold-soft);margin-top:15px}
 
-.btn{
-  margin-top:30px;
-  display:inline-block;
-  padding:14px 36px;
-  border:1px solid var(--gold);
-  border-radius:999px;
-  color:var(--gold);
-  transition:.3s;
+header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("https://i.ibb.co.com/6Kqpnzc/LOGO-SB-Co.png") no-repeat center center;
+  background-size: contain;
+  filter: drop-shadow(0 0 10px var(--gold)) drop-shadow(0 0 20px var(--gold-soft));
+  opacity: 0.15;
+  z-index: 0;
+  animation: glowPulse 4s ease-in-out infinite alternate;
 }
-.btn:hover{background:var(--gold);color:#000}
+
+@keyframes glowPulse {
+  0% {
+    opacity: 0.1;
+    filter: drop-shadow(0 0 10px var(--gold)) drop-shadow(0 0 15px var(--gold-soft));
+  }
+  100% {
+    opacity: 0.25;
+    filter: drop-shadow(0 0 15px var(--gold)) drop-shadow(0 0 25px var(--gold-soft));
+  }
+}
+
+header > div {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+  animation: fadeScaleIn 1.2s ease forwards;
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+@keyframes fadeScaleIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+header img {
+  width: 280px;
+  max-width: 90vw;
+  margin-bottom: 30px;
+  filter: drop-shadow(0 0 10px var(--gold)) drop-shadow(0 0 20px var(--gold-soft));
+  animation: fadeScaleIn 1.5s ease forwards;
+}
+
+header h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 3.8rem;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+header p {
+  color: var(--gold-soft);
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 14px 40px;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  color: var(--gold);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+.btn:hover {
+  background: var(--gold);
+  color: #000;
+}
 
 /* ===== NAV ===== */
-nav{
-  position:sticky;top:0;
-  background:#000;
-  border-bottom:1px solid rgba(212,175,55,.2);
+nav {
+  position: sticky;
+  top: 0;
+  background: #000;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  z-index: 10;
 }
-nav ul{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:30px;
-  padding:15px;
-  list-style:none;
+nav ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  padding: 15px;
+  list-style: none;
 }
-nav img{width:40px}
-nav a:hover{color:var(--gold)}
+nav img {
+  width: 42px;
+}
+nav a:hover {
+  color: var(--gold);
+}
 
 /* ===== SECTION ===== */
-section{
-  max-width:1100px;
-  margin:90px auto;
-  padding:0 20px;
+section {
+  max-width: 1100px;
+  margin: 90px auto;
+  padding: 0 20px;
 }
-h2{
-  font-family:Playfair Display,serif;
-  color:var(--gold);
-  margin-bottom:25px;
+h2 {
+  font-family: "Playfair Display", serif;
+  color: var(--gold);
+  margin-bottom: 25px;
 }
 
 /* ===== CARD ===== */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:30px;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
 }
-.card{
-  background:#0f0f0f;
-  border:1px solid rgba(212,175,55,.2);
-  padding:35px;
-  border-radius:18px;
-  transition:.3s;
-  cursor:pointer;
+.card {
+  background: #0f0f0f;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 35px;
+  border-radius: 18px;
+  transition: 0.3s;
+  cursor: pointer;
 }
-.card:hover{
-  transform:translateY(-8px);
-  border-color:var(--gold);
-  box-shadow:0 10px 30px rgba(212,175,55,.15);
+.card:hover {
+  transform: translateY(-8px);
+  border-color: var(--gold);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
 }
 
 /* ===== FOOTER ===== */
-footer{
-  text-align:center;
-  padding:40px;
-  border-top:1px solid rgba(212,175,55,.2);
-  color:var(--muted);
+footer {
+  text-align: center;
+  padding: 40px;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  color: var(--muted);
 }
 
-/* ===== MODAL COMMAND HELP ===== */
-#commandModal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.9);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:999;
+/* ===== MODAL ===== */
+#commandModal,
+#adminLogin {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 }
-.modal-box{
-  background:#0f0f0f;
-  border:1px solid var(--gold);
-  border-radius:20px;
-  padding:35px;
-  width:90%;
-  max-width:500px;
+.modal-box,
+.login-box {
+  background: #0f0f0f;
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  padding: 35px;
+  width: 90%;
+  max-width: 500px;
 }
-.modal-box h3{
-  color:var(--gold);
-  margin-bottom:15px;
+.modal-box h3,
+.login-box h3 {
+  color: var(--gold);
+  margin-bottom: 15px;
 }
-.command{
-  margin-top:10px;
-  padding:10px;
-  border-bottom:1px solid rgba(212,175,55,.15);
+.command {
+  padding: 10px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
 }
-.close-btn{
-  margin-top:25px;
-  display:inline-block;
-  padding:10px 25px;
-  border:1px solid var(--gold);
-  border-radius:999px;
-  color:var(--gold);
-  cursor:pointer;
+.close-btn,
+button {
+  margin-top: 25px;
+  padding: 12px 28px;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  background: none;
+  color: var(--gold);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s, color 0.3s;
 }
-.close-btn:hover{background:var(--gold);color:#000}
+.close-btn:hover,
+button:hover {
+  background: var(--gold);
+  color: #000;
+}
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border-radius: 10px;
+  border: none;
+  background: #222;
+  color: #fff;
+  font-size: 1rem;
+}
+#errorMsg {
+  color: #ff4d4d;
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
 
-/* ===== ADMIN LOGIN ===== */
-#adminLogin{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.92);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:999;
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 2.8rem;
+  }
+  header img {
+    width: 80vw;
+  }
 }
-.login-box{
-  background:#0f0f0f;
-  border:1px solid rgba(212,175,55,.4);
-  padding:40px;
-  border-radius:20px;
-  width:90%;
-  max-width:380px;
-  text-align:center;
-}
-.login-box h3{color:var(--gold);margin-bottom:15px}
-.login-box input{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:none;
-  margin-top:15px;
-}
-.login-box button{
-  width:100%;
-  margin-top:20px;
-  padding:12px;
-  border:none;
-  border-radius:999px;
-  background:var(--gold);
-  font-weight:600;
-  cursor:pointer;
-}
-#errorMsg{color:#ff4d4d;margin-top:15px;font-size:.9rem}
 </style>
 </head>
 
@@ -193,7 +263,7 @@ footer{
 
 <header>
   <div>
-    <img src="https://i.ibb.co.com/6Kqpnzc/LOGO-SB-Co.png">
+    <img src="https://i.ibb.co.com/6Kqpnzc/LOGO-SB-Co.png" alt="SkyBridge Logo" />
     <h1>SkyBridge Apps</h1>
     <p>Automation • Innovation • Digital Systems</p>
     <a href="#contact" class="btn">Contact</a>
@@ -202,43 +272,38 @@ footer{
 
 <nav>
   <ul>
-    <li><img src="https://i.ibb.co.com/6Kqpnzc/LOGO-SB-Co.png"></li>
+    <li><img src="https://i.ibb.co.com/6Kqpnzc/LOGO-SB-Co.png" alt="Logo" /></li>
     <li><a href="#portfolio">PORTFOLIO</a></li>
     <li><a href="#contact">CONTACT</a></li>
   </ul>
 </nav>
 
 <section id="portfolio">
-<h2>Portfolio</h2>
-<div class="grid">
+  <h2>Portfolio</h2>
+  <div class="grid">
+    <div class="card" onclick="openCommandHelp()">
+      🤖 <strong>Bot Command Help</strong>
+      <p style="margin-top:10px;color:var(--gold-soft)">Klik untuk melihat command</p>
+    </div>
 
-  <!-- BOT COMMAND HELP -->
-  <div class="card" onclick="openCommandHelp()">
-    🤖 <strong>Bot Command Help</strong>
-    <p style="margin-top:10px;color:var(--gold-soft)">
-      Klik untuk melihat daftar command
-    </p>
+    <div class="card" onclick="openAdmin()">
+      🔒 <strong>Automation Dashboard</strong>
+      <p style="margin-top:10px;color:var(--gold-soft)">Admin Only</p>
+    </div>
+
+    <a href="https://bit.ly/SupportBotSkyBridge" target="_blank" class="card">
+      ➕ <strong>Request ADD Bot To Your Server</strong>
+      <p style="margin-top:10px;color:var(--gold-soft)">Join Discord Support</p>
+    </a>
   </div>
-
-  <div class="card" onclick="openAdmin()">
-    🔒 <strong>Automation Dashboard</strong>
-    <p style="margin-top:10px;color:var(--gold-soft)">Admin Only</p>
-  </div>
-
-  <a href="https://bit.ly/SupportBotSkyBridge" target="_blank" class="card">
-    ➕ <strong>Request ADD Bot To Your Server</strong>
-    <p style="margin-top:10px;color:var(--gold-soft)">Join Discord Support</p>
-  </a>
-
-</div>
 </section>
 
 <section id="contact">
-<h2>Contact</h2>
-<p>
-📧 skybridgecompanyjgrp@gmail.com<br>
-💬 Discord Support
-</p>
+  <h2>Contact</h2>
+  <p>
+    📧 skybridgecompanyjgrp@gmail.com<br />
+    💬 Discord Support
+  </p>
 </section>
 
 <footer>© 2025 SkyBridge Apps</footer>
@@ -247,13 +312,15 @@ footer{
 <div id="commandModal">
   <div class="modal-box">
     <h3>🤖 Bot Command Help</h3>
-
     <div class="command">!help — Menampilkan semua command</div>
     <div class="command">!ping — Cek latency bot</div>
-    <div class="command">!status — Status server</div>
-    <div class="command">!register — Registrasi user</div>
-    <div class="command">!support — Hubungi admin</div>
-
+    <div class="command">!bills — Menampilkan bills pemesanan advert</div>
+    <div class="command">!nickname — Mengganti nama user</div>
+    <div class="command">!startcount — Menghitung advert yang sudah dikerjakan</div>
+    <div class="command">!purge — Menghapus pesan user</div>
+    <div class="command">!advert — Menampilkan teks salinan advert</div>
+    <div class="command">!fired — Untuk memecat karyawan</div>
+    <div class="command">!ping — Cek latency bot</div>
     <div class="close-btn" onclick="closeCommandHelp()">Close</div>
   </div>
 </div>
@@ -262,35 +329,41 @@ footer{
 <div id="adminLogin">
   <div class="login-box">
     <h3>🔐 Admin Login</h3>
-    <input type="password" id="adminPass" placeholder="Admin Password">
+    <input type="password" id="adminPass" placeholder="Admin Password" />
     <button onclick="loginAdmin()">Login</button>
     <div id="errorMsg"></div>
   </div>
 </div>
 
 <script>
-const DASHBOARD_URL="https://control.bot-hosting.net/server/bb8042f9";
-const ADMIN_PASSWORD_HASH="b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
+const DASHBOARD_URL = "https://control.bot-hosting.net/server/bb8042f9";
+const ADMIN_PASSWORD_HASH = "b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
 
-function openCommandHelp(){
-  document.getElementById("commandModal").style.display="flex";
+const commandModal = document.getElementById("commandModal");
+const adminLogin = document.getElementById("adminLogin");
+const adminPass = document.getElementById("adminPass");
+const errorMsg = document.getElementById("errorMsg");
+
+function openCommandHelp() {
+  commandModal.style.display = "flex";
 }
-function closeCommandHelp(){
-  document.getElementById("commandModal").style.display="none";
+function closeCommandHelp() {
+  commandModal.style.display = "none";
 }
-function openAdmin(){
-  document.getElementById("adminLogin").style.display="flex";
+function openAdmin() {
+  adminLogin.style.display = "flex";
 }
-async function sha256(t){
-  const b=new TextEncoder().encode(t);
-  const h=await crypto.subtle.digest("SHA-256",b);
-  return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,"0")).join("");
+async function sha256(t) {
+  const b = new TextEncoder().encode(t);
+  const h = await crypto.subtle.digest("SHA-256", b);
+  return [...new Uint8Array(h)]
+    .map((x) => x.toString(16).padStart(2, "0"))
+    .join("");
 }
-async function loginAdmin(){
-  const i=document.getElementById("adminPass").value;
-  const e=document.getElementById("errorMsg");
-  if(await sha256(i)===ADMIN_PASSWORD_HASH)location.href=DASHBOARD_URL;
-  else e.textContent="Password salah";
+async function loginAdmin() {
+  const i = adminPass.value;
+  if ((await sha256(i)) === ADMIN_PASSWORD_HASH) location.href = DASHBOARD_URL;
+  else errorMsg.textContent = "Password salah";
 }
 </script>
 
