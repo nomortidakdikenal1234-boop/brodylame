@@ -25,6 +25,7 @@ body{
 }
 a{text-decoration:none;color:inherit}
 
+/* ===== HEADER ===== */
 header{
   min-height:100vh;
   display:flex;
@@ -33,6 +34,7 @@ header{
   text-align:center;
   background:radial-gradient(circle at top,#1a1a1a,#000);
 }
+header img{width:130px;margin-bottom:25px}
 header h1{
   font-family:Playfair Display,serif;
   font-size:3.5rem;
@@ -51,6 +53,7 @@ header p{color:var(--gold-soft);margin-top:15px}
 }
 .btn:hover{background:var(--gold);color:#000}
 
+/* ===== NAV ===== */
 nav{
   position:sticky;top:0;
   background:#000;
@@ -59,12 +62,15 @@ nav{
 nav ul{
   display:flex;
   justify-content:center;
+  align-items:center;
   gap:30px;
   padding:15px;
   list-style:none;
 }
+nav img{width:40px}
 nav a:hover{color:var(--gold)}
 
+/* ===== SECTION ===== */
 section{
   max-width:1100px;
   margin:90px auto;
@@ -76,6 +82,7 @@ h2{
   margin-bottom:25px;
 }
 
+/* ===== CARD ===== */
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
@@ -95,12 +102,51 @@ h2{
   box-shadow:0 10px 30px rgba(212,175,55,.15);
 }
 
+/* ===== FOOTER ===== */
 footer{
   text-align:center;
   padding:40px;
   border-top:1px solid rgba(212,175,55,.2);
   color:var(--muted);
 }
+
+/* ===== MODAL COMMAND HELP ===== */
+#commandModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.9);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+.modal-box{
+  background:#0f0f0f;
+  border:1px solid var(--gold);
+  border-radius:20px;
+  padding:35px;
+  width:90%;
+  max-width:500px;
+}
+.modal-box h3{
+  color:var(--gold);
+  margin-bottom:15px;
+}
+.command{
+  margin-top:10px;
+  padding:10px;
+  border-bottom:1px solid rgba(212,175,55,.15);
+}
+.close-btn{
+  margin-top:25px;
+  display:inline-block;
+  padding:10px 25px;
+  border:1px solid var(--gold);
+  border-radius:999px;
+  color:var(--gold);
+  cursor:pointer;
+}
+.close-btn:hover{background:var(--gold);color:#000}
 
 /* ===== ADMIN LOGIN ===== */
 #adminLogin{
@@ -110,6 +156,7 @@ footer{
   display:none;
   justify-content:center;
   align-items:center;
+  z-index:999;
 }
 .login-box{
   background:#0f0f0f;
@@ -146,6 +193,7 @@ footer{
 
 <header>
   <div>
+    <img src="https://i.ibb.co.com/6Kqpnzc/LOGO-SB-Co.png">
     <h1>SkyBridge Apps</h1>
     <p>Automation • Innovation • Digital Systems</p>
     <a href="#contact" class="btn">Contact</a>
@@ -154,8 +202,7 @@ footer{
 
 <nav>
   <ul>
-    <li><a href="#about">ABOUT</a></li>
-    <li><a href="#services">SERVICES</a></li>
+    <li><img src="https://i.ibb.co.com/6Kqpnzc/LOGO-SB-Co.png"></li>
     <li><a href="#portfolio">PORTFOLIO</a></li>
     <li><a href="#contact">CONTACT</a></li>
   </ul>
@@ -165,24 +212,22 @@ footer{
 <h2>Portfolio</h2>
 <div class="grid">
 
-  <div class="card">SkyBridge Bot System</div>
+  <!-- BOT COMMAND HELP -->
+  <div class="card" onclick="openCommandHelp()">
+    🤖 <strong>Bot Command Help</strong>
+    <p style="margin-top:10px;color:var(--gold-soft)">
+      Klik untuk melihat daftar command
+    </p>
+  </div>
 
   <div class="card" onclick="openAdmin()">
     🔒 <strong>Automation Dashboard</strong>
     <p style="margin-top:10px;color:var(--gold-soft)">Admin Only</p>
   </div>
 
-  <!-- ✅ FIXED CARD -->
-  <a
-    href="https://bit.ly/SupportBotSkyBridge"
-    target="_blank"
-    class="card"
-    style="display:block; text-align:center;"
-  >
-    🤖 <strong>Request ADD Bot To Your Server</strong>
-    <p style="margin-top:10px;color:var(--gold-soft)">
-      Click to join Discord Support
-    </p>
+  <a href="https://bit.ly/SupportBotSkyBridge" target="_blank" class="card">
+    ➕ <strong>Request ADD Bot To Your Server</strong>
+    <p style="margin-top:10px;color:var(--gold-soft)">Join Discord Support</p>
   </a>
 
 </div>
@@ -191,13 +236,29 @@ footer{
 <section id="contact">
 <h2>Contact</h2>
 <p>
-📧 <a href="mailto:skybridgecompanyjgrp@gmail.com" style="color:var(--gold)">skybridgecompanyjgrp@gmail.com</a><br>
-💬 <a href="https://bit.ly/SupportBotSkyBridge" target="_blank" style="color:var(--gold)">Discord Support</a>
+📧 skybridgecompanyjgrp@gmail.com<br>
+💬 Discord Support
 </p>
 </section>
 
 <footer>© 2025 SkyBridge Apps</footer>
 
+<!-- COMMAND MODAL -->
+<div id="commandModal">
+  <div class="modal-box">
+    <h3>🤖 Bot Command Help</h3>
+
+    <div class="command">!help — Menampilkan semua command</div>
+    <div class="command">!ping — Cek latency bot</div>
+    <div class="command">!status — Status server</div>
+    <div class="command">!register — Registrasi user</div>
+    <div class="command">!support — Hubungi admin</div>
+
+    <div class="close-btn" onclick="closeCommandHelp()">Close</div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
 <div id="adminLogin">
   <div class="login-box">
     <h3>🔐 Admin Login</h3>
@@ -208,39 +269,28 @@ footer{
 </div>
 
 <script>
-const DASHBOARD_URL = "https://control.bot-hosting.net/server/bb8042f9";
+const DASHBOARD_URL="https://control.bot-hosting.net/server/bb8042f9";
+const ADMIN_PASSWORD_HASH="b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
 
-/* SHA256 dari password admin */
-const ADMIN_PASSWORD_HASH =
-"b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
-
+function openCommandHelp(){
+  document.getElementById("commandModal").style.display="flex";
+}
+function closeCommandHelp(){
+  document.getElementById("commandModal").style.display="none";
+}
 function openAdmin(){
   document.getElementById("adminLogin").style.display="flex";
 }
-
-async function sha256(text){
-  const buf = new TextEncoder().encode(text);
-  const hash = await crypto.subtle.digest("SHA-256", buf);
-  return Array.from(new Uint8Array(hash))
-    .map(b=>b.toString(16).padStart(2,"0"))
-    .join("");
+async function sha256(t){
+  const b=new TextEncoder().encode(t);
+  const h=await crypto.subtle.digest("SHA-256",b);
+  return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,"0")).join("");
 }
-
 async function loginAdmin(){
-  const input = document.getElementById("adminPass").value.trim();
-  const error = document.getElementById("errorMsg");
-
-  if(!input){
-    error.textContent="Password kosong";
-    return;
-  }
-
-  const hash = await sha256(input);
-  if(hash === ADMIN_PASSWORD_HASH){
-    window.location.href = DASHBOARD_URL;
-  }else{
-    error.textContent="Akses ditolak. Password salah.";
-  }
+  const i=document.getElementById("adminPass").value;
+  const e=document.getElementById("errorMsg");
+  if(await sha256(i)===ADMIN_PASSWORD_HASH)location.href=DASHBOARD_URL;
+  else e.textContent="Password salah";
 }
 </script>
 
