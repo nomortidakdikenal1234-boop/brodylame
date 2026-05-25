@@ -12,10 +12,10 @@
 
 <style>
 :root {
-  /* Ubah tema ke Biru Premium khas ST Company */
+  /* Tema Biru Premium khas ST Company */
   --blue-primary: #0055ff;
   --blue-hover: #0033aa;
-  --bg-color: #0233a7; /* Warna latar belakang dari lo */
+  --bg-color: #0233a7; 
   --white: #fff;
   --muted: #9ca3af;
 }
@@ -44,18 +44,17 @@ a {
   border-radius: 50%;
   position: fixed; pointer-events: none;
   z-index: 9999; 
-  transition: transform 0.4s ease-out; /* Lamban & Smooth pas mengecil */
+  transition: transform 0.4s ease-out; 
   transform: translate(-50%, -50%);
 }
-/* Animasi saat diklik (Membesar Lamban) */
 #custom-cursor.click-anim {
   transform: translate(-50%, -50%) scale(2.5);
   background: rgba(0, 85, 255, 0.3);
   border-color: #ffffff;
-  transition: transform 0.4s ease-out; /* Lamban & Smooth pas membesar */
+  transition: transform 0.4s ease-out; 
 }
 
-/* ===== HERO SECTION FULLSCREEN (Style ST Company) ===== */
+/* ===== HERO SECTION FULLSCREEN ===== */
 header {
   height: 100vh; 
   display: flex; 
@@ -65,18 +64,16 @@ header {
   background-color: var(--bg-color); 
   background-image: linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05)), 
                     url('https://cdn.postimage.me/2026/04/25/ChatGPT-Image-25-Apr-2026-08.52.30.png');
-  background-size: 50%; /* Dikecilin biar pas di tengah */
+  background-size: 50%; 
   background-position: center; 
   background-repeat: no-repeat; 
   background-attachment: fixed;
 }
-
-/* Menyembunyikan text bawaan di dalam header biar bersih fokus ke logo background */
 header > div {
   display: none;
 }
 
-/* ===== NAV (Style ST Company dengan tombol Login Baru) ===== */
+/* ===== NAV ===== */
 nav {
   position: fixed; top: 0; width: 100%;
   padding: 20px 50px; display: flex;
@@ -116,7 +113,6 @@ nav .nav-links button:hover, nav .nav-links a:hover {
   background: var(--blue-primary); 
   color: #fff; 
 }
-/* Tombol Login Baru di Navbar */
 .nav-login-btn {
   background: var(--blue-primary) !important;
   color: white !important;
@@ -142,8 +138,20 @@ section {
 h2 {
   font-family: "Playfair Display", serif;
   color: var(--blue-primary);
-  margin-bottom: 25px;
+  margin-bottom: 5px;
   font-size: 2.2rem;
+}
+
+/* Style Teks Jumlah Pengunjung */
+.visitor-counter-text {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 25px;
+  font-weight: 500;
+}
+.visitor-counter-text span {
+  color: var(--blue-primary);
+  font-weight: 700;
 }
 
 /* ===== CARD ===== */
@@ -242,6 +250,9 @@ footer {
   font-weight: 600;
 }
 </style>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 
 <body>
@@ -258,7 +269,7 @@ footer {
   </div>
   <div class="nav-links">
     <button onclick="scrollToId('hero')">HOME</button>
-    <button onclick="scrollToId('portfolio')">SKY AI</button>
+    <button onclick="scrollToId('portfolio')">PORTFOLIO</button>
     <button onclick="scrollToId('contact')">CONTACT</button>
     <button class="nav-login-btn" onclick="openAdmin()">LOGIN ADMIN</button>
   </div>
@@ -266,12 +277,22 @@ footer {
 
 <section id="portfolio">
   <h2>Sky Artificial Intelligence</h2>
+  
+  <div class="visitor-counter-text">
+    👁️ Total Pengunjung Website: <span id="totalVisitors">0</span> orang
+  </div>
+  
   <div class="grid">
-    <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot&utm_campaign=BOTS+-+DISCORD+DISCOVERY&utm_medium=bitly&utm_source=BOT+PROFILE+INVITE" target="_blank" class="card">
+    <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot&utm_campaign=BOTS+-+DISCORD+DISCOVERY&utm_medium=bitly&utm_source=BOT+PROFILE+INVITE" 
+       target="_blank" class="card" id="inviteBotCard">
       <div>
         ✨ <strong>ADD Sky AI To Your Discord Server</strong>
         <p style="margin-top: 12px; font-size: 0.85rem; color: #666; font-weight: 400; line-height: 1.5;">
           Jika kamu ingin menambahkan channel untuk chat dengan Sky AI kamu harus menjalankan command <code style="background: #eef2ff; color: var(--blue-primary); padding: 2px 6px; border-radius: 4px; font-weight: 600;">/addchannel</code> dan pilih channel yang ingin kamu tambahkan.
+        </p>
+        
+        <p style="margin-top: 15px; font-size: 0.85rem; color: #1e293b; font-weight: 600; background: #f0f5ff; display: inline-block; padding: 6px 12px; border-radius: 6px; border: 1px dashed var(--blue-primary);">
+          🤖 It has been used by <span id="totalInvites" style="color:var(--blue-primary); font-weight:800;">0</span> several people.
         </p>
       </div>
       <p style="margin-top:20px; color: var(--blue-primary); font-weight: 600;">Klik untuk invite bot AI</p>
@@ -300,6 +321,56 @@ footer {
 </div>
 
 <script>
+// =====================================================================
+// CONFIG FIREBASE PROJECT SHIN TAEYOUNG WEBSITE (BERHASIL DIPASANG)
+// =====================================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyCpOAf9D2Bv31pmqRIjffL-E9IAP8SqTTY",
+  authDomain: "shin-taeyoung-website.firebaseapp.com",
+  databaseURL: "https://shin-taeyoung-website-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "shin-taeyoung-website",
+  storageBucket: "shin-taeyoung-website.firebasestorage.app",
+  messagingSenderId: "313549044765",
+  appId: "1:313549044765:web:f0e31e60cb677bcfb81af4",
+  measurementId: "G-0W8243F7VD"
+};
+
+// Inisialisasi Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// REALTIME COUNTER LOGIC
+const visitorRef = database.ref("site_stats/visitor_count");
+const inviteRef = database.ref("site_stats/invite_count");
+
+// Monitor Visitor (Mencegah spam penambahan angka saat refresh biasa)
+if (!sessionStorage.getItem("visitedBefore")) {
+  visitorRef.transaction((currentValue) => {
+    return (currentValue || 0) + 1;
+  });
+  sessionStorage.setItem("visitedBefore", "true");
+}
+
+visitorRef.on("value", (snapshot) => {
+  document.getElementById("totalVisitors").textContent = snapshot.val() || 0;
+});
+
+// Monitor Invite Clicks
+inviteRef.on("value", (snapshot) => {
+  document.getElementById("totalInvites").textContent = snapshot.val() || 0;
+});
+
+// Trigger Click bertambah +1 otomatis saat card invite diklik
+document.getElementById("inviteBotCard").addEventListener("click", () => {
+  inviteRef.transaction((currentValue) => {
+    return (currentValue || 0) + 1;
+  });
+});
+
+
+// =====================================================================
+// SCRIPT KURSOR CUSTOM & NAV (TETAP UTUH LENGKAP)
+// =====================================================================
 const DASHBOARD_URL = "https://control.bot-hosting.net/server/bb8042f9";
 const ADMIN_PASSWORD_HASH = "b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
 
@@ -307,7 +378,6 @@ const adminLogin = document.getElementById("adminLogin");
 const adminPass = document.getElementById("adminPass");
 const errorMsg = document.getElementById("errorMsg");
 
-/* --- CURSOR & SCROLL LOGIC COMBINED --- */
 const cursor = document.getElementById('custom-cursor');
 
 document.addEventListener('mousemove', (e) => {
@@ -315,7 +385,6 @@ document.addEventListener('mousemove', (e) => {
     cursor.style.top = e.clientY + 'px';
 });
 
-// Animasi Klik Lamban & Balik Smooth
 document.addEventListener('mousedown', () => {
     cursor.classList.add('click-anim');
 });
@@ -323,7 +392,6 @@ document.addEventListener('mouseup', () => {
     cursor.classList.remove('click-anim');
 });
 
-// Efek Navbar saat di-scroll
 window.onscroll = function() {
     const nav = document.getElementById('navbar');
     if (window.scrollY > 50) nav.classList.add('scrolled');
