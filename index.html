@@ -188,8 +188,8 @@ footer {
   color: #555;
 }
 
-/* ===== MODAL & LOGIN OVERLAY ===== */
-#adminLogin {
+/* ===== MODAL OVERLAYS (LOGIN & CONSOLE SELECTION) ===== */
+#adminLogin, #consoleSelection {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5); 
@@ -217,7 +217,7 @@ footer {
 }
 .close-btn,
 .login-box button {
-  margin-top: 25px;
+  margin-top: 15px;
   width: 100%;
   padding: 14px;
   border: none;
@@ -249,6 +249,20 @@ footer {
   font-size: 0.9rem;
   font-weight: 600;
 }
+
+/* Style Khusus Tombol Pilihan Console Admin */
+.console-btn {
+  background: #ffffff !important;
+  color: var(--blue-primary) !important;
+  border: 2px solid var(--blue-primary) !important;
+  display: block;
+  text-align: center;
+  font-size: 1rem;
+}
+.console-btn:hover {
+  background: var(--blue-primary) !important;
+  color: #ffffff !important;
+}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -260,7 +274,7 @@ footer {
 <div id="custom-cursor"></div>
 
 <header id="hero">
-  </header>
+</header>
 
 <nav id="navbar">
   <div class="nav-brand">
@@ -303,8 +317,8 @@ footer {
 <section id="contact">
   <h2>Contact</h2>
   <p style="font-size:1.1rem; line-height:1.8; color: #555;">
-    <a href="mailto:skytechcompanyjgrp@gmail.com" style="color:var(--blue-primary); font-weight: 600;">skytechcompanyjgrp@gmail.com</a><br />
-    <a href="https://discord.gg/cXYSfSZFUq" target="_blank" rel="noopener noreferrer" style="color:var(--blue-primary); font-weight: 600;">Discord Support</a>
+    Email: <a href="mailto:skytechcompanyjgrp@gmail.com" style="color:var(--blue-primary); font-weight: 600;">skytechcompanyjgrp@gmail.com</a><br />
+    Discord: <a href="https://discord.gg/cXYSfSZFUq" target="_blank" rel="noopener noreferrer" style="color:var(--blue-primary); font-weight: 600;">Discord Support</a>
   </p>
 </section>
 
@@ -320,9 +334,21 @@ footer {
   </div>
 </div>
 
+<div id="consoleSelection">
+  <div class="login-box">
+    <h3>Pilih Console Admin</h3>
+    <p style="font-size:0.85rem; color:#666; margin-bottom:15px;">Silakan pilih dashboard layanan yang ingin Anda kelola:</p>
+    
+    <button class="console-btn" onclick="location.href='https://control.bot-hosting.net/server/bb8042f9'">SkyTech Bot Console</button>
+    <button class="console-btn" onclick="location.href='https://control.katabump.com/server/16cff3c0/console'">Sky AI Console</button>
+    
+    <div class="close-btn" style="background:#888; margin-top:20px;" onclick="closeConsoleSelection()">Tutup</div>
+  </div>
+</div>
+
 <script>
 // =====================================================================
-// CONFIG FIREBASE PROJECT SHIN TAEYOUNG WEBSITE (BERHASIL DIPASANG)
+// CONFIG FIREBASE PROJECT SHIN TAEYOUNG WEBSITE
 // =====================================================================
 const firebaseConfig = {
   apiKey: "AIzaSyCpOAf9D2Bv31pmqRIjffL-E9IAP8SqTTY",
@@ -343,7 +369,7 @@ const database = firebase.database();
 const visitorRef = database.ref("site_stats/visitor_count");
 const inviteRef = database.ref("site_stats/invite_count");
 
-// Monitor Visitor (Mencegah spam penambahan angka saat refresh biasa)
+// Monitor Visitor
 if (!sessionStorage.getItem("visitedBefore")) {
   visitorRef.transaction((currentValue) => {
     return (currentValue || 0) + 1;
@@ -369,12 +395,12 @@ document.getElementById("inviteBotCard").addEventListener("click", () => {
 
 
 // =====================================================================
-// SCRIPT KURSOR CUSTOM & NAV (TETAP UTUH LENGKAP)
+// SCRIPT KURSOR CUSTOM & NAV & MULTI-MODAL LOGIN LOGIC
 // =====================================================================
-const DASHBOARD_URL = "https://control.bot-hosting.net/server/bb8042f9";
 const ADMIN_PASSWORD_HASH = "b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
 
 const adminLogin = document.getElementById("adminLogin");
+const consoleSelection = document.getElementById("consoleSelection");
 const adminPass = document.getElementById("adminPass");
 const errorMsg = document.getElementById("errorMsg");
 
@@ -402,6 +428,7 @@ function scrollToId(id) {
   document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
 }
 
+// Kontrol Modal Login Admin
 function openAdmin() {
   adminLogin.style.display = "flex";
   errorMsg.textContent = "";
@@ -410,6 +437,16 @@ function openAdmin() {
 function closeAdmin() {
   adminLogin.style.display = "none";
 }
+
+// Kontrol Modal Pilihan Console
+function openConsoleSelection() {
+  consoleSelection.style.display = "flex";
+}
+function closeConsoleSelection() {
+  consoleSelection.style.display = "none";
+}
+
+// Hash & Cek Validasi Login
 async function sha256(t) {
   const b = new TextEncoder().encode(t);
   const h = await crypto.subtle.digest("SHA-256", b);
@@ -417,10 +454,15 @@ async function sha256(t) {
     .map((x) => x.toString(16).padStart(2, "0"))
     .join("");
 }
+
 async function loginAdmin() {
   const i = adminPass.value;
-  if ((await sha256(i)) === ADMIN_PASSWORD_HASH) location.href = DASHBOARD_URL;
-  else errorMsg.textContent = "Password salah";
+  if ((await sha256(i)) === ADMIN_PASSWORD_HASH) {
+    closeAdmin();             
+    openConsoleSelection();   
+  } else {
+    errorMsg.textContent = "Password salah";
+  }
 }
 </script>
 
