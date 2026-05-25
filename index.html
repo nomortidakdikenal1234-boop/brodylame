@@ -162,6 +162,9 @@ h2 {
   cursor: none;
   box-shadow: 0 10px 30px rgba(0,0,0,0.05);
   color: #333;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .card:hover {
   transform: translateY(-10px);
@@ -178,7 +181,6 @@ footer {
 }
 
 /* ===== MODAL & LOGIN OVERLAY ===== */
-#commandModal,
 #adminLogin {
   position: fixed;
   inset: 0;
@@ -189,7 +191,6 @@ footer {
   align-items: center;
   z-index: 2000;
 }
-.modal-box,
 .login-box {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(5px);
@@ -201,16 +202,10 @@ footer {
   box-shadow: 0 20px 40px rgba(0,0,0,0.2);
   color: #333;
 }
-.modal-box h3,
 .login-box h3 {
   color: var(--blue-primary);
   margin-bottom: 20px;
   letter-spacing: 1px;
-}
-.command {
-  padding: 12px;
-  border-bottom: 1px solid rgba(0, 85, 255, 0.1);
-  font-weight: 500;
 }
 .close-btn,
 .login-box button {
@@ -272,19 +267,21 @@ footer {
 <section id="portfolio">
   <h2>Portfolio</h2>
   <div class="grid">
-    <div class="card" onclick="openCommandHelp()">
-      🤖 <strong>Bot Command Help</strong>
-      <p style="margin-top:10px; color: var(--blue-primary); font-weight: 600;">Klik untuk melihat command</p>
-    </div>
-
     <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot&utm_campaign=BOTS+-+DISCORD+DISCOVERY&utm_medium=bitly&utm_source=BOT+PROFILE+INVITE" target="_blank" class="card">
-      ✨ <strong>ADD Sky AI To Your Discord Server</strong>
-      <p style="margin-top:10px; color: var(--blue-primary); font-weight: 600;">Klik untuk invite bot AI</p>
+      <div>
+        ✨ <strong>ADD Sky AI To Your Discord Server</strong>
+        <p style="margin-top: 12px; font-size: 0.85rem; color: #666; font-weight: 400; line-height: 1.5;">
+          Jika kamu ingin menambahkan channel untuk chat dengan Sky AI kamu harus menjalankan command <code style="background: #eef2ff; color: var(--blue-primary); padding: 2px 6px; border-radius: 4px; font-weight: 600;">/addchannel</code> dan pilih channel yang ingin kamu tambahkan.
+        </p>
+      </div>
+      <p style="margin-top:20px; color: var(--blue-primary); font-weight: 600;">Klik untuk invite bot AI</p>
     </a>
 
     <a href="https://bit.ly/SupportBotSkyBridge" target="_blank" class="card">
-      ➕ <strong>Request ADD Bot To Your Server</strong>
-      <p style="margin-top:10px; color: var(--blue-primary); font-weight: 600;">Join Discord Support</p>
+      <div>
+        ➕ <strong>Request ADD Bot To Your Server</strong>
+      </div>
+      <p style="margin-top:20px; color: var(--blue-primary); font-weight: 600;">Join Discord Support</p>
     </a>
   </div>
 </section>
@@ -298,21 +295,6 @@ footer {
 </section>
 
 <footer>© 2025 SkyTech Apps</footer>
-
-<div id="commandModal">
-  <div class="modal-box">
-    <h3>🤖 Bot Command Help</h3>
-    <div class="command">!help — Menampilkan semua command</div>
-    <div class="command">!ping — Cek latency bot</div>
-    <div class="command">!bills — Menampilkan bills pemesanan advert</div>
-    <div class="command">!nickname — Mengganti nama user</div>
-    <div class="command">!startcount — Menghitung advert yang sudah dikerjakan</div>
-    <div class="command">!purge — Menghapus pesan user</div>
-    <div class="command">!advert — Menampilkan teks salinan advert</div>
-    <div class="command">!fired — Untuk memecat karyawan</div>
-    <div class="close-btn" onclick="closeCommandHelp()">Close</div>
-  </div>
-</div>
 
 <div id="adminLogin">
   <div class="login-box">
@@ -328,7 +310,6 @@ footer {
 const DASHBOARD_URL = "https://control.bot-hosting.net/server/bb8042f9";
 const ADMIN_PASSWORD_HASH = "b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
 
-const commandModal = document.getElementById("commandModal");
 const adminLogin = document.getElementById("adminLogin");
 const adminPass = document.getElementById("adminPass");
 const errorMsg = document.getElementById("errorMsg");
@@ -360,12 +341,6 @@ function scrollToId(id) {
   document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
 }
 
-function openCommandHelp() {
-  commandModal.style.display = "flex";
-}
-function closeCommandHelp() {
-  commandModal.style.display = "none";
-}
 function openAdmin() {
   adminLogin.style.display = "flex";
   errorMsg.textContent = "";
