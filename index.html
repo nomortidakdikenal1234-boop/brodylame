@@ -6,6 +6,7 @@
 <title>SkyTech Apps | Official Website</title>
 <link rel="icon" type="image/png" href="https://cdn.postimage.me/2026/04/25/ChatGPT-Image-25-Apr-2026-08.52.30.png">  
 
+<!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -13,7 +14,7 @@
 <style>
 :root {
   /* Tema Premium Dark Blue Sesuai Gambar */
-  --bg-dark: #030816;
+  --bg-dark: #020613;
   --bg-gradient-start: #060f26;
   --bg-gradient-end: #020613;
   --blue-glow: #0055ff;
@@ -31,7 +32,6 @@
 body {
   font-family: 'Poppins', sans-serif;
   background-color: var(--bg-dark);
-  background-image: radial-gradient(circle at top, #0b1a3a 0%, var(--bg-dark) 70%);
   color: var(--text-white);
   overflow-x: hidden;
   cursor: none; /* Kursor asli dimatikan */
@@ -40,6 +40,18 @@ body {
 a {
   text-decoration: none;
   color: inherit;
+}
+
+/* --- PARTICLE BACKGROUND CANVAS --- */
+#bg-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 30%, #0d1e42 0%, var(--bg-dark) 80%);
 }
 
 /* --- CUSTOM CURSOR --- */
@@ -130,15 +142,33 @@ nav .nav-links a:hover {
   transform: translateY(-2px);
 }
 
-/* ===== HERO SECTION (PERSIS SEPERTI FOTO) ===== */
-.hero-section {
+/* ===== HERO SECTION (TAMPILAN 3D PERSPEKTIF SESUAI GAMBAR) ===== */
+.hero-wrapper {
+  position: relative;
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 140px 4% 80px 4%;
+  overflow: hidden;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  align-items: center;
+  gap: 30px;
+  width: 100%;
+  max-width: 1400px;
+  z-index: 10;
+}
+
+/* Tampilan Tengah Hero */
+.hero-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  padding: 120px 20px 60px 20px;
 }
 
 /* Badge Atas */
@@ -155,7 +185,7 @@ nav .nav-links a:hover {
   text-transform: uppercase;
 }
 
-/* Logo Box Tengah */
+/* Logo Box Tengah (Animasi Bergerak & Glowing) */
 .logo-container {
   width: 110px;
   height: 110px;
@@ -164,9 +194,10 @@ nav .nav-links a:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 15px 35px rgba(0, 85, 255, 0.3);
+  box-shadow: 0 0 30px rgba(0, 85, 255, 0.4);
   margin-bottom: 30px;
   position: relative;
+  animation: floatLogo 4s ease-in-out infinite, pulseGlow 3s ease-in-out infinite;
 }
 .logo-container::after {
   content: '';
@@ -183,28 +214,40 @@ nav .nav-links a:hover {
   letter-spacing: -1px;
 }
 
+@keyframes floatLogo {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 25px rgba(0, 85, 255, 0.4); }
+  50% { box-shadow: 0 0 45px rgba(0, 85, 255, 0.7); }
+}
+
 /* Judul Utama */
-.hero-section h1 {
-  font-size: 42px;
+.hero-center h1 {
+  font-size: 36px;
   font-weight: 800;
   color: #3b82f6;
   letter-spacing: 1px;
   text-transform: uppercase;
   margin-bottom: 2px;
+  line-height: 1.2;
 }
-.hero-section h2 {
-  font-size: 46px;
+.hero-center h2 {
+  font-size: 40px;
   font-weight: 800;
   color: #ffffff;
   letter-spacing: 1px;
   text-transform: uppercase;
   margin-bottom: 15px;
+  line-height: 1.2;
 }
-.hero-section p {
-  font-size: 16px;
+.hero-center p {
+  font-size: 14px;
   color: var(--text-muted);
   margin-bottom: 35px;
   font-weight: 400;
+  max-width: 320px;
 }
 
 /* Button Group */
@@ -216,10 +259,10 @@ nav .nav-links a:hover {
 .btn-primary {
   background: var(--blue-glow);
   color: white;
-  padding: 12px 28px;
+  padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   transition: 0.3s;
   display: flex;
   align-items: center;
@@ -234,10 +277,10 @@ nav .nav-links a:hover {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
-  padding: 12px 28px;
+  padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   transition: 0.3s;
   display: flex;
   align-items: center;
@@ -251,15 +294,15 @@ nav .nav-links a:hover {
 /* Stats Row Bawah */
 .stats-container {
   display: flex;
-  gap: 40px;
+  gap: 25px;
   justify-content: center;
   align-items: center;
 }
 .stat-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 6px;
+  font-size: 13px;
   color: #cbd5e1;
   font-weight: 500;
 }
@@ -268,11 +311,58 @@ nav .nav-links a:hover {
   color: white;
 }
 
-/* ===== MAIN CONTENT SECTION (PORTFOLIO & CONTACT) ===== */
+/* --- SIDE MOCKUPS (PERSPEKTIF 3D MIRING MASUK DALAM) --- */
+.showcase-container-left {
+  perspective: 1200px;
+  display: flex;
+  justify-content: center;
+}
+.showcase-container-right {
+  perspective: 1200px;
+  display: flex;
+  justify-content: center;
+}
+
+.tablet-mockup {
+  width: 100%;
+  max-width: 380px;
+  border-radius: 16px;
+  border: 4px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+  background: #000;
+  overflow: hidden;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.tablet-mockup img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Rotasi miring ke dalam untuk mockup kiri */
+.mockup-left {
+  transform: rotateY(20deg) rotateX(8deg) rotateZ(-3deg);
+}
+.mockup-left:hover {
+  transform: rotateY(5deg) rotateX(2deg) rotateZ(-1deg) scale(1.05);
+}
+
+/* Rotasi miring ke dalam untuk mockup kanan */
+.mockup-right {
+  transform: rotateY(-20deg) rotateX(8deg) rotateZ(3deg);
+}
+.mockup-right:hover {
+  transform: rotateY(-5deg) rotateX(2deg) rotateZ(1deg) scale(1.05);
+}
+
+/* ===== MAIN CONTENT SECTION (DASHBOARD) ===== */
 section {
   max-width: 1100px;
   margin: 0 auto;
   padding: 80px 20px;
+  position: relative;
+  z-index: 10;
 }
 .section-title {
   font-size: 28px;
@@ -301,6 +391,7 @@ section {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  backdrop-filter: blur(8px);
 }
 .card:hover {
   background: rgba(255, 255, 255, 0.04);
@@ -315,6 +406,106 @@ section {
   font-family: monospace;
 }
 
+/* ===== TESTIMONI SECTION (PERSIS GAMBAR KEDUA) ===== */
+.testi-section {
+  text-align: center;
+  padding: 100px 20px;
+}
+.testi-badge {
+  background: rgba(0, 85, 255, 0.1);
+  border: 1px solid rgba(0, 85, 255, 0.2);
+  color: #3b82f6;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+.testi-section h2 {
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.testi-section h2 span {
+  color: #3b82f6;
+}
+.testi-subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 50px;
+}
+
+/* Grid Testimoni */
+.testi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.testi-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 30px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+.testi-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(0, 85, 255, 0.3);
+  transform: translateY(-5px);
+}
+.stars {
+  color: #fbbf24;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+.testi-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #cbd5e1;
+  font-style: italic;
+  margin-bottom: 30px;
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.user-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: #3b82f6;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+.user-detail h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+}
+.user-detail p {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ===== CONTACT SECTION ===== */
+#contact {
+  padding-bottom: 120px;
+}
+
 /* ===== FOOTER ===== */
 footer {
   text-align: center;
@@ -322,6 +513,8 @@ footer {
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.3);
   font-size: 13px;
+  position: relative;
+  z-index: 10;
 }
 
 /* ===== MODAL OVERLAYS ===== */
@@ -393,6 +586,17 @@ footer {
   background: var(--blue-glow) !important;
   border-color: var(--blue-glow) !important;
 }
+
+/* Responsivitas Layout */
+@media (max-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+  .showcase-container-left, .showcase-container-right {
+    display: none; /* Sembunyikan mockup samping di tablet/hp agar tidak merusak visual */
+  }
+}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -401,8 +605,13 @@ footer {
 
 <body>
 
+<!-- Background Partikel Bintang -->
+<canvas id="bg-particles"></canvas>
+
+<!-- Custom Cursor -->
 <div id="custom-cursor"></div>
 
+<!-- FIXED NAVBAR -->
 <nav id="navbar">
   <div class="nav-brand">
     <img src="https://cdn.postimage.me/2026/04/25/ChatGPT-Image-25-Apr-2026-08.52.30.png" alt="Logo" />
@@ -411,7 +620,7 @@ footer {
   <div class="nav-links">
     <a href="#hero" onclick="scrollToId('hero'); return false;">Home</a>
     <a href="#portfolio" onclick="scrollToId('portfolio'); return false;">Features</a>
-    <a href="#portfolio" onclick="scrollToId('portfolio'); return false;">Portfolio</a>
+    <a href="#portfolio" onclick="scrollToId('portfolio'); return false;">Dashboard</a>
     <a href="#contact" onclick="scrollToId('contact'); return false;">Contact</a>
     <button class="nav-login-btn" onclick="openAdmin()">
       <span>🔒</span> Login Admin
@@ -419,39 +628,62 @@ footer {
   </div>
 </nav>
 
-<header class="hero-section" id="hero">
-  <div class="ai-badge">✦ Discord Bot Powered By AI</div>
-  
-  <div class="logo-container">
-    <span>ST</span>
-  </div>
-  
-  <h1>Sky Artificial</h1>
-  <h2>Intelligence</h2>
-  <p>Smart Discord Bot For Modern Community</p>
-  
-  <div class="btn-group">
-    <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot" target="_blank" class="btn-primary" id="btnInviteDirect">
-      🚀 Add to Discord
-    </a>
-    <a href="#portfolio" onclick="scrollToId('portfolio'); return false;" class="btn-secondary">
-      ⚡ View Features
-    </a>
-  </div>
-  
-  <div class="stats-container">
-    <div class="stat-item">
-      <span>👥 <span id="displayUsers">4</span></span> Users
+<!-- HERO SECTION (PERSIS SESUAI DESIGN BARU) -->
+<div class="hero-wrapper" id="hero">
+  <div class="hero-grid">
+    
+    <!-- Mockup Kiri (Miring Masuk ke Dalam) -->
+    <div class="showcase-container-left">
+      <div class="tablet-mockup mockup-left">
+        <img src="https://www.upload.ee/image/19381660/Screenshot_2026-05-26_113707.png" alt="Portfolio Left" />
+      </div>
     </div>
-    <div class="stat-item">
-      <span>🌐 298.5K</span> Commands Used
+    
+    <!-- Konten Tengah Utama -->
+    <div class="hero-center">
+      <div class="ai-badge">✦ Discord Bot Powered By AI</div>
+      
+      <div class="logo-container">
+        <span>ST</span>
+      </div>
+      
+      <h1>Sky Artificial</h1>
+      <h2>Intelligence</h2>
+      <p>Smart Discord Bot For Modern Community</p>
+      
+      <div class="btn-group">
+        <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot" target="_blank" class="btn-primary" id="btnInviteDirect">
+          🚀 Add to Discord
+        </a>
+        <a href="#portfolio" onclick="scrollToId('portfolio'); return false;" class="btn-secondary">
+          ⚡ View Features
+        </a>
+      </div>
+      
+      <div class="stats-container">
+        <div class="stat-item">
+          <span>👥 <span id="displayUsers">4</span></span> Users
+        </div>
+        <div class="stat-item">
+          <span>🌐 298.5K</span> Commands Used
+        </div>
+        <div class="stat-item">
+          <span style="color: #10b981;">⚡ Online 24/7</span>
+        </div>
+      </div>
     </div>
-    <div class="stat-item">
-      <span style="color: #10b981;">⚡ Online 24/7</span>
+    
+    <!-- Mockup Kanan (Miring Masuk ke Dalam) -->
+    <div class="showcase-container-right">
+      <div class="tablet-mockup mockup-right">
+        <img src="https://www.upload.ee/image/19381675/ChatGPT_Image_26_Mei_2026__11.41.49.png" alt="Portfolio Right" />
+      </div>
     </div>
-  </div>
-</header>
 
+  </div>
+</div>
+
+<!-- BACKEND HUB / PORTFOLIO AREA -->
 <section id="portfolio">
   <h2 class="section-title">Sky Artificial Intelligence Dashboard</h2>
   
@@ -472,6 +704,63 @@ footer {
   </div>
 </section>
 
+<!-- TESTIMONI SECTION (REPLIKASI PERSIS KATA MEREKA TENTANG KAMI) -->
+<section class="testi-section">
+  <div class="testi-badge">TESTIMONI</div>
+  <h2>Kata Mereka <span>Tentang Kami</span></h2>
+  <p class="testi-subtitle">Review dari pengguna setia SkyTech App Discord</p>
+  
+  <div class="testi-grid">
+    
+    <!-- Testi 1 -->
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">
+        "Bot terbaik untuk server RP. Fitur AI-nya sangat membantu dan responsif banget, nggak pernah lag sama sekali!"
+      </p>
+      <div class="user-info">
+        <div class="user-avatar" style="background: #2563eb;">F</div>
+        <div class="user-detail">
+          <h4>Fukaya</h4>
+          <p>RP Server Owner</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Testi 2 -->
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">
+        "UI keren dan ringan banget. Setup mudah, fiturnya lengkap. Wajib ada di setiap server Discord modern!"
+      </p>
+      <div class="user-info">
+        <div class="user-avatar" style="background: #1d4ed8;">L</div>
+        <div class="user-detail">
+          <h4>Leonardo</h4>
+          <p>Community Manager</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Testi 3 -->
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">
+        "Music quality HD dan anti-spam works perfectly. Server kita jadi lebih aman dan seru sejak pakai SkyTech!"
+      </p>
+      <div class="user-info">
+        <div class="user-avatar" style="background: #3b82f6;">R</div>
+        <div class="user-detail">
+          <h4>Raiden</h4>
+          <p>Gaming Server Admin</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT SECTION -->
 <section id="contact">
   <h2 class="section-title">Contact Us</h2>
   <p style="color: var(--text-muted); line-height: 1.8;">
@@ -482,6 +771,7 @@ footer {
 
 <footer>© 2025 SkyTech Apps</footer>
 
+<!-- MODAL LOGIN ADMIN -->
 <div id="adminLogin">
   <div class="login-box">
     <h3>Admin Login</h3>
@@ -492,6 +782,7 @@ footer {
   </div>
 </div>
 
+<!-- MODAL SELECTION CONSOLE -->
 <div id="consoleSelection">
   <div class="login-box">
     <h3>Pilih Console Admin</h3>
@@ -506,7 +797,67 @@ footer {
 
 <script>
 // =====================================================================
-// CONFIG FIREBASE PROJECT
+// CANVAS PARTICLE SYSTEM (BINTANG DAN GLOW MELAYANG)
+// =====================================================================
+const canvas = document.getElementById("bg-particles");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + 0.5;
+    this.speedX = Math.random() * 0.4 - 0.2;
+    this.speedY = Math.random() * 0.4 - 0.2;
+    this.alpha = Math.random() * 0.8 + 0.2;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function initParticles() {
+  particles = [];
+  const count = Math.min(Math.floor(canvas.width / 15), 100);
+  for (let i = 0; i < count; i++) {
+    particles.push(new Particle());
+  }
+}
+initParticles();
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.update();
+    p.draw();
+  });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// =====================================================================
+// CONFIG FIREBASE PROJECT (SINKRONISASI VISITOR 21 & INVITE 4)
 // =====================================================================
 const firebaseConfig = {
   apiKey: "AIzaSyCpOAf9D2Bv31pmqRIjffL-E9IAP8SqTTY",
@@ -525,10 +876,6 @@ const database = firebase.database();
 
 const visitorRef = database.ref("site_stats/visitor_count");
 const inviteRef = database.ref("site_stats/invite_count");
-
-// =====================================================================
-// LOGIC SINKRONISASI MINIMAL: 21 VISITOR & 4 INVITE
-// =====================================================================
 
 // Monitor & Perbarui Visitor Otomatis
 if (!sessionStorage.getItem("visitedBefore")) {
