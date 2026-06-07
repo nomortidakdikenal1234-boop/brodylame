@@ -1440,6 +1440,46 @@ footer {
   </div>
 </div>
 
+<!-- MODAL LIMIT HARIAN -->
+<div id="limitModal" style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 3000;">
+  <div class="login-box" style="text-align: center; max-width: 450px; border: 1px solid rgba(239, 68, 68, 0.4); box-shadow: 0 0 30px rgba(239, 68, 68, 0.2);">
+    <div style="font-size: 50px; margin-bottom: 15px;">🚫</div>
+    <h3 style="color: #ef4444; font-size: 22px; margin-bottom: 10px; font-weight: 800;">Limit Harian Tercapai!</h3>
+    <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 25px;">
+      Kamu telah menggunakan batas kuota <span style="color: white; font-weight: 700;">10 pertanyaan gratis</span> hari ini di playground website kami. 
+    </p>
+    <p style="font-size: 13px; color: #3b82f6; font-weight: 600; margin-bottom: 20px; line-height: 1.5;">
+      Tapi jangan khawatir! Kamu bisa terus mengobrol dengan Sky AI tanpa batas dengan menambahkannya ke server Discord kamu! 🎉
+    </p>
+    
+    <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot" target="_blank" class="btn-primary" style="display: inline-flex; justify-content: center; width: 100%; margin-bottom: 12px; font-weight: 700; gap: 8px;">
+      🚀 Tambahkan Sky AI ke Server
+    </a>
+    <button class="close-btn" style="background: #1e293b; border: 1px solid rgba(255,255,255,0.1); width: 100%; cursor: none;" onclick="closeLimitModal()">
+      Tutup
+    </button>
+  </div>
+</div>
+
+<!-- MODAL SECURITY CAPTCHA -->
+<div id="captchaModal" style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 3500;">
+  <div class="login-box" style="text-align: center; max-width: 400px; border: 1px solid rgba(0, 85, 255, 0.4); box-shadow: 0 0 30px rgba(0, 85, 255, 0.2);">
+    <div style="font-size: 40px; margin-bottom: 15px;">🛡️</div>
+    <h3 style="color: #3b82f6; font-size: 20px; margin-bottom: 8px; font-weight: 800;">Human Verification</h3>
+    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px;">
+      Selesaikan tantangan keamanan di bawah ini untuk membuktikan bahwa Anda bukan bot jahat:
+    </p>
+    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+      <span id="captcha-question" style="font-size: 24px; font-weight: 800; color: #fff; letter-spacing: 2px; font-family: monospace;">5 + 7 = ?</span>
+    </div>
+    <input type="number" id="captcha-answer" placeholder="Masukkan jawaban..." style="width: 100%; padding: 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; font-size: 1rem; outline: none; text-align: center;" onkeydown="handleCaptchaKeyDown(event)" />
+    <button onclick="verifyCaptcha()" style="margin-top: 15px; width: 100%; padding: 12px; border: none; border-radius: 6px; background: var(--blue-glow); color: #fff; cursor: none; font-weight: 700; transition: 0.3s;">
+      VERIFIKASI MANUSIA
+    </button>
+    <div id="captchaError" style="color: #ef4444; margin-top: 12px; font-size: 0.9rem; font-weight: 600;"></div>
+  </div>
+</div>
+
 <script>
 // =====================================================================
 // CANVAS PARTICLE SYSTEM (BINTANG DAN GLOW MELAYANG)
@@ -1645,12 +1685,28 @@ document.getElementById("btnInviteDirect").addEventListener("click", incrementIn
 
 
 // =====================================================================
-// SKY AI LIVE TESTING - REAL-TIME COLLABORATIVE PLAYGROUND
+// SKY AI LIVE TESTING - REAL-TIME COLLABORATIVE PLAYGROUND (MULTI-API)
 // =====================================================================
-const apiKey = ""; // Kunci API disediakan secara otomatis pada runtime enviroment Canvas
+const GROQ_API_KEY = "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";
+const GEMINI_API_KEY = "AIzaSyDtDIl7F0ZuxRqNNgzSJDtKFr32Ff2smlM";
+const OPENAI_API_KEY = "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";
+
 const chatsRef = database.ref("public_chats");
 
-// Menghasilkan Nama Anonim Acak untuk User saat ini (Disimpan di sessionStorage)
+// CAPTCHA State Variables
+let captchaVal1 = 0;
+let captchaVal2 = 0;
+let captchaAnswer = 0;
+let pendingMessageQuery = "";
+
+// Menghasilkan ID unik persistent lewat Cookie (bukan localStorage) untuk melacak kuota harian
+let userId = document.cookie.replace(/(?:(?:^|.*;\s*)sky_user_id\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+if (!userId) {
+  userId = 'usr_' + Math.random().toString(36).substr(2, 9);
+  document.cookie = "sky_user_id=" + userId + ";max-age=31536000;path=/;SameSite=Strict;Secure";
+}
+
+// Menghasilkan Nama Anonim Acak untuk User saat ini
 if (!sessionStorage.getItem("chatUsername")) {
   const randNum = Math.floor(1000 + Math.random() * 9000);
   sessionStorage.setItem("chatUsername", "Tester #" + randNum);
@@ -1692,18 +1748,23 @@ chatsRef.limitToLast(15).on("value", (snapshot) => {
   })).sort((a, b) => a.timestamp - b.timestamp);
   
   sortedMessages.forEach(msg => {
-    const isBot = msg.author === "Sky AI";
+    const isBot = msg.author.startsWith("Sky AI");
     const avatarColor = isBot ? "linear-gradient(135deg, #1e40af, #0055ff)" : stringToColor(msg.author);
-    const initial = msg.author.charAt(0).toUpperCase();
+    const initial = "S"; // Bot default initial
+    const finalInitial = isBot ? initial : msg.author.charAt(0).toUpperCase();
+    
+    // Tampilkan label platform/model jika tersedia di data obrolan
+    const providerBadge = msg.provider ? `<span style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 9px; padding: 1px 5px; border-radius: 4px; font-weight: bold; margin-left: 5px; text-transform: uppercase; font-family: monospace;">${msg.provider}</span>` : '';
     
     const msgRow = document.createElement("div");
     msgRow.className = "discord-msg-row" + (isBot ? " ai-message" : "");
     msgRow.innerHTML = `
-      <div class="discord-avatar" style="background: ${avatarColor}">${initial}</div>
+      <div class="discord-avatar" style="background: ${avatarColor}">${finalInitial}</div>
       <div class="msg-details">
         <div class="msg-meta">
           <span class="msg-author">${escapeHtml(msg.author)}</span>
           ${isBot ? '<span class="msg-bot-tag">BOT</span>' : ''}
+          ${providerBadge}
           <span class="msg-time">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
         </div>
         <div class="msg-content">${escapeHtml(msg.content)}</div>
@@ -1728,6 +1789,125 @@ function escapeHtml(text) {
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
+// =====================================================================
+// PEMROSES UTAMA INTEGRASI 3 API (GROQ, GEMINI, OPENAI)
+// =====================================================================
+
+// 1. Pemanggil Groq API
+async function callGroqAPI(query, systemPrompt) {
+  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer " + GROQ_API_KEY,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: query }
+      ],
+      temperature: 0.7
+    })
+  });
+  if (!response.ok) throw new Error("Groq API returned HTTP " + response.status);
+  const data = await response.json();
+  return data.choices[0].message.content;
+}
+
+// 2. Pemanggil Gemini API
+async function callGeminiAPI(query, systemPrompt) {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: query }] }],
+      systemInstruction: { parts: [{ text: systemPrompt }] }
+    })
+  });
+  if (!response.ok) throw new Error("Gemini API returned HTTP " + response.status);
+  const data = await response.json();
+  return data.candidates[0].content.parts[0].text;
+}
+
+// 3. Pemanggil OpenAI API
+async function callOpenAIAPI(query, systemPrompt) {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer " + OPENAI_API_KEY,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: query }
+      ],
+      temperature: 0.5
+    })
+  });
+  if (!response.ok) throw new Error("OpenAI API returned HTTP " + response.status);
+  const data = await response.json();
+  return data.choices[0].message.content;
+}
+
+// 4. Sistem Intelijen Perutean & Fallback (Smart Intent Router)
+async function getSmartAIResponse(query, systemPrompt) {
+  const lowerQuery = query.toLowerCase();
+  
+  // Deteksi Keyword Pemrograman/Coding (OpenAI priority)
+  const codingKeywords = ["code", "coding", "function", "script", "html", "css", "js", "javascript", "python", "java", "c++", "bug", "error", "compile", "git", "sql", "program", "buatkan program", "website", "database", "api", "json", "array"];
+  
+  // Deteksi Keyword Analisis/Panjang (Gemini priority)
+  const longKeywords = ["jelaskan", "rangkum", "tuliskan", "artikel", "mendalam", "mengapa", "esai", "ringkasan", "analisis", "buatkan cerita", "dongeng", "sejarah", "tutorial"];
+
+  let primaryProvider = "groq"; // Default santai/chitchat
+
+  const isCoding = codingKeywords.some(kw => lowerQuery.includes(kw));
+  const isLong = longKeywords.some(kw => lowerQuery.includes(kw)) || query.length > 150;
+
+  if (isCoding) {
+    primaryProvider = "openai";
+  } else if (isLong) {
+    primaryProvider = "gemini";
+  }
+
+  // Tentukan urutan fallback antrian eksekusi
+  let executionQueue = [];
+  if (primaryProvider === "openai") {
+    executionQueue = ["openai", "groq", "gemini"];
+  } else if (primaryProvider === "gemini") {
+    executionQueue = ["gemini", "groq", "openai"];
+  } else {
+    executionQueue = ["groq", "gemini", "openai"];
+  }
+
+  console.log(`Intent Detected. Primary Provider: ${primaryProvider.toUpperCase()}. Queue order:`, executionQueue);
+
+  // Jalankan percobaan pada antrian
+  for (let provider of executionQueue) {
+    try {
+      let resultText = "";
+      if (provider === "groq") {
+        resultText = await callGroqAPI(query, systemPrompt);
+      } else if (provider === "gemini") {
+        resultText = await callGeminiAPI(query, systemPrompt);
+      } else if (provider === "openai") {
+        resultText = await callOpenAIAPI(query, systemPrompt);
+      }
+
+      if (resultText && resultText.trim().length > 0) {
+        return { text: resultText, activeProvider: provider };
+      }
+    } catch (e) {
+      console.warn(`[ROUTER WARNING] Provider ${provider.toUpperCase()} gagal/limit. Berpindah ke model berikutnya...`, e);
+    }
+  }
+
+  throw new Error("Semua kanal kecerdasan buatan (Groq, Gemini, OpenAI) mengalami limitasi.");
+}
+
 // Fungsi mengirim pesan dari user ke Firebase
 async function sendPublicChatMessage() {
   const inputField = document.getElementById("chat-input-field");
@@ -1736,12 +1916,76 @@ async function sendPublicChatMessage() {
   
   if (!query) return;
   
+  // Cek Verifikasi Captcha (Sekali per Sesi Browser)
+  if (!sessionStorage.getItem("isHumanVerified")) {
+    generateCaptcha(query);
+    return;
+  }
+  
   // Matikan input sementara
   inputField.value = "";
   inputField.disabled = true;
   sendButton.disabled = true;
+
+  // Cek limit harian 10 pesan gratis per user per hari
+  const today = getTodayString();
+  const limitRef = database.ref(`user_limits/${userId}`);
   
-  // 1. Simpan pesan user ke Firebase (semua orang akan melihatnya instan)
+  try {
+    const limitSnapshot = await limitRef.once("value");
+    const limitData = limitSnapshot.val() || { count: 0, date: today };
+    
+    let currentCount = limitData.count;
+    if (limitData.date !== today) {
+      currentCount = 0;
+    }
+    
+    if (currentCount >= 10) {
+      // Hapus placeholder atau loader pengetikan jika ada
+      hideTypingIndicator();
+      
+      // Masukkan pesan sistem langsung ke kotak obrolan Discord Simulator
+      const messagesBox = document.getElementById("discord-messages-box");
+      const errRow = document.createElement("div");
+      errRow.className = "discord-msg-row ai-message";
+      errRow.innerHTML = `
+        <div class="discord-avatar" style="background: linear-gradient(135deg, #ef4444, #b91c1c)">S</div>
+        <div class="msg-details">
+          <div class="msg-meta">
+            <span class="msg-author" style="color: #ef4444;">Sky AI [Limit]</span>
+            <span class="msg-bot-tag" style="background: #ef4444;">LIMIT</span>
+            <span class="msg-time">Sekarang</span>
+          </div>
+          <div class="msg-content" style="border-left: 3px solid #ef4444; background: rgba(239, 68, 68, 0.05); color: #f87171;">
+            Oops! Kamu sudah mencapai batas limit <strong>10 pertanyaan gratis per hari</strong>. 
+            Silakan <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot" target="_blank" style="color: #60a5fa; text-decoration: underline; font-weight: bold;">tambahkan Sky AI ke server Discord kamu</a> untuk menikmati obrolan tanpa batas! 🚀
+          </div>
+        </div>
+      `;
+      messagesBox.appendChild(errRow);
+      messagesBox.scrollTop = messagesBox.scrollHeight;
+      
+      // Buka modal limit interaktif
+      openLimitModal();
+      
+      inputField.disabled = false;
+      sendButton.disabled = false;
+      inputField.focus();
+      return;
+    }
+    
+    // Catat & update peningkatan kuota ke Firebase
+    await limitRef.set({
+      count: currentCount + 1,
+      date: today,
+      username: currentUsername,
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    });
+  } catch (e) {
+    console.error("Gagal memeriksa kuota penggunaan harian:", e);
+  }
+
+  // 1. Simpan pesan user ke Firebase
   const newUserMsgRef = chatsRef.push();
   await newUserMsgRef.set({
     author: currentUsername,
@@ -1753,29 +1997,31 @@ async function sendPublicChatMessage() {
   showTypingIndicator();
   
   try {
-    // 2. Hubungi Gemini API dengan sistem instruksi (Exponential Backoff)
     const systemPrompt = "Anda adalah Sky AI, bot asisten pintar dari SkyTech Company di platform Discord. Sifat Anda adalah ramah, gaul, bersahabat, asyik, dan sopan. Gunakan gaya bahasa Indonesia santai (bisa selipkan istilah slang atau emoji keren). Jawab secara singkat padat dan jelas.";
-    const responseText = await callGeminiWithBackoff(query, systemPrompt);
+    
+    // Panggil sistem routing pintar
+    const responseData = await getSmartAIResponse(query, systemPrompt);
     
     // Hapus indikator mengetik
     hideTypingIndicator();
     
-    // 3. Simpan balasan Sky AI ke Firebase (semua orang akan melihat balasan instan)
+    // 3. Simpan balasan Sky AI ke Firebase beserta provider aktifnya
     const newBotMsgRef = chatsRef.push();
     await newBotMsgRef.set({
       author: "Sky AI",
-      content: responseText,
+      content: responseData.text,
+      provider: responseData.activeProvider,
       timestamp: firebase.database.ServerValue.TIMESTAMP
     });
   } catch (error) {
     hideTypingIndicator();
-    console.error("Gagal memproses Sky AI:", error);
+    console.error("Gagal memproses Sky AI Router:", error);
     
-    // Tampilkan pesan error di chat sistem
+    // Tampilkan pesan error di chat sistem jika seluruh API limit
     const newBotMsgRef = chatsRef.push();
     await newBotMsgRef.set({
       author: "Sky AI",
-      content: "Maaf, sistem pemrosesan neural saya sedang mengalami gangguan singkat. Silakan coba kembali dalam beberapa saat! 🛠️",
+      content: "Maaf, sistem pemrosesan neural saya (Groq, Gemini & OpenAI) sedang mengalami limitasi/gangguan singkat secara serentak. Silakan coba kembali dalam beberapa saat! 🛠️",
       timestamp: firebase.database.ServerValue.TIMESTAMP
     });
   } finally {
@@ -1789,37 +2035,6 @@ async function sendPublicChatMessage() {
 function handleChatKeyDown(event) {
   if (event.key === "Enter") {
     sendPublicChatMessage();
-  }
-}
-
-// Fungsi memanggil API Gemini 3 Flash dengan skema Exponential Backoff (Maksimal 5x coba)
-async function callGeminiWithBackoff(userQuery, systemPrompt) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-  const payload = {
-    contents: [{ parts: [{ text: userQuery }] }],
-    systemInstruction: { parts: [{ text: systemPrompt }] }
-  };
-  
-  let delay = 1000;
-  for (let attempt = 0; attempt < 5; attempt++) {
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      
-      if (!response.ok) throw new Error("HTTP error " + response.status);
-      
-      const result = await response.json();
-      const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (text) return text;
-      throw new Error("Invalid format from API response");
-    } catch (e) {
-      if (attempt === 4) throw e; // Gagal setelah 5 kali mencoba
-      await new Promise(resolve => setTimeout(resolve, delay));
-      delay *= 2; // Naikkan delay eksponensial (1s, 2s, 4s, 8s, 16s)
-    }
   }
 }
 
@@ -1914,6 +2129,162 @@ async function loginAdmin() {
     openConsoleSelection();   
   } else {
     errorMsg.textContent = "Password salah";
+  }
+}
+
+// Fungsi pembantu penanganan format tanggal lokal (YYYY-MM-DD)
+function getTodayString() {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+// Buka dan tutup modal pemberitahuan limit harian
+function openLimitModal() {
+  document.getElementById("limitModal").style.display = "flex";
+}
+function closeLimitModal() {
+  document.getElementById("limitModal").style.display = "none";
+}
+
+// =====================================================================
+// CAPTCHA SECURITY SYSTEM
+// =====================================================================
+function generateCaptcha(query) {
+  pendingMessageQuery = query;
+  captchaVal1 = Math.floor(Math.random() * 8) + 2; // Angka 2-9
+  captchaVal2 = Math.floor(Math.random() * 8) + 2; // Angka 2-9
+  
+  // Menggunakan operator matematika random (+ atau *)
+  const useMultiply = Math.random() > 0.5;
+  if (useMultiply) {
+    captchaAnswer = captchaVal1 * captchaVal2;
+    document.getElementById("captcha-question").textContent = `${captchaVal1} × ${captchaVal2} = ?`;
+  } else {
+    captchaAnswer = captchaVal1 + captchaVal2;
+    document.getElementById("captcha-question").textContent = `${captchaVal1} + ${captchaVal2} = ?`;
+  }
+  
+  document.getElementById("captcha-answer").value = "";
+  document.getElementById("captchaError").textContent = "";
+  document.getElementById("captchaModal").style.display = "flex";
+  setTimeout(() => document.getElementById("captcha-answer").focus(), 100);
+}
+
+function verifyCaptcha() {
+  const userAnswer = parseInt(document.getElementById("captcha-answer").value);
+  if (userAnswer === captchaAnswer) {
+    sessionStorage.setItem("isHumanVerified", "true");
+    document.getElementById("captchaModal").style.display = "none";
+    // Lanjutkan pengiriman pesan tertunda secara otomatis
+    sendPublicChatMessageDirectly(pendingMessageQuery);
+  } else {
+    document.getElementById("captchaError").textContent = "Jawaban salah! Coba verifikasi lagi.";
+    document.getElementById("captcha-answer").value = "";
+    document.getElementById("captcha-answer").focus();
+  }
+}
+
+function handleCaptchaKeyDown(event) {
+  if (event.key === "Enter") {
+    verifyCaptcha();
+  }
+}
+
+// Mengirim pesan langsung setelah verifikasi captcha berhasil tanpa memicu validasi captcha modal lagi
+async function sendPublicChatMessageDirectly(query) {
+  const inputField = document.getElementById("chat-input-field");
+  const sendButton = document.getElementById("chat-send-button");
+  
+  // Matikan input sementara
+  inputField.disabled = true;
+  sendButton.disabled = true;
+
+  const today = getTodayString();
+  const limitRef = database.ref(`user_limits/${userId}`);
+  
+  try {
+    const limitSnapshot = await limitRef.once("value");
+    const limitData = limitSnapshot.val() || { count: 0, date: today };
+    
+    let currentCount = limitData.count;
+    if (limitData.date !== today) {
+      currentCount = 0;
+    }
+    
+    if (currentCount >= 10) {
+      hideTypingIndicator();
+      const messagesBox = document.getElementById("discord-messages-box");
+      const errRow = document.createElement("div");
+      errRow.className = "discord-msg-row ai-message";
+      errRow.innerHTML = `
+        <div class="discord-avatar" style="background: linear-gradient(135deg, #ef4444, #b91c1c)">S</div>
+        <div class="msg-details">
+          <div class="msg-meta">
+            <span class="msg-author" style="color: #ef4444;">Sky AI [Limit]</span>
+            <span class="msg-bot-tag" style="background: #ef4444;">LIMIT</span>
+            <span class="msg-time">Sekarang</span>
+          </div>
+          <div class="msg-content" style="border-left: 3px solid #ef4444; background: rgba(239, 68, 68, 0.05); color: #f87171;">
+            Oops! Kamu sudah mencapai batas limit <strong>10 pertanyaan gratis per hari</strong>. 
+            Silakan <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot" target="_blank" style="color: #60a5fa; text-decoration: underline; font-weight: bold;">tambahkan Sky AI ke server Discord kamu</a> untuk menikmati obrolan tanpa batas! 🚀
+          </div>
+        </div>
+      `;
+      messagesBox.appendChild(errRow);
+      messagesBox.scrollTop = messagesBox.scrollHeight;
+      openLimitModal();
+      inputField.disabled = false;
+      sendButton.disabled = false;
+      return;
+    }
+    
+    await limitRef.set({
+      count: currentCount + 1,
+      date: today,
+      username: currentUsername,
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    });
+  } catch (e) {
+    console.error(e);
+  }
+
+  // Simpan pesan user ke Firebase
+  const newUserMsgRef = chatsRef.push();
+  await newUserMsgRef.set({
+    author: currentUsername,
+    content: query,
+    timestamp: firebase.database.ServerValue.TIMESTAMP
+  });
+  
+  showTypingIndicator();
+  
+  try {
+    const systemPrompt = "Anda adalah Sky AI, bot asisten pintar dari SkyTech Company di platform Discord. Sifat Anda adalah ramah, gaul, bersahabat, asyik, dan sopan. Gunakan gaya bahasa Indonesia santai (bisa selipkan istilah slang atau emoji keren). Jawab secara singkat padat dan jelas.";
+    const responseData = await getSmartAIResponse(query, systemPrompt);
+    hideTypingIndicator();
+    
+    const newBotMsgRef = chatsRef.push();
+    await newBotMsgRef.set({
+      author: "Sky AI",
+      content: responseData.text,
+      provider: responseData.activeProvider,
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    });
+  } catch (error) {
+    hideTypingIndicator();
+    const newBotMsgRef = chatsRef.push();
+    await newBotMsgRef.set({
+      author: "Sky AI",
+      content: "Maaf, sistem pemrosesan neural saya sedang mengalami limitasi/gangguan singkat secara serentak. Silakan coba kembali dalam beberapa saat! 🛠️",
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    });
+  } finally {
+    inputField.disabled = false;
+    sendButton.disabled = false;
+    inputField.focus();
   }
 }
 </script>
