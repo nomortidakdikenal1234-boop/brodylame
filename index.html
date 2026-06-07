@@ -37,9 +37,187 @@ body {
   cursor: none; /* Kursor asli dimatikan */
 }
 
+/* Scrollbar kustom premium */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: #0f2554;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--blue-glow);
+}
+
 a {
   text-decoration: none;
   color: inherit;
+}
+
+/* =====================================================================
+   PRELOADER / LANDING INTRO 10 DETIK (SCI-FI STYLE)
+   ===================================================================== */
+#intro-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: #01040f;
+  background-image: radial-gradient(circle at center, #06112c 0%, #01040f 100%);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1), visibility 1s;
+}
+
+.intro-content {
+  text-align: center;
+  max-width: 480px;
+  width: 90%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Container logo preloader melingkar */
+.intro-logo-wrapper {
+  width: 160px;
+  height: 160px;
+  position: relative;
+  margin-bottom: 35px;
+}
+
+/* Outer ring yang berputar */
+.intro-outer-ring {
+  position: absolute;
+  inset: 0;
+  border: 3px dashed rgba(0, 85, 255, 0.4);
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(0, 85, 255, 0.2);
+}
+/* Efek animasi putar ring luar saat aktif */
+.intro-outer-ring.spinning {
+  animation: spinRing 10s linear infinite;
+  border-color: var(--blue-glow);
+  box-shadow: 0 0 35px rgba(0, 85, 255, 0.5);
+}
+
+/* Inner logo container */
+.intro-logo-container {
+  position: absolute;
+  inset: 12px;
+  background: #040d21;
+  border: 2px solid rgba(0, 85, 255, 0.2);
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 0 15px rgba(0, 85, 255, 0.3);
+}
+
+.intro-logo-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+/* Animasi logo dalam yang berputar */
+.intro-logo-container.spinning img {
+  animation: spinLogo 10s linear infinite;
+}
+
+@keyframes spinRing {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes spinLogo {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.intro-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: white;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ffffff, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.intro-status {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-family: monospace;
+  margin-bottom: 30px;
+  height: 20px;
+}
+
+/* Tombol Launch Inisialisasi */
+#intro-start-btn {
+  background: linear-gradient(135deg, #0055ff, #0033aa);
+  color: white;
+  border: none;
+  padding: 14px 35px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: none;
+  letter-spacing: 1px;
+  box-shadow: 0 5px 25px rgba(0, 85, 255, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+#intro-start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 85, 255, 0.6);
+}
+
+/* Progres Bar Loader Sci-Fi */
+.intro-loader-container {
+  width: 100%;
+  display: none; /* Muncul setelah tombol diklik */
+  flex-direction: column;
+  gap: 10px;
+}
+
+.intro-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.intro-progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #0055ff, #3b82f6);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 85, 255, 0.5);
+}
+
+.intro-metrics {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: monospace;
+  font-size: 12px;
+}
+#intro-log {
+  color: #3b82f6;
+}
+#intro-percentage {
+  color: white;
+  font-weight: bold;
 }
 
 /* --- PARTICLE BACKGROUND CANVAS --- */
@@ -63,7 +241,7 @@ a {
   border-radius: 50%;
   position: fixed;
   pointer-events: none;
-  z-index: 9999; 
+  z-index: 99999; 
   transition: transform 0.1s ease-out; 
   transform: translate(-50%, -50%);
 }
@@ -535,6 +713,217 @@ section {
   50% { background-color: transparent; }
 }
 
+/* ===== SKY AI LIVE TESTING PLAYGROUND (FASILITAS SIMULASI REALTIME) ===== */
+.playground-section {
+  padding: 100px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.playground-section h2 {
+  font-size: 36px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.playground-section h2 span {
+  color: #3b82f6;
+  background: linear-gradient(135deg, #3b82f6, #0055ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.playground-subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 45px;
+  font-weight: 400;
+}
+
+/* Discord Window Simulator */
+.discord-container {
+  background: #0f1524;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  height: 520px;
+  backdrop-filter: blur(10px);
+}
+
+.discord-header {
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.discord-status-dot {
+  width: 10px;
+  height: 10px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #10b981;
+}
+.discord-channel-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+.discord-channel-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+/* Area Menampilkan Bubble Chat */
+.discord-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Desain Message Row */
+.discord-msg-row {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+  animation: fadeInMsg 0.3s ease-out forwards;
+}
+@keyframes fadeInMsg {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.discord-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.msg-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.msg-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.msg-author {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+}
+.msg-bot-tag {
+  background: #3b82f6;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.msg-time {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.msg-content {
+  font-size: 13.5px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 10px 14px;
+  border-radius: 0 12px 12px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  max-width: 100%;
+  word-break: break-word;
+}
+.discord-msg-row.ai-message .msg-content {
+  border-left: 3px solid var(--blue-glow);
+  background: rgba(0, 85, 255, 0.03);
+}
+
+/* Loading Typing Simulator */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+}
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  background: #64748b;
+  border-radius: 50%;
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+/* Kolom Input Discord Style */
+.discord-input-area {
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 16px 24px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.discord-input {
+  flex: 1;
+  background: #090e1a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 14px 20px;
+  color: #ffffff;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+  transition: 0.3s;
+}
+.discord-input:focus {
+  border-color: var(--blue-glow);
+  box-shadow: 0 0 10px rgba(0, 85, 255, 0.2);
+}
+.discord-send-btn {
+  background: var(--blue-glow);
+  color: #ffffff;
+  border: none;
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: none;
+  transition: 0.3s;
+}
+.discord-send-btn:hover {
+  background: var(--blue-hover);
+}
+.discord-send-btn:disabled {
+  background: #1e293b;
+  color: #64748b;
+}
+
 /* ===== TESTIMONI SECTION (PERSIS GAMBAR KEDUA) ===== */
 .testi-section {
   text-align: center;
@@ -734,6 +1123,40 @@ footer {
 
 <body>
 
+<!-- =====================================================================
+     PRELOADER / LANDING INTRO 10 DETIK
+     ===================================================================== -->
+<div id="intro-overlay">
+  <!-- Elemen audio intro premium -->
+  <audio id="intro-audio" src="https://b.top4top.io/m_3810q84bd1.mp3" preload="auto"></audio>
+  
+  <div class="intro-content">
+    <div class="intro-logo-wrapper">
+      <div class="intro-outer-ring" id="intro-ring"></div>
+      <div class="intro-logo-container" id="intro-logo-box">
+        <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI Logo" />
+      </div>
+    </div>
+    
+    <h1 class="intro-title">Sky AI Website</h1>
+    <p class="intro-status" id="intro-status-text">Click launch to activate portal security handshake...</p>
+    
+    <!-- Tombol mulai interaktif -->
+    <button id="intro-start-btn" onclick="startIntro()">LAUNCH SYSTEM</button>
+    
+    <!-- Sci-fi progres bar loader -->
+    <div class="intro-loader-container" id="intro-loader-container">
+      <div class="intro-progress-bar">
+        <div class="intro-progress-fill" id="intro-progress-fill"></div>
+      </div>
+      <div class="intro-metrics">
+        <span id="intro-log">AWAITING HANDSHAKE...</span>
+        <span id="intro-percentage">0%</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Background Partikel Bintang -->
 <canvas id="bg-particles"></canvas>
 
@@ -749,6 +1172,7 @@ footer {
   <div class="nav-links">
     <a href="#hero" onclick="scrollToId('hero'); return false;">Home</a>
     <a href="#features" onclick="scrollToId('features'); return false;">Features</a>
+    <a href="#playground" onclick="scrollToId('playground'); return false;">Playground</a>
     <a href="#portfolio" onclick="scrollToId('portfolio'); return false;">Dashboard</a>
     <a href="#contact" onclick="scrollToId('contact'); return false;">Contact</a>
     <button class="nav-login-btn" onclick="openAdmin()">
@@ -893,6 +1317,34 @@ footer {
         skytech@bot:~# <span class="terminal-cursor"></span>
       </div>
 
+    </div>
+  </div>
+</section>
+
+<!-- ===== SKY AI LIVE TESTING PLAYGROUND (CHAT REAL-TIME PUBLIK) ===== -->
+<section id="playground" class="playground-section">
+  <h2>Sky AI <span>Playground</span></h2>
+  <p class="playground-subtitle">Uji coba langsung kemampuan Sky AI di bawah ini secara bersama-sama. Seluruh obrolan disinkronkan secara real-time dan bisa dilihat oleh semua pengunjung website!</p>
+
+  <div class="discord-container">
+    <div class="discord-header">
+      <div class="discord-status-dot"></div>
+      <div class="discord-channel-name">💬｜live-testing-sky-ai</div>
+      <div class="discord-channel-desc">Uji coba interaktif publik</div>
+    </div>
+
+    <!-- Tampilan Log Pesan -->
+    <div class="discord-messages" id="discord-messages-box">
+      <!-- Chat akan dimuat secara dinamis dari Firebase -->
+      <div style="color: var(--text-muted); font-size: 13px; text-align: center; margin: auto;" id="chat-loading-placeholder">
+        Menghubungkan secure chat stream...
+      </div>
+    </div>
+
+    <!-- Input Box Simulator -->
+    <div class="discord-input-area">
+      <input type="text" class="discord-input" id="chat-input-field" placeholder="Ketik pesan di sini untuk menguji Sky AI..." onkeydown="handleChatKeyDown(event)" />
+      <button class="discord-send-btn" id="chat-send-button" onclick="sendPublicChatMessage()">Kirim 🚀</button>
     </div>
   </div>
 </section>
@@ -1051,6 +1503,87 @@ function animateParticles() {
 animateParticles();
 
 // =====================================================================
+// LOGIK INTRO LANDING PAGE 10 DETIK & AUTOPLAY AUDIO SINKRONISASI
+// =====================================================================
+function startIntro() {
+  const startBtn = document.getElementById("intro-start-btn");
+  const loaderContainer = document.getElementById("intro-loader-container");
+  const statusText = document.getElementById("intro-status-text");
+  const audio = document.getElementById("intro-audio");
+  
+  const ring = document.getElementById("intro-ring");
+  const logoBox = document.getElementById("intro-logo-box");
+  const progressFill = document.getElementById("intro-progress-fill");
+  const progressPercentage = document.getElementById("intro-percentage");
+  const progressLog = document.getElementById("intro-log");
+
+  // Mainkan audio file mp3 kustom
+  audio.play().catch(err => {
+    console.log("Audio playback failed or was blocked by autoplay security:", err);
+  });
+
+  // Ganti tampilan UI
+  startBtn.style.display = "none";
+  loaderContainer.style.display = "flex";
+  statusText.textContent = "Connecting Secure Neural Uplink Handshake...";
+
+  // Mulai animasi putar pada logo
+  ring.classList.add("spinning");
+  logoBox.classList.add("spinning");
+
+  // Progres bar berjalan 10 detik (10.000 ms)
+  const duration = 10000;
+  const intervalTime = 50; 
+  let elapsed = 0;
+
+  // Daftar status log sci-fi dinamis
+  const logs = [
+    { threshold: 0, text: "INITIALIZING SKY AI CORES..." },
+    { threshold: 2000, text: "CONNECTING TO NEURAL NETWORK..." },
+    { threshold: 4500, text: "SYNCING REALTIME DATABASE..." },
+    { threshold: 7000, text: "LOADING INTERACTIVE CLI DASHBOARD..." },
+    { threshold: 9000, text: "ESTABLISHING SECURE PORTAL PROTOCOLS..." }
+  ];
+
+  const countdown = setInterval(() => {
+    elapsed += intervalTime;
+    const progress = Math.min((elapsed / duration) * 100, 100);
+
+    // Update Progres Bar & Persentase
+    progressFill.style.width = progress + "%";
+    progressPercentage.textContent = Math.floor(progress) + "%";
+
+    // Update Log Teks
+    for (let i = logs.length - 1; i >= 0; i--) {
+      if (elapsed >= logs[i].threshold) {
+        progressLog.textContent = logs[i].text;
+        break;
+      }
+    }
+
+    if (elapsed >= duration) {
+      clearInterval(countdown);
+      statusText.textContent = "PORTAL ONLINE - WELCOME!";
+      progressLog.textContent = "SYSTEM DEPLOYED SUCCESSFULLY.";
+      
+      // Matikan inisialisasi, hilangkan overlay secara halus
+      setTimeout(() => {
+        const overlay = document.getElementById("intro-overlay");
+        overlay.style.opacity = "0";
+        overlay.style.visibility = "hidden";
+        // Aktifkan scroll pada halaman utama
+        document.body.style.overflow = "auto";
+      }, 800);
+    }
+  }, intervalTime);
+}
+
+// Blokir scroll selama intro aktif
+document.addEventListener("DOMContentLoaded", () => {
+  document.body.style.overflow = "hidden";
+});
+
+// =====================================================================
 // CONFIG FIREBASE PROJECT (SINKRONISASI VISITOR 21 & INVITE 4)
 // =====================================================================
 const firebaseConfig = {
@@ -1109,6 +1642,222 @@ function incrementInvite() {
 
 document.getElementById("inviteBotCard").addEventListener("click", incrementInvite);
 document.getElementById("btnInviteDirect").addEventListener("click", incrementInvite);
+
+
+// =====================================================================
+// SKY AI LIVE TESTING - REAL-TIME COLLABORATIVE PLAYGROUND
+// =====================================================================
+const apiKey = ""; // Kunci API disediakan secara otomatis pada runtime enviroment Canvas
+const chatsRef = database.ref("public_chats");
+
+// Menghasilkan Nama Anonim Acak untuk User saat ini (Disimpan di sessionStorage)
+if (!sessionStorage.getItem("chatUsername")) {
+  const randNum = Math.floor(1000 + Math.random() * 9000);
+  sessionStorage.setItem("chatUsername", "Tester #" + randNum);
+}
+const currentUsername = sessionStorage.getItem("chatUsername");
+
+// Fungsi untuk Menghasilkan Warna Avatar Berdasarkan Nama
+function stringToColor(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const colors = ["#2563eb", "#1d4ed8", "#3b82f6", "#0284c7", "#0369a1", "#0891b2", "#0f766e", "#059669", "#7c3aed", "#6d28d9"];
+  return colors[Math.abs(hash) % colors.length];
+}
+
+// Membaca Chat Publik dari Firebase secara Real-time
+chatsRef.limitToLast(15).on("value", (snapshot) => {
+  const messagesBox = document.getElementById("discord-messages-box");
+  const placeholder = document.getElementById("chat-loading-placeholder");
+  if (placeholder) placeholder.remove();
+  
+  messagesBox.innerHTML = "";
+  
+  const data = snapshot.val();
+  if (!data) {
+    messagesBox.innerHTML = `
+      <div style="color: var(--text-muted); font-size: 13px; text-align: center; margin: auto;">
+        Belum ada obrolan. Jadilah yang pertama menyapa Sky AI di bawah! 👋
+      </div>
+    `;
+    return;
+  }
+  
+  // Mengurutkan pesan berdasarkan timestamp
+  const sortedMessages = Object.keys(data).map(key => ({
+    id: key,
+    ...data[key]
+  })).sort((a, b) => a.timestamp - b.timestamp);
+  
+  sortedMessages.forEach(msg => {
+    const isBot = msg.author === "Sky AI";
+    const avatarColor = isBot ? "linear-gradient(135deg, #1e40af, #0055ff)" : stringToColor(msg.author);
+    const initial = msg.author.charAt(0).toUpperCase();
+    
+    const msgRow = document.createElement("div");
+    msgRow.className = "discord-msg-row" + (isBot ? " ai-message" : "");
+    msgRow.innerHTML = `
+      <div class="discord-avatar" style="background: ${avatarColor}">${initial}</div>
+      <div class="msg-details">
+        <div class="msg-meta">
+          <span class="msg-author">${escapeHtml(msg.author)}</span>
+          ${isBot ? '<span class="msg-bot-tag">BOT</span>' : ''}
+          <span class="msg-time">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+        </div>
+        <div class="msg-content">${escapeHtml(msg.content)}</div>
+      </div>
+    `;
+    messagesBox.appendChild(msgRow);
+  });
+  
+  // Scroll otomatis ke chat terbawah
+  messagesBox.scrollTop = messagesBox.scrollHeight;
+});
+
+// Menghindari serangan XSS pada chat publik
+function escapeHtml(text) {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
+// Fungsi mengirim pesan dari user ke Firebase
+async function sendPublicChatMessage() {
+  const inputField = document.getElementById("chat-input-field");
+  const sendButton = document.getElementById("chat-send-button");
+  const query = inputField.value.trim();
+  
+  if (!query) return;
+  
+  // Matikan input sementara
+  inputField.value = "";
+  inputField.disabled = true;
+  sendButton.disabled = true;
+  
+  // 1. Simpan pesan user ke Firebase (semua orang akan melihatnya instan)
+  const newUserMsgRef = chatsRef.push();
+  await newUserMsgRef.set({
+    author: currentUsername,
+    content: query,
+    timestamp: firebase.database.ServerValue.TIMESTAMP
+  });
+  
+  // Tampilkan indikator Sky AI sedang mengetik
+  showTypingIndicator();
+  
+  try {
+    // 2. Hubungi Gemini API dengan sistem instruksi (Exponential Backoff)
+    const systemPrompt = "Anda adalah Sky AI, bot asisten pintar dari SkyTech Company di platform Discord. Sifat Anda adalah ramah, gaul, bersahabat, asyik, dan sopan. Gunakan gaya bahasa Indonesia santai (bisa selipkan istilah slang atau emoji keren). Jawab secara singkat padat dan jelas.";
+    const responseText = await callGeminiWithBackoff(query, systemPrompt);
+    
+    // Hapus indikator mengetik
+    hideTypingIndicator();
+    
+    // 3. Simpan balasan Sky AI ke Firebase (semua orang akan melihat balasan instan)
+    const newBotMsgRef = chatsRef.push();
+    await newBotMsgRef.set({
+      author: "Sky AI",
+      content: responseText,
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    });
+  } catch (error) {
+    hideTypingIndicator();
+    console.error("Gagal memproses Sky AI:", error);
+    
+    // Tampilkan pesan error di chat sistem
+    const newBotMsgRef = chatsRef.push();
+    await newBotMsgRef.set({
+      author: "Sky AI",
+      content: "Maaf, sistem pemrosesan neural saya sedang mengalami gangguan singkat. Silakan coba kembali dalam beberapa saat! 🛠️",
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    });
+  } finally {
+    inputField.disabled = false;
+    sendButton.disabled = false;
+    inputField.focus();
+  }
+}
+
+// Memproses penekanan tombol Enter pada input chat
+function handleChatKeyDown(event) {
+  if (event.key === "Enter") {
+    sendPublicChatMessage();
+  }
+}
+
+// Fungsi memanggil API Gemini 3 Flash dengan skema Exponential Backoff (Maksimal 5x coba)
+async function callGeminiWithBackoff(userQuery, systemPrompt) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+  const payload = {
+    contents: [{ parts: [{ text: userQuery }] }],
+    systemInstruction: { parts: [{ text: systemPrompt }] }
+  };
+  
+  let delay = 1000;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      
+      if (!response.ok) throw new Error("HTTP error " + response.status);
+      
+      const result = await response.json();
+      const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (text) return text;
+      throw new Error("Invalid format from API response");
+    } catch (e) {
+      if (attempt === 4) throw e; // Gagal setelah 5 kali mencoba
+      await new Promise(resolve => setTimeout(resolve, delay));
+      delay *= 2; // Naikkan delay eksponensial (1s, 2s, 4s, 8s, 16s)
+    }
+  }
+}
+
+// Menampilkan Animasi Mengetik Sky AI
+let typingElement = null;
+function showTypingIndicator() {
+  const messagesBox = document.getElementById("discord-messages-box");
+  typingElement = document.createElement("div");
+  typingElement.className = "discord-msg-row ai-message";
+  typingElement.id = "typing-loader-row";
+  typingElement.innerHTML = `
+    <div class="discord-avatar" style="background: linear-gradient(135deg, #1e40af, #0055ff)">S</div>
+    <div class="msg-details">
+      <div class="msg-meta">
+        <span class="msg-author">Sky AI</span>
+        <span class="msg-bot-tag">BOT</span>
+        <span class="msg-time">Sekarang</span>
+      </div>
+      <div class="msg-content">
+        <div class="typing-indicator">
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+        </div>
+      </div>
+    </div>
+  `;
+  messagesBox.appendChild(typingElement);
+  messagesBox.scrollTop = messagesBox.scrollHeight;
+}
+
+// Menghapus Animasi Mengetik Sky AI
+function hideTypingIndicator() {
+  if (typingElement) {
+    typingElement.remove();
+    typingElement = null;
+  }
+}
 
 
 // =====================================================================
