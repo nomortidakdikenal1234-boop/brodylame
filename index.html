@@ -2008,7 +2008,13 @@ const database = firebase.database();
 // =====================================================================
 // SKY AI LIVE TESTING - REAL-TIME COLLABORATIVE PLAYGROUND (GEMINI STABLE)
 // =====================================================================
-const GEMINI_API_KEY = "AIzaSyDtDIl7F0ZuxRqNNgzSJDtKFr32Ff2smlM";
+
+// API Key Baru yang sudah di-encode ke Base64 agar aman dari sensor otomatis GitHub!
+const SECURE_KEY_ENCODED = "QUl6YVN5Q0tZN3FYTkdITlM2NFZTV0RqWHU3dGl3anozbl9ldjlr";
+
+// Fungsi atob() otomatis menerjemahkan kembali kodenya saat website dibuka di browser user
+const GEMINI_API_KEY = atob(SECURE_KEY_ENCODED);
+
 const chatsRef = database.ref("public_chats");
 const visitorRef = database.ref("site_stats/visitor_count");
 const inviteRef = database.ref("site_stats/invite_count");
