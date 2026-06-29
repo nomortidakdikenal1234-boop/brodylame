@@ -2011,22 +2011,28 @@ const database = firebase.database();
 // Pantau status perbaikan Chat AI secara langsung
 database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
   if (snapshot.val() === true) {
-    // CARA OTOMATIS: Cari area chat berdasarkan tombol kirim chat kamu
-    // (Bisa mendeteksi tombol input, button kirim, atau form chat)
-    const chatInput = document.querySelector('input[type="text"], textarea, button[type="submit"]');
-    
-    if (chatInput) {
-      // Mengambil elemen pembungkus paling dekat dari chat kamu
-      const chatContainer = chatInput.closest('div') || document.body;
+    // Fungsi bawaan untuk memastikan halaman HTML sudah selesai dimuat 100%
+    setTimeout(() => {
+      // CARA JITU: Cari elemen input tempat ngetik pesan di playground
+      const chatInput = document.querySelector('input[placeholder*="Ketik pesan"], input[type="text"]');
       
-      // Kunci area tersebut dengan pesan maintenance
-      chatContainer.innerHTML = `
-        <div style="text-align:center; padding:50px 20px; background:#202225; color:#fff; border-radius:12px; font-family:sans-serif; border:2px dashed #ed4245; margin: 20px auto; max-width: 600px;">
-          <h2 style="color:#ed4245; margin-bottom:10px;">⚠️ Fitur Chat AI Dimatikan Sementara ⚠️</h2>
-          <p style="color:#b9bbbe; font-size:14px; line-height:1.5;">Co-Founder SkyTech sedang memperbarui modul database AI.<br>Menu website lainnya tetap bisa Anda gunakan!</p>
-        </div>
-      `;
-    }
+      if (chatInput) {
+        // Melompat 3 tingkat ke atas untuk membungkus seluruh kotak box chat besar tersebut
+        const chatContainer = chatInput.parentElement.parentElement.parentElement || chatInput.closest('div');
+        
+        if (chatContainer) {
+          chatContainer.innerHTML = `
+            <div style="text-align:center; padding:60px 20px; background:#1e1f22; color:#fff; border-radius:12px; font-family:sans-serif; border:2px dashed #ed4245; margin: 40px auto; max-width: 550px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+              <h2 style="color:#ed4245; margin-top:0; margin-bottom:12px; font-size:22px;">⚠️ Fitur Chat AI Dimatikan Sementara ⚠️</h2>
+              <p style="color:#b9bbbe; font-size:14px; line-height:1.6; margin:0;">
+                Co-Founder SkyTech sedang memperbarui modul database AI.<br>
+                Menu website lainnya tetap bisa Anda gunakan!
+              </p>
+            </div>
+          `;
+        }
+      }
+    }, 500); // Diberi jeda setengah detik biar HTML-nya siap dulu
   }
 });
 
