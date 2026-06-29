@@ -2005,6 +2005,21 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
+// ==========================================
+// PASANG CODE MAINTENANCE DI SINI (PAS DI BAWAHNYA)
+// ==========================================
+database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
+  if (snapshot.val() === true) {
+    // Jika di dashboard admin diaktifkan, halaman web langsung berubah jadi ini:
+    document.body.innerHTML = `
+      <div style="text-align:center; padding:100px; background:#202225; color:#fff; height:100vh; font-family:sans-serif;">
+        <h1>🛠️ Sky AI Sedang Maintenance 🛠️</h1>
+        <p>Co-Founder kami sedang memperbarui sistem. Silakan kembali beberapa saat lagi!</p>
+      </div>
+    `;
+  }
+});
+
 // =====================================================================
 // SKY AI LIVE TESTING - REAL-TIME COLLABORATIVE PLAYGROUND (GEMINI STABLE)
 // =====================================================================
