@@ -2010,21 +2010,22 @@ const database = firebase.database();
 // ==========================================
 // Pantau status perbaikan Chat AI secara langsung
 database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
-  // Ganti "id-kotak-chat-kamu" dengan id kontainer HTML pembungkus fitur chat AI kamu
-  const chatContainer = document.getElementById("id-kotak-chat-kamu"); 
-  
-  if (chatContainer) {
-    if (snapshot.val() === true) {
-      // Jika di dashboard admin dinyalakan, area chat diblokir dengan pesan ini
+  if (snapshot.val() === true) {
+    // CARA OTOMATIS: Cari area chat berdasarkan tombol kirim chat kamu
+    // (Bisa mendeteksi tombol input, button kirim, atau form chat)
+    const chatInput = document.querySelector('input[type="text"], textarea, button[type="submit"]');
+    
+    if (chatInput) {
+      // Mengambil elemen pembungkus paling dekat dari chat kamu
+      const chatContainer = chatInput.closest('div') || document.body;
+      
+      // Kunci area tersebut dengan pesan maintenance
       chatContainer.innerHTML = `
-        <div style="text-align:center; padding:40px 20px; background:#202225; color:#fff; border-radius:8px; font-family:sans-serif; border:1px dashed #ed4245;">
-          <h2>⚠️ Fitur Chat AI Dimatikan Sementara ⚠️</h2>
-          <p style="color:#b9bbbe;">Co-Founder SkyTech sedang memperbarui modul database AI. Menu website lainnya tetap bisa Anda gunakan!</p>
+        <div style="text-align:center; padding:50px 20px; background:#202225; color:#fff; border-radius:12px; font-family:sans-serif; border:2px dashed #ed4245; margin: 20px auto; max-width: 600px;">
+          <h2 style="color:#ed4245; margin-bottom:10px;">⚠️ Fitur Chat AI Dimatikan Sementara ⚠️</h2>
+          <p style="color:#b9bbbe; font-size:14px; line-height:1.5;">Co-Founder SkyTech sedang memperbarui modul database AI.<br>Menu website lainnya tetap bisa Anda gunakan!</p>
         </div>
       `;
-    } else {
-      // Jika dimatikan, halaman otomatis reload untuk mengembalikan fungsi chat aslinya
-      // (Atau kamu bisa panggil fungsi loadChatmu kembali di sini)
     }
   }
 });
