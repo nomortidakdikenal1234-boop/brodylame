@@ -2071,6 +2071,18 @@ database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
     }
   }
 });
+
+// Pantau update teks pengumuman dari admin dashboard secara live
+database.ref("system_control/broadcast_message").on("value", (snapshot) => {
+  // Ganti "id-kotak-pengumuman" dengan ID element tempat teks berjalan/alert di websitemu
+  const alertContainer = document.getElementById("id-kotak-pengumuman");
+  if (alertContainer && snapshot.exists() && snapshot.val() !== "") {
+    alertContainer.innerText = snapshot.val();
+    alertContainer.style.display = "block"; // Munculkan komponen
+  } else if (alertContainer) {
+    alertContainer.style.display = "none"; // Sembunyikan jika kosong
+  }
+});
   
 // =====================================================================
 // SKY AI LIVE TESTING - REAL-TIME COLLABORATIVE PLAYGROUND (GEMINI STABLE)
