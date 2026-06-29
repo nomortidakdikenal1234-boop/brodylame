@@ -2085,6 +2085,15 @@ database.ref("system_control/broadcast_message").on("value", (snapshot) => {
     alertContainer.style.display = "none";
   }
 });
+
+// ==========================================
+// 3. TARUH FUNGSI TRACK INVITE DI SINI (PALING BAWAH)
+// ==========================================
+function trackInviteClick() {
+  database.ref("site_stats/invite_click_count").transaction((currentCount) => {
+    return (currentCount || 0) + 1;
+  });
+}
   
 // =====================================================================
 // SKY AI LIVE TESTING - REAL-TIME COLLABORATIVE PLAYGROUND (GEMINI STABLE)
