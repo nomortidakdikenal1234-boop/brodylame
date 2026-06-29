@@ -2018,6 +2018,19 @@ let wordBlacklist = [];
 let isMaintenanceMode = false;
 let whitelist = [];
 
+// Fungsi bantu untuk membuat elemen banner pengumuman otomatis jika belum ada di HTML
+function buatBannerPengumuman() {
+  let banner = document.getElementById("announcement-banner");
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'announcement-banner';
+    // Style UI Banner nempel di paling atas halaman
+    banner.style.cssText = "display: none; background: #faa61a; color: #000; padding: 12px; text-align: center; font-weight: bold; width: 100%; position: fixed; top: 0; left: 0; z-index: 99999; font-size: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.3);";
+    banner.innerHTML = `📢 <span id="announcement-text"></span>`;
+    document.body.prepend(banner);
+  }
+}
+
 database.ref("system_control").on("value", (snapshot) => {
     const data = snapshot.val();
     if (!data) return;
@@ -2032,6 +2045,22 @@ database.ref("system_control").on("value", (snapshot) => {
     if (inputContainer && maintenanceAlert) {
         inputContainer.style.setProperty("display", isMaintenanceMode ? "none" : "flex", "important");
         maintenanceAlert.style.display = isMaintenanceMode ? "block" : "none";
+    }
+
+    // -----------------------------------------------------------------
+    // SINKRONISASI PENGUMUMAN WEBSITE (TAMBAHAN BARU)
+    // -----------------------------------------------------------------
+    buatBannerPengumuman(); // Pastikan elemen banner sudah terpasang di body
+    const bannerEl = document.getElementById("announcement-banner");
+    const textEl = document.getElementById("announcement-text");
+
+    if (data.broadcast_message && data.broadcast_message.trim() !== "") {
+        textEl.innerText = data.broadcast_message;
+        bannerEl.style.display = "block";
+        document.body.style.paddingTop = "45px"; // Dorong konten web ke bawah sedikit biar ga ketutup banner
+    } else {
+        bannerEl.style.display = "none";
+        document.body.style.paddingTop = "0px";
     }
 });
 
