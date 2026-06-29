@@ -2006,11 +2006,9 @@ firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 // ==========================================
-// PASANG CODE MAINTENANCE DI SINI (PAS DI BAWAHNYA)
+// 1. SYSTEM MAINTENANCE CONTROL LOGIC
 // ==========================================
-// Pantau status perbaikan Chat AI secara langsung via CSS Injection
 database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
-  // Hapus style lama jika ada (agar tidak menumpuk saat toggle mati/nyalakan)
   const existingStyle = document.getElementById("maintenance-cyber-style");
   if (existingStyle) existingStyle.remove();
   
@@ -2018,11 +2016,9 @@ database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
   if (existingAlert) existingAlert.remove();
 
   if (snapshot.val() === true) {
-    // 1. Suntikkan CSS untuk menyembunyikan area chat dan tombol kirim secara paksa
     const style = document.createElement("style");
     style.id = "maintenance-cyber-style";
     style.innerHTML = `
-      /* Sembunyikan daftar pesan, input ketik, dan tombol kirim di dalam playground */
       input[placeholder*="Ketik pesan"], 
       button:has(svg), 
       .live-testing-sky-ai,
@@ -2033,15 +2029,11 @@ database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
     `;
     document.head.appendChild(style);
 
-    // 2. Fungsi otomatis untuk memasang kotak pengumuman tepat di dalam playground
     const injectAlert = () => {
-      // Mencari input chat sebagai panduan lokasi penempatan
       const chatInput = document.querySelector('input[placeholder*="Ketik pesan"], input[type="text"]');
       if (chatInput) {
-        // Cari kontainer terdekat yang membungkus area chat tersebut
         const targetContainer = chatInput.closest('div');
         if (targetContainer && !document.getElementById("maintenance-alert-box")) {
-          
           const alertBox = document.createElement("div");
           alertBox.id = "maintenance-alert-box";
           alertBox.innerHTML = `
@@ -2053,34 +2045,44 @@ database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
               </p>
             </div>
           `;
-          // Taruh kotak pengumuman di bagian atas kontainer chat tersebut
           targetContainer.insertBefore(alertBox, targetContainer.firstChild);
         }
       }
     };
 
-    // Jalankan pencarian berkala (interval) untuk memastikan kotak pengumuman terpasang sempurna
     const maintenanceInterval = setInterval(injectAlert, 300);
-    // Simpan id interval agar bisa dimatikan jika maintenance dinonaktifkan
     window.currentMaintenanceInterval = maintenanceInterval;
 
   } else {
-    // Jika maintenance dimatikan di dashboard, hentikan interval dan kembalikan fungsi chat
     if (window.currentMaintenanceInterval) {
       clearInterval(window.currentMaintenanceInterval);
     }
   }
 });
 
-// Pantau update teks pengumuman dari admin dashboard secara live
+// ==========================================
+// 2. LIVE BROADCAST / ALERT ANNOUNCEMENT LOGIC
+// ==========================================
 database.ref("system_control/broadcast_message").on("value", (snapshot) => {
-  // Ganti "id-kotak-pengumuman" dengan ID element tempat teks berjalan/alert di websitemu
-  const alertContainer = document.getElementById("id-kotak-pengumuman");
-  if (alertContainer && snapshot.exists() && snapshot.val() !== "") {
-    alertContainer.innerText = snapshot.val();
-    alertContainer.style.display = "block"; // Munculkan komponen
+  // Mencari judul Playground sebagai titik patokan penempatan teks pengumuman
+  const playgroundHeader = document.querySelector('.live-testing-sky-ai')?.parentElement || document.querySelector('h1')?.parentElement;
+  
+  let alertContainer = document.getElementById("sky-global-announcement");
+  
+  // Jika kontainer pengumuman belum ada, buat otomatis di atas area Playground
+  if (!alertContainer && playgroundHeader) {
+    alertContainer = document.createElement("div");
+    alertContainer.id = "sky-global-announcement";
+    alertContainer.style.cssText = "text-align:center; padding:12px 20px; background:#5865f2; color:#fff; font-family:sans-serif; font-size:14px; font-weight:bold; border-radius:8px; margin: 15px auto 25px auto; max-width: 700px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); line-height:1.4;";
+    playgroundHeader.insertBefore(alertContainer, playgroundHeader.firstChild);
+  }
+
+  // Jika pesan diketikkan di dashboard admin, tampilkan live!
+  if (alertContainer && snapshot.exists() && snapshot.val().trim() !== "") {
+    alertContainer.innerHTML = `📢 <span style="font-weight: 800; text-transform: uppercase; color: #fff;">Pengumuman SkyTech:</span> ${snapshot.val()}`;
+    alertContainer.style.display = "block";
   } else if (alertContainer) {
-    alertContainer.style.display = "none"; // Sembunyikan jika kosong
+    alertContainer.style.display = "none";
   }
 });
   
