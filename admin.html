@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkyTech Company - Admin Dashboard</title>
+  <title>SkyTech Company - Executive Dashboard</title>
   <style>
     :root {
       --bg-main: #2f3136;
@@ -38,7 +38,7 @@
     .login-container h2 { margin-bottom: 20px; color: var(--blurple); }
     .input-group { margin-bottom: 15px; text-align: left; }
     .input-group label { display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; }
-    .input-group input { width: 100%; padding: 10px; border: none; background: var(--bg-sidebar); color: #fff; border-radius: 4px; box-sizing: border-box; }
+    .input-group input, .input-group textarea { width: 100%; padding: 10px; border: none; background: var(--bg-sidebar); color: #fff; border-radius: 4px; box-sizing: border-box; }
     .btn { width: 100%; padding: 12px; border: none; background: var(--blurple); color: #fff; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s; }
     .btn:hover { background: #4752c4; }
      
@@ -55,14 +55,20 @@
     .header span { color: var(--text-muted); }
      
     /* Stats Grid */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1-fr)); gap: 20px; margin-bottom: 30px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
     .stat-card { background: var(--bg-card); padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); border-left: 4px solid var(--blurple); }
     .stat-card.green-card { border-left-color: var(--green); }
+    .stat-card.red-card { border-left-color: var(--red); }
     .stat-card h3 { margin: 0; font-size: 14px; color: var(--text-muted); text-transform: uppercase; }
     .stat-card p { margin: 10px 0 0 0; font-size: 28px; font-weight: bold; }
 
+    /* Layout Grid Main */
+    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; }
+    @media (max-width: 768px) { .main-grid { grid-template-columns: 1fr; } }
+
     /* Control Panel Card */
-    .control-panel { background: var(--bg-card); padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+    .panel-card { background: var(--bg-card); padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); margin-bottom: 25px; }
+    .panel-card h2 { margin-top: 0; font-size: 18px; border-bottom: 1px solid var(--bg-sidebar); padding-bottom: 10px; margin-bottom: 15px; color: var(--blurple); }
     .control-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--bg-sidebar); }
     .control-row:last-child { border-bottom: none; }
      
@@ -73,6 +79,14 @@
     .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
     input:checked + .slider { background-color: var(--green); }
     input:checked + .slider:before { transform: translateX(26px); }
+
+    /* Table Styles */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; background: var(--bg-sidebar); border-radius: 6px; overflow: hidden; }
+    th, td { padding: 12px; text-align: left; font-size: 14px; }
+    th { background-color: #18191c; color: var(--text-main); font-weight: bold; }
+    tr { border-bottom: 1px solid var(--bg-card); }
+    tr:last-child { border-bottom: none; }
+    td { color: var(--text-muted); }
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -107,22 +121,79 @@
         <h3>Total Percakapan AI</h3>
         <p id="stat-chats">0</p>
       </div>
-    </div>
-
-    <div class="control-panel">
-      <h2>Sistem Global Web & Bot Control</h2>
-       
-      <div class="control-row">
-        <div>
-          <strong>AI Chat Tester Maintenance</strong>
-          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Menonaktifkan fitur obrolan AI sementara tanpa menutup akses halaman beranda web.</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="maintenance-toggle" onchange="toggleMaintenance(this.checked)">
-          <span class="slider"></span>
-        </label>
+      <div class="stat-card red-card">
+        <h3>Bot Discord Status</h3>
+        <p id="stat-bot" style="color: var(--green); font-size: 20px; margin-top: 15px;">● ONLINE</p>
       </div>
     </div>
+
+    <div class="main-grid">
+      
+      <div>
+        <div class="panel-card">
+          <h2>Sistem Global Web & Bot Control</h2>
+          <div class="control-row">
+            <div>
+              <strong>AI Chat Tester Maintenance</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Menonaktifkan fitur obrolan AI sementara tanpa menutup akses halaman beranda web.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="maintenance-toggle" onchange="toggleMaintenance(this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <h2>Broadcast / Alert Manager</h2>
+          <div class="input-group">
+            <label>Teks Pengumuman Website Utama</label>
+            <textarea id="broadcast-text" rows="3" placeholder="Tulis info rilis fitur baru atau pengumuman penting..."></textarea>
+          </div>
+          <button class="btn" style="background: var(--green);" onclick="updateBroadcast()">Update Pengumuman</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel-card" style="height: calc(100% - 50px); overflow-y: auto;">
+          <h2>Log Aktivitas Tim (Audit Logs)</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Waktu</th>
+                <th>Aktivitas Sistem</th>
+              </tr>
+            </thead>
+            <tbody id="audit-logs-table">
+              <tr>
+                <td colspan="2" style="text-align: center;">Belum ada riwayat aktivitas terbaru.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="panel-card">
+      <h2>Kotak Masuk Saran & Hubungi Kami (Feedback Inbox)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nama Pengirim</th>
+            <th>Kontak (Discord/Email)</th>
+            <th>Isi Pesan/Keluhan</th>
+            <th>Tanggal Masuk</th>
+          </tr>
+        </thead>
+        <tbody id="feedback-table">
+          <tr>
+            <td colspan="4" style="text-align: center;">Kotak masuk kosong. Belum ada saran yang dikirim pengunjung.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 
   <script>
@@ -141,17 +212,14 @@
     }
     const database = firebase.database();
 
-    // Kunci hash SHA-256 dari password administrator untuk otentikasi aman
+    // Kunci hash SHA-256 dari password administrator
     const ADMIN_PASSWORD_HASH = "b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
 
-    // Fungsi login menggunakan validasi SHA-256 asinkron bawaan browser
     async function checkAuth() {
       const passInput = document.getElementById("admin-password").value;
-      
       const encoder = new TextEncoder();
       const data = encoder.encode(passInput);
       const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-      
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const inputHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
@@ -168,6 +236,7 @@
       document.getElementById("dashboard-box").style.display = "block";
       document.body.style.alignItems = "flex-start";
        
+      // 1. Ambil data statistik real-time
       database.ref("site_stats/visitor_count").on("value", (snapshot) => {
         document.getElementById("stat-visitors").innerText = snapshot.val() || 0;
       });
@@ -180,12 +249,78 @@
       database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
         document.getElementById("maintenance-toggle").checked = snapshot.val() === true;
       });
+
+      // 2. Ambil pengumuman broadcast aktif saat ini
+      database.ref("system_control/broadcast_message").once("value", (snapshot) => {
+        if (snapshot.exists()) document.getElementById("broadcast-text").value = snapshot.val();
+      });
+
+      // 3. Muat Kotak Masuk Feedback secara real-time
+      database.ref("site_feedback").on("value", (snapshot) => {
+        const tableBody = document.getElementById("feedback-table");
+        tableBody.innerHTML = "";
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          Object.keys(data).reverse().forEach(key => {
+            const item = data[key];
+            const date = new Date(item.timestamp).toLocaleDateString("id-ID") + " " + new Date(item.timestamp).toLocaleTimeString("id-ID");
+            tableBody.innerHTML += `
+              <tr>
+                <td style="color: #fff; font-weight: bold;">${item.name}</td>
+                <td>${item.contact}</td>
+                <td>${item.message}</td>
+                <td style="font-size: 12px;">${date}</td>
+              </tr>
+            `;
+          });
+        } else {
+          tableBody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Kotak masuk kosong. Belum ada saran.</td></tr>`;
+        }
+      });
+
+      // 4. Muat Audit Logs Aktivitas Tim
+      database.ref("audit_logs").limitToLast(10).on("value", (snapshot) => {
+        const tableBody = document.getElementById("audit-logs-table");
+        tableBody.innerHTML = "";
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          Object.keys(data).reverse().forEach(key => {
+            const log = data[key];
+            const time = new Date(log.timestamp).toLocaleTimeString("id-ID");
+            tableBody.innerHTML += `
+              <tr>
+                <td style="font-size: 12px; width: 80px;">${time}</td>
+                <td>${log.activity}</td>
+              </tr>
+            `;
+          });
+        } else {
+          tableBody.innerHTML = `<tr><td colspan="2" style="text-align: center;">Belum ada riwayat aktivitas.</td></tr>`;
+        }
+      });
     }
 
     function toggleMaintenance(status) {
       database.ref("system_control").update({
-        maintenance_mode: status,
-        updated_at: firebase.database.ServerValue.TIMESTAMP
+        maintenance_mode: status
+      });
+      // Tulis log aktivitas ke Firebase
+      database.ref("audit_logs").push({
+        activity: `Maintenance Mode diubah ke ${status ? 'ON 🛠️' : 'OFF 🟢'}`,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      });
+    }
+
+    function updateBroadcast() {
+      const text = document.getElementById("broadcast-text").value;
+      database.ref("system_control").update({
+        broadcast_message: text
+      }).then(() => {
+        alert("Pengumuman berhasil diperbarui secara global!");
+        database.ref("audit_logs").push({
+          activity: `Memperbarui pesan pengumuman website`,
+          timestamp: firebase.database.ServerValue.TIMESTAMP
+        });
       });
     }
 
