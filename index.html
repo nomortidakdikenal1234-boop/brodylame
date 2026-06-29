@@ -1993,7 +1993,7 @@ footer {
 const ADMIN_PASSWORD_HASH = "b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
 
 // =====================================================================
-// CONFIG FIREBASE PROJECT (DEFINED AT THE TOP TO PREVENT REFERENCEERROR)
+// CONFIG FIREBASE PROJECT
 // =====================================================================
 const firebaseConfig = {
   apiKey: "AIzaSyCpOAf9D2Bv31pmqRIjffL-E9IAP8SqTTY",
@@ -2006,61 +2006,65 @@ const firebaseConfig = {
   measurementId: "G-0W8243F7VD"
 };
 
-// Inisialisasi Firebase secara global sebelum variabel reference lainnya dipanggil
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 const database = firebase.database();
 
-// ==========================================
-// 1. SYSTEM MAINTENANCE CONTROL LOGIC
-// ==========================================
-database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
-  const isMaintenance = snapshot.val() === true;
-  
-  const inputContainer = document.getElementById("chat-input-container");
-  const maintenanceAlert = document.getElementById("chat-maintenance-alert");
+// =====================================================================
+// ATURAN SISTEM (BLACKLIST, MAINTENANCE, WHITELIST)
+// =====================================================================
+let wordBlacklist = [];
+let isMaintenanceMode = false;
+let whitelist = [];
 
-  if (inputContainer && maintenanceAlert) {
-    if (isMaintenance) {
-      // Jika maintenance aktif: Sembunyikan input box Discord, munculkan teks alert
-      inputContainer.style.setProperty("display", "none", "important");
-      maintenanceAlert.style.display = "block";
-    } else {
-      // Jika normal: Tampilkan kembali input box Discord dengan layout flex asli, sembunyikan alert
-      inputContainer.style.setProperty("display", "flex", "important");
-      maintenanceAlert.style.display = "none";
+database.ref("system_control").on("value", (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
+
+    wordBlacklist = data.word_blacklist ? Object.values(data.word_blacklist).map(w => w.toLowerCase()) : [];
+    isMaintenanceMode = data.maintenance_mode === true;
+    whitelist = data.whitelist ? Object.values(data.whitelist) : [];
+    
+    // Sinkronisasi UI Maintenance otomatis
+    const inputContainer = document.getElementById("chat-input-container");
+    const maintenanceAlert = document.getElementById("chat-maintenance-alert");
+    if (inputContainer && maintenanceAlert) {
+        inputContainer.style.setProperty("display", isMaintenanceMode ? "none" : "flex", "important");
+        maintenanceAlert.style.display = isMaintenanceMode ? "block" : "none";
     }
-  }
-});
-  
-// ==========================================
-// 2. LIVE BROADCAST / ALERT ANNOUNCEMENT LOGIC
-// ==========================================
-database.ref("system_control/broadcast_message").on("value", (snapshot) => {
-  // Mencari judul Playground sebagai titik patokan penempatan teks pengumuman
-  const playgroundHeader = document.querySelector('.live-testing-sky-ai')?.parentElement || document.querySelector('h1')?.parentElement;
-  
-  let alertContainer = document.getElementById("sky-global-announcement");
-  
-  // Jika kontainer pengumuman belum ada, buat otomatis di atas area Playground
-  if (!alertContainer && playgroundHeader) {
-    alertContainer = document.createElement("div");
-    alertContainer.id = "sky-global-announcement";
-    alertContainer.style.cssText = "text-align:center; padding:12px 20px; background:#5865f2; color:#fff; font-family:sans-serif; font-size:14px; font-weight:bold; border-radius:8px; margin: 15px auto 25px auto; max-width: 700px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); line-height:1.4;";
-    playgroundHeader.insertBefore(alertContainer, playgroundHeader.firstChild);
-  }
-
-  // Jika pesan diketikkan di dashboard admin, tampilkan live!
-  if (alertContainer && snapshot.exists() && snapshot.val().trim() !== "") {
-    alertContainer.innerHTML = `📢 <span style="font-weight: 800; text-transform: uppercase; color: #fff;">Pengumuman SkyTech:</span> ${snapshot.val()}`;
-    alertContainer.style.display = "block";
-  } else if (alertContainer) {
-    alertContainer.style.display = "none";
-  }
 });
 
-// ==========================================
-// 3. TARUH FUNGSI TRACK INVITE DI SINI (PALING BAWAH)
-// ==========================================
+// =====================================================================
+// FUNGSI VALIDASI SEBELUM KIRIM CHAT
+// =====================================================================
+function isMessageSafe(text) {
+    const lowerText = text.toLowerCase();
+    return !wordBlacklist.some(word => lowerText.includes(word));
+}
+
+// PANGGIL FUNGSI INI DI DALAM sendPublicChatMessage() SEBELUM push ke Firebase
+async function validateAndSendMessage(query) {
+    const currentUsername = sessionStorage.getItem("chatUsername");
+
+    // 1. Cek Maintenance
+    if (isMaintenanceMode && !whitelist.includes(currentUsername)) {
+        alert("Sistem sedang Maintenance! Mohon tunggu ya.");
+        return false;
+    }
+
+    // 2. Cek Blacklist
+    if (!isMessageSafe(query)) {
+        alert("Pesan Anda mengandung kata yang dilarang!");
+        return false;
+    }
+
+    return true; // Lolos validasi
+}
+
+// =====================================================================
+// FUNGSI LAINNYA
+// =====================================================================
 function trackInviteClick() {
   database.ref("site_stats/invite_click_count").transaction((currentCount) => {
     return (currentCount || 0) + 1;
