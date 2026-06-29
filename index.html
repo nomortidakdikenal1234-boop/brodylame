@@ -2008,15 +2008,24 @@ const database = firebase.database();
 // ==========================================
 // PASANG CODE MAINTENANCE DI SINI (PAS DI BAWAHNYA)
 // ==========================================
+// Pantau status perbaikan Chat AI secara langsung
 database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
-  if (snapshot.val() === true) {
-    // Jika di dashboard admin diaktifkan, halaman web langsung berubah jadi ini:
-    document.body.innerHTML = `
-      <div style="text-align:center; padding:100px; background:#202225; color:#fff; height:100vh; font-family:sans-serif;">
-        <h1>🛠️ Sky AI Sedang Maintenance 🛠️</h1>
-        <p>Co-Founder kami sedang memperbarui sistem. Silakan kembali beberapa saat lagi!</p>
-      </div>
-    `;
+  // Ganti "id-kotak-chat-kamu" dengan id kontainer HTML pembungkus fitur chat AI kamu
+  const chatContainer = document.getElementById("id-kotak-chat-kamu"); 
+  
+  if (chatContainer) {
+    if (snapshot.val() === true) {
+      // Jika di dashboard admin dinyalakan, area chat diblokir dengan pesan ini
+      chatContainer.innerHTML = `
+        <div style="text-align:center; padding:40px 20px; background:#202225; color:#fff; border-radius:8px; font-family:sans-serif; border:1px dashed #ed4245;">
+          <h2>⚠️ Fitur Chat AI Dimatikan Sementara ⚠️</h2>
+          <p style="color:#b9bbbe;">Co-Founder SkyTech sedang memperbarui modul database AI. Menu website lainnya tetap bisa Anda gunakan!</p>
+        </div>
+      `;
+    } else {
+      // Jika dimatikan, halaman otomatis reload untuk mengembalikan fungsi chat aslinya
+      // (Atau kamu bisa panggil fungsi loadChatmu kembali di sini)
+    }
   }
 });
 
