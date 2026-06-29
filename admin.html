@@ -284,16 +284,25 @@
       </div>
 
       <!-- COLUMN 2: FILTERS, BROADCASTS & AUDIT LOGS -->
-      <div>
-        <!-- BROADCAST MANAGER -->
-        <div class="panel-card">
-          <h2>Broadcast / Alert Manager</h2>
-          <div class="input-group">
-            <label>Teks Pengumuman Website Utama</label>
-            <textarea id="broadcast-text" rows="2" placeholder="Tulis info rilis fitur baru atau pengumuman penting..."></textarea>
-          </div>
-          <button class="btn" style="background: var(--green);" onclick="updateBroadcast()">Update Pengumuman</button>
-        </div>
+      <div class="panel-card">
+  <h2>Broadcast / Alert Manager</h2>
+  <div class="input-group">
+    <label>Teks Pengumuman Website Utama</label>
+    <textarea id="broadcast-text" rows="2" placeholder="Tulis info rilis fitur baru atau pengumuman penting..."></textarea>
+  </div>
+  
+  <div class="input-group">
+    <label>Pilih Warna Banner (RGB Palette)</label>
+    <div id="color-palette-grid" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; background: var(--bg-sidebar); padding: 8px; border-radius: 4px; margin-bottom: 10px;"></div>
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px;">
+      <span>Warna Terpilih:</span>
+      <div id="selected-color-preview" style="width: 50px; height: 20px; background: #faa61a; border-radius: 3px; border: 1px solid #fff;"></div>
+      <span id="selected-color-hex" style="font-weight: bold; color: var(--orange);">#faa61a</span>
+    </div>
+  </div>
+
+  <button class="btn" style="background: var(--green);" onclick="updateBroadcast()">Update Pengumuman & Warna 🚀</button>
+</div>
 
         <!-- ANTI-ABUSE / WORD BLACKLIST FILTER -->
         <div class="panel-card">
