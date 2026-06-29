@@ -2014,67 +2014,24 @@ const database = firebase.database();
 // 1. SYSTEM MAINTENANCE CONTROL LOGIC
 // ==========================================
 database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
-  const existingStyle = document.getElementById("maintenance-cyber-style");
-  if (existingStyle) existingStyle.remove();
-  
-  const existingAlert = document.getElementById("maintenance-alert-box");
-  if (existingAlert) existingAlert.remove();
-
   const isMaintenance = snapshot.val() === true;
+  
+  const inputContainer = document.getElementById("chat-input-container");
+  const maintenanceAlert = document.getElementById("chat-maintenance-alert");
 
-  if (isMaintenance) {
-    // Sembunyikan input chat bawaan & tombol kirim via CSS inject
-    const style = document.createElement("style");
-    style.id = "maintenance-cyber-style";
-    style.innerHTML = `
-      input[placeholder*="Ketik pesan"], 
-      #chat-message-input,
-      #chat-send-btn,
-      #chat-input-container,
-      button:has(svg), 
-      .live-testing-sky-ai,
-      [class*="chat-box"] button,
-      [class*="playground"] button {
-        display: none !important;
-      }
-    `;
-    document.head.appendChild(style);
-
-    // Inject box peringatan "Sedang Maintenance" tepat di area input chat
-    const injectAlert = () => {
-      // Mencari element input chat target (baik id, placeholder, atau container)
-      const chatInput = document.getElementById("chat-message-input") || 
-                        document.querySelector('input[placeholder*="Ketik pesan"], input[type="text"]');
-      
-      if (chatInput) {
-        const targetContainer = chatInput.closest('div');
-        if (targetContainer && !document.getElementById("maintenance-alert-box")) {
-          const alertBox = document.createElement("div");
-          alertBox.id = "maintenance-alert-box";
-          alertBox.innerHTML = `
-            <div style="text-align:center; padding:30px 20px; background:rgba(237, 66, 69, 0.1); color:#ed4245; border-radius:12px; font-family:sans-serif; border:1px dashed #ed4245; margin: 20px auto; max-width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-weight: bold; font-size: 14px; line-height: 1.6;">
-              🛠️ Maaf, fitur chat sedang dimatikan sementara karena maintenance.<br>
-              <span style="color:#b9bbbe; font-size:12px; font-weight: normal;">Co-Founder SkyTech sedang memperbarui database AI. Menu web lainnya tetap aktif!</span>
-            </div>
-          `;
-          // Masukkan alert box di tempat input chat berada
-          targetContainer.parentNode.insertBefore(alertBox, targetContainer);
-        }
-      }
-    };
-
-    // Jalankan interval check buat mastiin elemen ke-inject sempurna
-    if (window.currentMaintenanceInterval) clearInterval(window.currentMaintenanceInterval);
-    window.currentMaintenanceInterval = setInterval(injectAlert, 300);
-
-  } else {
-    // Jika maintenance OFF: Bersihkan interval, style, dan alert box agar chat muncul kembali normal
-    if (window.currentMaintenanceInterval) {
-      clearInterval(window.currentMaintenanceInterval);
+  if (inputContainer && maintenanceAlert) {
+    if (isMaintenance) {
+      // Jika maintenance aktif: Sembunyikan input box Discord, munculkan teks alert
+      inputContainer.style.setProperty("display", "none", "important");
+      maintenanceAlert.style.display = "block";
+    } else {
+      // Jika normal: Tampilkan kembali input box Discord dengan layout flex asli, sembunyikan alert
+      inputContainer.style.setProperty("display", "flex", "important");
+      maintenanceAlert.style.display = "none";
     }
   }
 });
-
+  
 // ==========================================
 // 2. LIVE BROADCAST / ALERT ANNOUNCEMENT LOGIC
 // ==========================================
