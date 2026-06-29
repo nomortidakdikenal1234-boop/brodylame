@@ -86,7 +86,7 @@
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #72767d; transition: .3s; border-radius: 26px; }
     .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
     input:checked + .slider { background-color: var(--green); }
-    #maintenance-toggle:checked + .slider { background-color: var(--red); } /* Maintenance on berwarna merah */
+    #maintenance-toggle:checked + .slider { background-color: var(--red); }
     input:checked + .slider:before { transform: translateX(24px); }
 
     /* Chip List Styles */
@@ -185,7 +185,7 @@
       <button class="btn" style="width: auto; background: var(--bg-sidebar); border: 1px solid var(--red); color: var(--red);" onclick="logout()">Logout</button>
     </div>
 
-    <!-- STATS GRID (5 KARTU TERMASUK LATENCY PING) -->
+    <!-- STATS GRID -->
     <div class="stats-grid">
       <div class="stat-card">
         <h3>Total Pengunjung</h3>
@@ -284,25 +284,27 @@
       </div>
 
       <!-- COLUMN 2: FILTERS, BROADCASTS & AUDIT LOGS -->
-      <div class="panel-card">
-  <h2>Broadcast / Alert Manager</h2>
-  <div class="input-group">
-    <label>Teks Pengumuman Website Utama</label>
-    <textarea id="broadcast-text" rows="2" placeholder="Tulis info rilis fitur baru atau pengumuman penting..."></textarea>
-  </div>
-  
-  <div class="input-group">
-    <label>Pilih Warna Banner (RGB Palette)</label>
-    <div id="color-palette-grid" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; background: var(--bg-sidebar); padding: 8px; border-radius: 4px; margin-bottom: 10px;"></div>
-    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px;">
-      <span>Warna Terpilih:</span>
-      <div id="selected-color-preview" style="width: 50px; height: 20px; background: #faa61a; border-radius: 3px; border: 1px solid #fff;"></div>
-      <span id="selected-color-hex" style="font-weight: bold; color: var(--orange);">#faa61a</span>
-    </div>
-  </div>
+      <div>
+        <!-- BROADCAST MANAGER WITH RGB PALETTE -->
+        <div class="panel-card">
+          <h2>Broadcast / Alert Manager</h2>
+          <div class="input-group">
+            <label>Teks Pengumuman Website Utama</label>
+            <textarea id="broadcast-text" rows="2" placeholder="Tulis info rilis fitur baru atau pengumuman penting..."></textarea>
+          </div>
+          
+          <div class="input-group">
+            <label>Pilih Warna Banner (RGB Palette)</label>
+            <div id="color-palette-grid" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; background: var(--bg-sidebar); padding: 8px; border-radius: 4px; margin-bottom: 10px;"></div>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 13px;">
+              <span>Warna Terpilih:</span>
+              <div id="selected-color-preview" style="width: 50px; height: 20px; background: #faa61a; border-radius: 3px; border: 1px solid #fff;"></div>
+              <span id="selected-color-hex" style="font-weight: bold; color: var(--orange);">#faa61a</span>
+            </div>
+          </div>
 
-  <button class="btn" style="background: var(--green);" onclick="updateBroadcast()">Update Pengumuman & Warna 🚀</button>
-</div>
+          <button class="btn" style="background: var(--green);" onclick="updateBroadcast()">Update Pengumuman & Warna 🚀</button>
+        </div>
 
         <!-- ANTI-ABUSE / WORD BLACKLIST FILTER -->
         <div class="panel-card">
@@ -375,10 +377,45 @@
     const database = firebase.database();
 
     const ADMIN_PASSWORD_HASH = "b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
-
-    // Enkripsi API Key Gemini secara Base64 (Aman dari scraping teks biasa)
     const SECURE_KEY_ENCODED = "QUl6YVN5RHRESWw3RjBadXhScU5OZ3pTSkR0S0ZyMzJGZjJzbWxN";
     const GEMINI_API_KEY = atob(SECURE_KEY_ENCODED);
+
+    // Variabel Global Pembantu Pemilih Warna RGB
+    let selectedBannerColor = "#faa61a"; 
+    const rgbColorsPreset = [
+      "#4a0000", "#4a2300", "#4a4a00", "#004a00", "#004a4a", "#00234a", "#00004a", "#23004a", "#4a004a", "#4a0023", "#000000", "#1c1c1c",
+      "#990000", "#994c00", "#999900", "#009900", "#009999", "#004c99", "#000099", "#4c0099", "#990099", "#99004c", "#555555", "#333333",
+      "#ff0000", "#ff7f00", "#ffff00", "#00ff00", "#00ffff", "#007fff", "#0000ff", "#7f00ff", "#ff00ff", "#ff007f", "#aaaaaa", "#777777",
+      "#ff4c4c", "#ffa64d", "#ffff4d", "#4dff4d", "#4dffff", "#4da6ff", "#4d4dff", "#a64dff", "#ff4dff", "#ff4da6", "#ffffff", "#dddddd"
+    ];
+
+    function renderColorPalette() {
+      const grid = document.getElementById("color-palette-grid");
+      if (!grid) return;
+      grid.innerHTML = "";
+      
+      rgbColorsPreset.forEach(color => {
+        const box = document.createElement("div");
+        box.style.backgroundColor = color;
+        box.style.height = "22px";
+        box.style.cursor = "pointer";
+        box.style.borderRadius = "2px";
+        box.style.border = "1px solid rgba(0,0,0,0.4)";
+        box.title = color;
+        
+        box.onclick = function() {
+          ubahWarnaTerpilihElemen(color);
+        };
+        grid.appendChild(box);
+      });
+    }
+
+    function ubahWarnaTerpilihElemen(color) {
+      selectedBannerColor = color;
+      document.getElementById("selected-color-preview").style.backgroundColor = color;
+      document.getElementById("selected-color-hex").innerText = color;
+      document.getElementById("selected-color-hex").style.color = color;
+    }
 
     // Custom Toast Notification System
     function showToast(message, isError = false) {
@@ -427,25 +464,18 @@
       }
     }
 
-    // =====================================================================
-    // CORE SCRIPT: Auto-Ping Gemini API Langsung dari Dashboard
-    // =====================================================================
+    // Auto-Ping Gemini API Langsung dari Dashboard
     async function updateGeminiPing() {
       const startTime = Date.now();
       try {
-        // Melakukan request test ringan (countTokens) ke Gemini API untuk mengukur RTT (Latency)
         await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:countTokens?key=${GEMINI_API_KEY}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ contents: [{ parts: [{ text: "ping" }] }] })
         });
-        
         const latency = Date.now() - startTime;
-        
-        // Push pembaruan status & ping langsung ke Firebase secara real-time
         database.ref("bot_status/last_seen").set(Date.now()); 
         database.ref("bot_status/gemini_latency").set(latency); 
-        
         console.log("Ping terupdate otomatis:", latency + "ms");
       } catch (error) {
         console.error("Gagal mengukur ping:", error);
@@ -458,7 +488,9 @@
       document.getElementById("dashboard-box").style.display = "block";
       document.body.style.alignItems = "flex-start";
 
-      // Trigger ping pertama kali saat login berhasil, lalu set berkala tiap 30 detik
+      // Render palet warna grid RGB otomatis
+      renderColorPalette();
+
       updateGeminiPing();
       if (window.pingIntervalTimer) clearInterval(window.pingIntervalTimer);
       window.pingIntervalTimer = setInterval(updateGeminiPing, 30000);
@@ -520,7 +552,7 @@
         }
       });
 
-      // SYNC SAKELAR & TEKS STATUS BERDASARKAN DATABASE FIREBASE
+      // SYNC SAKELAR MAINTENANCE
       database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
         const isMaintenance = snapshot.val() === true;
         document.getElementById("maintenance-toggle").checked = isMaintenance;
@@ -572,8 +604,16 @@
         }
       });
 
+      // Ambil isi teks pengumuman yang ada saat ini di Firebase
       database.ref("system_control/broadcast_message").once("value", (snapshot) => {
         if (snapshot.exists()) document.getElementById("broadcast-text").value = snapshot.val();
+      });
+
+      // Ambil warna aktif terakhir yang tersimpan di Firebase
+      database.ref("system_control/broadcast_color").once("value", (snapshot) => {
+        if (snapshot.exists()) {
+          ubahWarnaTerpilihElemen(snapshot.val());
+        }
       });
 
       // Muat Kotak Masuk Feedback
@@ -695,13 +735,18 @@
       );
     }
 
+    // MODIFIKASI SELESAI: Sekarang ikut mengirimkan broadcast_color pilihan secara serentak
     function updateBroadcast() {
       const text = document.getElementById("broadcast-text").value;
       database.ref("system_control").update({
-        broadcast_message: text
+        broadcast_message: text,
+        broadcast_color: selectedBannerColor
       }).then(() => {
-        showToast("Pengumuman berhasil diperbarui secara global!");
-        logActivity(`Memperbarui pesan pengumuman website.`);
+        showToast("Pengumuman dan warna banner berhasil diperbarui!");
+        logActivity(`Memperbarui pesan pengumuman dengan tema warna ${selectedBannerColor}`);
+      }).catch((error) => {
+        console.error("Gagal kirim warna ke Firebase:", error);
+        showToast("Gagal memperbarui pengumuman!", true);
       });
     }
 
