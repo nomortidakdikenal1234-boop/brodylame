@@ -2024,24 +2024,38 @@ function buatBannerPengumuman() {
   if (!banner) {
     banner = document.createElement('div');
     banner.id = 'announcement-banner';
-    // MENGUBAH position menjadi relative dan menghapus top/left/z-index agar tidak menutupi navbar
+    // Menggunakan position relative agar rapi mendorong navbar bawaan ke bawah
     banner.style.cssText = "display: none; background: #faa61a; color: #000; padding: 12px; text-align: center; font-weight: bold; width: 100%; position: relative; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);";
     banner.innerHTML = `📢 <span id="announcement-text"></span>`;
     document.body.prepend(banner);
   }
 }
 
-// Di bagian dalam database.ref("system_control").on("value", ...) ubah kodenya menjadi:
+// Taruh ini di dalam database.ref("system_control").on("value", (snapshot) => { ... })
 buatBannerPengumuman(); 
 const bannerEl = document.getElementById("announcement-banner");
 const textEl = document.getElementById("announcement-text");
 
-if (data.broadcast_message && data.broadcast_message.trim() !== "") {
+if (data && data.broadcast_message && data.broadcast_message.trim() !== "") {
     textEl.innerText = data.broadcast_message;
+    
+    // Ambil warna background dari Firebase, kalau kosong default ke oranye
+    const warnaBanner = data.broadcast_color || "#faa61a";
+    bannerEl.style.backgroundColor = warnaBanner;
+    
+    // FITUR CERDAS: Auto ganti warna teks (hitam/putih) biar tulisan pengumuman tetap kebaca gampang
+    if (warnaBanner === "#ffffff" || warnaBanner === "#ffff00" || warnaBanner === "#00ffff" || warnaBanner === "#aaaaaa" || warnaBanner === "#dddddd") {
+        bannerEl.style.color = "#000000"; // Teks hitam kalau background terang
+    } else {
+        bannerEl.style.color = "#ffffff"; // Teks putih kalau background gelap
+    }
+    
     bannerEl.style.display = "block";
-    // Hapus baris document.body.style.paddingTop karena posisi relative sudah otomatis mendorong konten secara aman!
 } else {
-    bannerEl.style.display = "none";
+    // DI SINI TYPO SEBELUMNYA SUDAH DIPERBAIKI (Tidak pakai double .style lagi)
+    if (bannerEl) {
+        bannerEl.style.display = "none";
+    }
 }
 
 database.ref("system_control").on("value", (snapshot) => {
