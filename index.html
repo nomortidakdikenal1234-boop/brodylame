@@ -2024,11 +2024,24 @@ function buatBannerPengumuman() {
   if (!banner) {
     banner = document.createElement('div');
     banner.id = 'announcement-banner';
-    // Style UI Banner nempel di paling atas halaman
-    banner.style.cssText = "display: none; background: #faa61a; color: #000; padding: 12px; text-align: center; font-weight: bold; width: 100%; position: fixed; top: 0; left: 0; z-index: 99999; font-size: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.3);";
+    // MENGUBAH position menjadi relative dan menghapus top/left/z-index agar tidak menutupi navbar
+    banner.style.cssText = "display: none; background: #faa61a; color: #000; padding: 12px; text-align: center; font-weight: bold; width: 100%; position: relative; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);";
     banner.innerHTML = `📢 <span id="announcement-text"></span>`;
     document.body.prepend(banner);
   }
+}
+
+// Di bagian dalam database.ref("system_control").on("value", ...) ubah kodenya menjadi:
+buatBannerPengumuman(); 
+const bannerEl = document.getElementById("announcement-banner");
+const textEl = document.getElementById("announcement-text");
+
+if (data.broadcast_message && data.broadcast_message.trim() !== "") {
+    textEl.innerText = data.broadcast_message;
+    bannerEl.style.display = "block";
+    // Hapus baris document.body.style.paddingTop karena posisi relative sudah otomatis mendorong konten secara aman!
+} else {
+    bannerEl.style.display = "none";
 }
 
 database.ref("system_control").on("value", (snapshot) => {
