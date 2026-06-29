@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkyTech Company - Executive Dashboard</title>
+  <title>SkyTech Company - Executive Dashboard V2</title>
   <style>
     :root {
       --bg-main: #2f3136;
@@ -14,6 +14,8 @@
       --blurple: #5865f2;
       --green: #3ba55d;
       --red: #ed4245;
+      --orange: #faa61a;
+      --yellow: #f1c40f;
     }
     body {
       margin: 0;
@@ -39,14 +41,18 @@
     .input-group { margin-bottom: 15px; text-align: left; }
     .input-group label { display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; }
     .input-group input, .input-group textarea { width: 100%; padding: 10px; border: none; background: var(--bg-sidebar); color: #fff; border-radius: 4px; box-sizing: border-box; }
-    .btn { width: 100%; padding: 12px; border: none; background: var(--blurple); color: #fff; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+    .btn { width: 100%; padding: 12px; border: none; background: var(--blurple); color: #fff; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.2s; display: inline-block; text-align: center; font-size: 14px; }
     .btn:hover { background: #4752c4; }
+    .btn-danger { background: var(--red); }
+    .btn-danger:hover { background: #c93b3e; }
+    .btn-success { background: var(--green); }
+    .btn-success:hover { background: #2f854a; }
       
     /* Main Dashboard Styles */
     .dashboard-container {
       display: none;
       width: 100%;
-      max-width: 1200px;
+      max-width: 1280px;
       padding: 20px;
       box-sizing: border-box;
     }
@@ -55,45 +61,111 @@
     .header span { color: var(--text-muted); }
       
     /* Stats Grid */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-    .stat-card { background: var(--bg-card); padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); border-left: 4px solid var(--blurple); }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+    .stat-card { background: var(--bg-card); padding: 18px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); border-left: 4px solid var(--blurple); position: relative; }
     .stat-card.green-card { border-left-color: var(--green); }
     .stat-card.red-card { border-left-color: var(--red); }
     .stat-card.blurple-card { border-left-color: var(--blurple); }
-    .stat-card h3 { margin: 0; font-size: 14px; color: var(--text-muted); text-transform: uppercase; }
-    .stat-card p { margin: 10px 0 0 0; font-size: 28px; font-weight: bold; }
+    .stat-card.orange-card { border-left-color: var(--orange); }
+    .stat-card h3 { margin: 0; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-card p { margin: 8px 0 0 0; font-size: 26px; font-weight: bold; }
 
     /* Layout Grid Main */
-    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; }
-    @media (max-width: 768px) { .main-grid { grid-template-columns: 1fr; } }
+    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+    @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
 
     /* Control Panel Card */
-    .panel-card { background: var(--bg-card); padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); margin-bottom: 25px; }
-    .panel-card h2 { margin-top: 0; font-size: 18px; border-bottom: 1px solid var(--bg-sidebar); padding-bottom: 10px; margin-bottom: 15px; color: var(--blurple); }
-    .control-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--bg-sidebar); }
+    .panel-card { background: var(--bg-card); padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); margin-bottom: 20px; }
+    .panel-card h2 { margin-top: 0; font-size: 16px; border-bottom: 1px solid var(--bg-sidebar); padding-bottom: 8px; margin-bottom: 15px; color: var(--blurple); text-transform: uppercase; letter-spacing: 0.5px; }
+    .control-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--bg-sidebar); }
     .control-row:last-child { border-bottom: none; }
       
     /* Toggle Switch Button */
-    .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+    .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
     .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #72767d; transition: .4s; border-radius: 34px; }
-    .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-    input:checked + .slider { background-color: var(--red); } /* Berubah merah saat aktif maintenance */
-    input:checked + .slider:before { transform: translateX(26px); }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #72767d; transition: .3s; border-radius: 26px; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: var(--green); }
+    #maintenance-toggle:checked + .slider { background-color: var(--red); } /* Maintenance on berwarna merah */
+    input:checked + .slider:before { transform: translateX(24px); }
+
+    /* Chip List Styles */
+    .chip-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; background: var(--bg-sidebar); padding: 10px; border-radius: 6px; min-height: 40px; align-items: center; }
+    .chip { background: var(--blurple); color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 11px; display: flex; align-items: center; gap: 6px; font-weight: bold; }
+    .chip.red-chip { background: var(--red); }
+    .chip span { cursor: pointer; font-weight: bold; background: rgba(0,0,0,0.25); padding: 0 5px; border-radius: 3px; font-size: 12px; }
 
     /* Table Styles */
     table { width: 100%; border-collapse: collapse; margin-top: 10px; background: var(--bg-sidebar); border-radius: 6px; overflow: hidden; }
-    th, td { padding: 12px; text-align: left; font-size: 14px; }
+    th, td { padding: 10px; text-align: left; font-size: 13px; }
     th { background-color: #18191c; color: var(--text-main); font-weight: bold; }
     tr { border-bottom: 1px solid var(--bg-card); }
     tr:last-child { border-bottom: none; }
     td { color: var(--text-muted); }
+
+    /* Custom Notification Toast */
+    #custom-toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--blurple);
+      color: #fff;
+      padding: 15px 25px;
+      border-radius: 6px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      z-index: 1000;
+      font-weight: bold;
+      display: none;
+      animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+    }
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+    /* Custom Confirm Modal dialog */
+    .modal-overlay {
+      position: fixed;
+      top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    .modal-content {
+      background: var(--bg-card);
+      padding: 25px;
+      border-radius: 8px;
+      max-width: 450px;
+      width: 90%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
+
+  <!-- Toast Notification Wrapper -->
+  <div id="custom-toast">Notifikasi Sistem SkyTech</div>
+
+  <!-- Custom Confirm Modal -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal-content">
+      <h3 style="color: var(--red); margin-top: 0;" id="modal-title">Konfirmasi Penting!</h3>
+      <p id="modal-desc" style="font-size: 14px; color: var(--text-muted); line-height: 1.5;">Apakah kamu yakin ingin melakukan tindakan ini?</p>
+      <div class="modal-buttons">
+        <button class="btn btn-danger" style="width: 120px;" id="modal-btn-confirm">Yakin ✅</button>
+        <button class="btn" style="width: 120px; background: #72767d;" onclick="closeModal()">Batal</button>
+      </div>
+    </div>
+  </div>
 
   <div class="login-container" id="login-box">
     <h2>SkyTech Core Access</h2>
@@ -107,12 +179,13 @@
   <div class="dashboard-container" id="dashboard-box">
     <div class="header">
       <div>
-        <h1>SkyTech Executive Dashboard</h1>
+        <h1>SkyTech Executive Dashboard <span style="font-size: 13px; color: var(--orange); vertical-align: middle;">[V2-STABLE]</span></h1>
         <span>Selamat bekerja, Co-Founder! Panel terpantau aman.</span>
       </div>
       <button class="btn" style="width: auto; background: var(--bg-sidebar); border: 1px solid var(--red); color: var(--red);" onclick="logout()">Logout</button>
     </div>
 
+    <!-- STATS GRID (SEKARANG ADA 5 KARTU) -->
     <div class="stats-grid">
       <div class="stat-card">
         <h3>Total Pengunjung</h3>
@@ -130,17 +203,23 @@
         <h3>Bot Sky AI Tester</h3>
         <p id="stat-bot" style="color: var(--text-muted); font-size: 20px; margin-top: 15px;">● CHECKING...</p>
       </div>
+      <div class="stat-card orange-card">
+        <h3>Gemini Latency Ping</h3>
+        <p id="stat-latency" style="color: var(--orange); font-size: 20px; margin-top: 15px;">-- ms</p>
+      </div>
     </div>
 
     <div class="main-grid">
       
+      <!-- COLUMN 1: CONTROLS & SWITCHES -->
       <div>
+        <!-- SYSTEM MAINTENANCE TOGGLE -->
         <div class="panel-card">
           <h2>Sistem Global Web & Bot Control</h2>
           <div class="control-row">
             <div>
               <strong>AI Chat Tester Maintenance</strong>
-              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Menonaktifkan fitur obrolan AI sementara tanpa menutup akses halaman beranda web.</div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Menonaktifkan fitur obrolan AI sementara tanpa menutup akses halaman beranda web.</div>
               <div id="maintenance-status-text" style="font-size: 13px; font-weight: bold; margin-top: 8px; color: var(--green);">STATUS: LIVE / NORMAL 🟢</div>
             </div>
             <label class="switch">
@@ -150,23 +229,90 @@
           </div>
         </div>
 
+        <!-- BOT GRANULAR MODULE TOGGLES -->
+        <div class="panel-card">
+          <h2>Bot Feature Granular Toggles</h2>
+          <div class="control-row">
+            <div>
+              <strong>Fitur Analisis Gambar (Gemini Vision)</strong>
+              <div style="font-size: 11px; color: var(--text-muted);">Izinkan bot membaca attachment lampiran gambar.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-vision" onchange="toggleFeature('vision_feature', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="control-row">
+            <div>
+              <strong>Fitur Simpan Memori Obrolan</strong>
+              <div style="font-size: 11px; color: var(--text-muted);">Bot mengingat riwayat obrolan user per sesi secara real-time.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-memory" onchange="toggleFeature('memory_feature', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="control-row">
+            <div>
+              <strong>Fitur Deteksi Bahasa Otomatis</strong>
+              <div style="font-size: 11px; color: var(--text-muted);">Menerjemahkan bahasa asing secara otomatis pada respons.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-lang" onchange="toggleFeature('lang_detection_feature', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- TOKEN BYPASS / WHITELIST SYSTEM -->
+        <div class="panel-card">
+          <h2>Team Whitelist (Bypass Maintenance)</h2>
+          <p style="font-size: 11px; color: var(--text-muted); margin-top: 0; margin-bottom: 12px;">Masukkan username Tester (contoh: Tester #9302) agar tetap bisa menguji obrolan AI saat sistem sedang dikunci/maintenance.</p>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="whitelist-input" placeholder="Masukkan ID/Username Tester..." style="flex: 1; padding: 10px; background: var(--bg-sidebar); border: none; color: #fff; border-radius: 4px;">
+            <button class="btn btn-success" style="width: auto; padding: 0 15px;" onclick="addWhitelist()">Tambah</button>
+          </div>
+          <div class="chip-list" id="whitelist-box"></div>
+        </div>
+
+        <!-- DATABASE MANAGEMENT -->
+        <div class="panel-card">
+          <h2>Database Management</h2>
+          <p style="font-size: 11px; color: var(--text-muted); margin-top: 0; margin-bottom: 12px;">Gunakan tombol darurat di bawah ini jika terdapat spam, kata kotor berlebihan, atau memori chat sudah penuh.</p>
+          <button class="btn btn-danger" onclick="triggerWipeChats()">Wipe / Bersihkan Seluruh Riwayat Chat Publik 🗑️</button>
+        </div>
+      </div>
+
+      <!-- COLUMN 2: FILTERS, BROADCASTS & AUDIT LOGS -->
+      <div>
+        <!-- BROADCAST MANAGER -->
         <div class="panel-card">
           <h2>Broadcast / Alert Manager</h2>
           <div class="input-group">
             <label>Teks Pengumuman Website Utama</label>
-            <textarea id="broadcast-text" rows="3" placeholder="Tulis info rilis fitur baru atau pengumuman penting..."></textarea>
+            <textarea id="broadcast-text" rows="2" placeholder="Tulis info rilis fitur baru atau pengumuman penting..."></textarea>
           </div>
           <button class="btn" style="background: var(--green);" onclick="updateBroadcast()">Update Pengumuman</button>
         </div>
-      </div>
 
-      <div>
-        <div class="panel-card" style="height: calc(100% - 50px); overflow-y: auto;">
+        <!-- ANTI-ABUSE / WORD BLACKLIST FILTER -->
+        <div class="panel-card">
+          <h2>Anti-Abuse / Word Blacklist Filter</h2>
+          <p style="font-size: 11px; color: var(--text-muted); margin-top: 0; margin-bottom: 12px;">Pesan masuk yang mengandung kata-kata blacklist berikut akan disensor secara otomatis secara real-time.</p>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="blacklist-input" placeholder="Masukkan kata kasar..." style="flex: 1; padding: 10px; background: var(--bg-sidebar); border: none; color: #fff; border-radius: 4px;">
+            <button class="btn btn-danger" style="width: auto; padding: 0 15px;" onclick="addBlacklist()">Saring</button>
+          </div>
+          <div class="chip-list" id="blacklist-box"></div>
+        </div>
+
+        <!-- AUDIT LOGS -->
+        <div class="panel-card" style="height: 250px; overflow-y: auto;">
           <h2>Log Aktivitas Tim (Audit Logs)</h2>
           <table>
             <thead>
               <tr>
-                <th>Waktu</th>
+                <th style="width: 80px;">Waktu</th>
                 <th>Aktivitas Sistem</th>
               </tr>
             </thead>
@@ -181,6 +327,7 @@
 
     </div>
 
+    <!-- FEEDBACK INBOX -->
     <div class="panel-card">
       <h2>Kotak Masuk Saran & Hubungi Kami (Feedback Inbox)</h2>
       <table>
@@ -220,6 +367,37 @@
 
     const ADMIN_PASSWORD_HASH = "b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
 
+    // Custom Toast Notification System (Menggantikan alert)
+    function showToast(message, isError = false) {
+      const toast = document.getElementById("custom-toast");
+      toast.innerText = message;
+      toast.style.background = isError ? "var(--red)" : "var(--green)";
+      toast.style.display = "block";
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, 3000);
+    }
+
+    // Custom Modal System (Menggantikan confirm)
+    let pendingConfirmAction = null;
+    function openModal(title, desc, confirmCallback) {
+      document.getElementById("modal-title").innerText = title;
+      document.getElementById("modal-desc").innerText = desc;
+      document.getElementById("confirm-modal").style.display = "flex";
+      pendingConfirmAction = confirmCallback;
+    }
+
+    function closeModal() {
+      document.getElementById("confirm-modal").style.display = "none";
+      pendingConfirmAction = null;
+    }
+
+    document.getElementById("modal-btn-confirm").onclick = function() {
+      if (pendingConfirmAction) pendingConfirmAction();
+      closeModal();
+    };
+
+    // Autentikasi Co-Founder
     async function checkAuth() {
       const passInput = document.getElementById("admin-password").value;
       const encoder = new TextEncoder();
@@ -232,16 +410,17 @@
         sessionStorage.setItem("isAdminLoggedIn", "true");
         showDashboard();
       } else {
-        alert("Password salah, bro! Akses ditolak.");
+        showToast("Password salah, bro! Akses ditolak.", true);
       }
     }
 
+    // Menampilkan Dashboard Utama & Menghubungkan Real-time Database
     function showDashboard() {
       document.getElementById("login-box").style.display = "none";
       document.getElementById("dashboard-box").style.display = "block";
       document.body.style.alignItems = "flex-start";
         
-      // Ambil data statistik real-time
+      // 1. Ambil data statistik real-time
       database.ref("site_stats/visitor_count").on("value", (snapshot) => {
         document.getElementById("stat-visitors").innerText = snapshot.val() || 0;
       });
@@ -280,6 +459,12 @@
         }
       });
 
+      // AMBIL STATUS LATENSI BOT / GEMINI PING
+      database.ref("bot_status/gemini_latency").on("value", (snapshot) => {
+        const latencyVal = snapshot.val();
+        document.getElementById("stat-latency").innerText = latencyVal ? latencyVal + " ms" : "-- ms";
+      });
+
       // SYNC SAKELAR & TEKS STATUS BERDASARKAN DATABASE FIREBASE
       database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
         const isMaintenance = snapshot.val() === true;
@@ -292,6 +477,43 @@
         } else {
           statusText.innerText = "STATUS: LIVE / NORMAL 🟢";
           statusText.style.color = "var(--green)";
+        }
+      });
+
+      // SYNC SAKELAR FITUR BOT SECARA INDIVIDUAL
+      const featureKeys = ['vision_feature', 'memory_feature', 'lang_detection_feature'];
+      const featureToggles = ['toggle-vision', 'toggle-memory', 'toggle-lang'];
+      featureKeys.forEach((key, index) => {
+        database.ref("system_control/features/" + key).on("value", (snapshot) => {
+          document.getElementById(featureToggles[index]).checked = snapshot.val() !== false;
+        });
+      });
+
+      // SYNC TIM WHITELIST SYSTEM
+      database.ref("system_control/whitelist").on("value", (snapshot) => {
+        const box = document.getElementById("whitelist-box");
+        box.innerHTML = "";
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          Object.keys(data).forEach(key => {
+            box.innerHTML += `<div class="chip">${escapeHtml(data[key])} <span onclick="removeNode('whitelist','${key}','${escapeHtml(data[key])}')">×</span></div>`;
+          });
+        } else {
+          box.innerHTML = `<span style="color: var(--text-muted); font-size: 11px;">Whitelist kosong. (Semua orang dikunci saat maintenance)</span>`;
+        }
+      });
+
+      // SYNC KATA KASAR BLACKLIST SYSTEM
+      database.ref("system_control/word_blacklist").on("value", (snapshot) => {
+        const box = document.getElementById("blacklist-box");
+        box.innerHTML = "";
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          Object.keys(data).forEach(key => {
+            box.innerHTML += `<div class="chip red-chip">${escapeHtml(data[key])} <span onclick="removeNode('word_blacklist','${key}','${escapeHtml(data[key])}')">×</span></div>`;
+          });
+        } else {
+          box.innerHTML = `<span style="color: var(--text-muted); font-size: 11px;">Blacklist kosong. (Tidak ada kata disensor)</span>`;
         }
       });
 
@@ -310,9 +532,9 @@
             const date = new Date(item.timestamp).toLocaleDateString("id-ID") + " " + new Date(item.timestamp).toLocaleTimeString("id-ID");
             tableBody.innerHTML += `
               <tr>
-                <td style="color: #fff; font-weight: bold;">${item.name}</td>
-                <td>${item.contact}</td>
-                <td>${item.message}</td>
+                <td style="color: #fff; font-weight: bold;">${escapeHtml(item.name)}</td>
+                <td>${escapeHtml(item.contact)}</td>
+                <td>${escapeHtml(item.message)}</td>
                 <td style="font-size: 12px;">${date}</td>
               </tr>
             `;
@@ -323,7 +545,7 @@
       });
 
       // Muat Audit Logs
-      database.ref("audit_logs").limitToLast(10).on("value", (snapshot) => {
+      database.ref("audit_logs").limitToLast(12).on("value", (snapshot) => {
         const tableBody = document.getElementById("audit-logs-table");
         tableBody.innerHTML = "";
         if (snapshot.exists()) {
@@ -334,7 +556,7 @@
             tableBody.innerHTML += `
               <tr>
                 <td style="font-size: 12px; width: 80px;">${time}</td>
-                <td>${log.activity}</td>
+                <td>${escapeHtml(log.activity)}</td>
               </tr>
             `;
           });
@@ -344,26 +566,96 @@
       });
     }
 
-    function toggleMaintenance(status) {
-      database.ref("system_control").update({
-        maintenance_mode: status
+    // Mengamankan data masukan dari serangan XSS
+    function escapeHtml(text) {
+      if (!text) return "";
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+      return String(text).replace(/[&<>"']/g, m => map[m]);
+    }
+
+    // Menghapus elemen Whitelist atau Blacklist
+    function removeNode(path, key, value) {
+      database.ref(`system_control/${path}/${key}`).remove().then(() => {
+        logActivity(`Menghapus [${value}] dari database ${path}`);
+        showToast(`Berhasil menghapus "${value}"!`);
       });
+    }
+
+    // Melacak Log Aktivitas Co-Founder
+    function logActivity(activityText) {
       database.ref("audit_logs").push({
-        activity: `Maintenance Mode diubah ke ${status ? 'ON 🛠️' : 'OFF 🟢'}`,
+        activity: activityText,
         timestamp: firebase.database.ServerValue.TIMESTAMP
       });
     }
 
+    // Action: Mengaktifkan Maintenance Mode
+    function toggleMaintenance(status) {
+      database.ref("system_control").update({
+        maintenance_mode: status
+      });
+      logActivity(`Maintenance Mode diubah ke ${status ? 'ON 🛠' : 'OFF 🟢'}`);
+      showToast(`Maintenance Mode berhasil diubah ke ${status ? 'AKTIF 🛠️' : 'NON-AKTIF 🟢'}!`);
+    }
+
+    // Action: Mengaktifkan Toggles Fitur secara Granular
+    function toggleFeature(featureKey, status) {
+      database.ref("system_control/features").update({
+        [featureKey]: status
+      });
+      const featureLabel = featureKey.replace('_', ' ').toUpperCase();
+      logActivity(`Mengubah fitur ${featureLabel} menjadi [${status ? 'AKTIF' : 'NON-AKTIF'}]`);
+      showToast(`Fitur ${featureLabel} berhasil ${status ? 'diaktifkan' : 'dimatikan'}!`);
+    }
+
+    // Action: Menambahkan Anggota Whitelist
+    function addWhitelist() {
+      const input = document.getElementById("whitelist-input");
+      const name = input.value.trim();
+      if (!name) return;
+
+      database.ref("system_control/whitelist").push(name).then(() => {
+        logActivity(`Menambahkan "${name}" ke Whitelist bypass.`);
+        showToast(`Berhasil menambahkan Whitelist: "${name}"`);
+        input.value = "";
+      });
+    }
+
+    // Action: Menambahkan Kata Kotor ke Blacklist Filter
+    function addBlacklist() {
+      const input = document.getElementById("blacklist-input");
+      const word = input.value.trim().toLowerCase();
+      if (!word) return;
+
+      database.ref("system_control/word_blacklist").push(word).then(() => {
+        logActivity(`Menambahkan kata kotor baru ke database blacklist: "${word}"`);
+        showToast(`Kata terlarang "${word}" disaring!`);
+        input.value = "";
+      });
+    }
+
+    // Action: Mematikan seluruh isi log obrolan di Playground
+    function triggerWipeChats() {
+      openModal(
+        "Wipe Database Obrolan!",
+        "Apakah Co-Founder yakin ingin menghapus TOTAL seluruh log obrolan publik di Playground? Tindakan ini bersifat permanen dan tidak bisa dibatalkan!",
+        () => {
+          database.ref("public_chats").remove().then(() => {
+            logActivity("🚨 MELAKUKAN WIPE DATABASE PUBLIC CHATS");
+            showToast("Log chat publik berhasil dikosongkan total!", false);
+          });
+        }
+      );
+    }
+
+    // Action: Memperbarui Pengumuman Global
     function updateBroadcast() {
       const text = document.getElementById("broadcast-text").value;
       database.ref("system_control").update({
         broadcast_message: text
       }).then(() => {
-        alert("Pengumuman berhasil diperbarui secara global!");
-        database.ref("audit_logs").push({
-          activity: `Memperbarui pesan pengumuman website`,
-          timestamp: firebase.database.ServerValue.TIMESTAMP
-        });
+        showToast("Pengumuman berhasil diperbarui secara global!");
+        logActivity(`Memperbarui pesan pengumuman website.`);
       });
     }
 
