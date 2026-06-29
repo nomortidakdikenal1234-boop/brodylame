@@ -78,7 +78,7 @@
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #72767d; transition: .4s; border-radius: 34px; }
     .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-    input:checked + .slider { background-color: var(--green); }
+    input:checked + .slider { background-color: var(--red); } /* Berubah merah saat aktif maintenance */
     input:checked + .slider:before { transform: translateX(26px); }
 
     /* Table Styles */
@@ -127,7 +127,7 @@
         <p id="stat-invites">0</p>
       </div>
       <div class="stat-card red-card">
-        <h3>Bot Discord Status</h3>
+        <h3>Bot Sky AI Tester</h3>
         <p id="stat-bot" style="color: var(--text-muted); font-size: 20px; margin-top: 15px;">● CHECKING...</p>
       </div>
     </div>
@@ -141,6 +141,7 @@
             <div>
               <strong>AI Chat Tester Maintenance</strong>
               <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Menonaktifkan fitur obrolan AI sementara tanpa menutup akses halaman beranda web.</div>
+              <div id="maintenance-status-text" style="font-size: 13px; font-weight: bold; margin-top: 8px; color: var(--green);">STATUS: LIVE / NORMAL 🟢</div>
             </div>
             <label class="switch">
               <input type="checkbox" id="maintenance-toggle" onchange="toggleMaintenance(this.checked)">
@@ -279,8 +280,19 @@
         }
       });
 
+      // SYNC SAKELAR & TEKS STATUS BERDASARKAN DATABASE FIREBASE
       database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
-        document.getElementById("maintenance-toggle").checked = snapshot.val() === true;
+        const isMaintenance = snapshot.val() === true;
+        document.getElementById("maintenance-toggle").checked = isMaintenance;
+        
+        const statusText = document.getElementById("maintenance-status-text");
+        if (isMaintenance) {
+          statusText.innerText = "STATUS: UNDER MAINTENANCE 🛠️";
+          statusText.style.color = "var(--red)";
+        } else {
+          statusText.innerText = "STATUS: LIVE / NORMAL 🟢";
+          statusText.style.color = "var(--green)";
+        }
       });
 
       database.ref("system_control/broadcast_message").once("value", (snapshot) => {
