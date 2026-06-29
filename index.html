@@ -1852,14 +1852,19 @@ footer {
       </div>
     </div>
 
-    <!-- Input Box Simulator -->
-    <div class="discord-input-area">
+<!-- Input Box Simulator -->
+    <div class="discord-input-area" id="chat-input-container">
       <input type="text" class="discord-input" id="chat-input-field" placeholder="Ketik pesan di sini untuk menguji Sky AI..." onkeydown="handleChatKeyDown(event)" />
       <button class="discord-send-btn" id="chat-send-button" onclick="sendPublicChatMessage()">Kirim 🚀</button>
     </div>
+
+    <!-- Teks Info Maintenance (Taruh tepat di bawah container input) -->
+    <div id="chat-maintenance-alert" style="display: none; background: rgba(237, 66, 69, 0.1); border: 1px dashed #ed4245; padding: 15px; border-radius: 8px; text-align: center; color: #ed4245; font-weight: bold; font-size: 14px; margin-top: 10px; font-family: sans-serif;">
+      🛠️ Maaf, fitur chat sedang dimatikan sementara karena maintenance.
+    </div>
   </div>
 </section>
-
+  
 <!-- TESTIMONI SECTION -->
 <section class="testi-section" id="testimonials">
   <div class="testi-badge">TESTIMONI</div>
