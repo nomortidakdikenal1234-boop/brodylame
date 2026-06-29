@@ -2008,34 +2008,70 @@ const database = firebase.database();
 // ==========================================
 // PASANG CODE MAINTENANCE DI SINI (PAS DI BAWAHNYA)
 // ==========================================
-// Pantau status perbaikan Chat AI secara langsung
+// Pantau status perbaikan Chat AI secara langsung via CSS Injection
 database.ref("system_control/maintenance_mode").on("value", (snapshot) => {
+  // Hapus style lama jika ada (agar tidak menumpuk saat toggle mati/nyalakan)
+  const existingStyle = document.getElementById("maintenance-cyber-style");
+  if (existingStyle) existingStyle.remove();
+  
+  const existingAlert = document.getElementById("maintenance-alert-box");
+  if (existingAlert) existingAlert.remove();
+
   if (snapshot.val() === true) {
-    // Fungsi bawaan untuk memastikan halaman HTML sudah selesai dimuat 100%
-    setTimeout(() => {
-      // CARA JITU: Cari elemen input tempat ngetik pesan di playground
+    // 1. Suntikkan CSS untuk menyembunyikan area chat dan tombol kirim secara paksa
+    const style = document.createElement("style");
+    style.id = "maintenance-cyber-style";
+    style.innerHTML = `
+      /* Sembunyikan daftar pesan, input ketik, dan tombol kirim di dalam playground */
+      input[placeholder*="Ketik pesan"], 
+      button:has(svg), 
+      .live-testing-sky-ai,
+      [class*="chat-box"],
+      [class*="playground"] button {
+        display: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // 2. Fungsi otomatis untuk memasang kotak pengumuman tepat di dalam playground
+    const injectAlert = () => {
+      // Mencari input chat sebagai panduan lokasi penempatan
       const chatInput = document.querySelector('input[placeholder*="Ketik pesan"], input[type="text"]');
-      
       if (chatInput) {
-        // Melompat 3 tingkat ke atas untuk membungkus seluruh kotak box chat besar tersebut
-        const chatContainer = chatInput.parentElement.parentElement.parentElement || chatInput.closest('div');
-        
-        if (chatContainer) {
-          chatContainer.innerHTML = `
-            <div style="text-align:center; padding:60px 20px; background:#1e1f22; color:#fff; border-radius:12px; font-family:sans-serif; border:2px dashed #ed4245; margin: 40px auto; max-width: 550px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
-              <h2 style="color:#ed4245; margin-top:0; margin-bottom:12px; font-size:22px;">⚠️ Fitur Chat AI Dimatikan Sementara ⚠️</h2>
+        // Cari kontainer terdekat yang membungkus area chat tersebut
+        const targetContainer = chatInput.closest('div');
+        if (targetContainer && !document.getElementById("maintenance-alert-box")) {
+          
+          const alertBox = document.createElement("div");
+          alertBox.id = "maintenance-alert-box";
+          alertBox.innerHTML = `
+            <div style="text-align:center; padding:40px 20px; background:#1e1f22; color:#fff; border-radius:12px; font-family:sans-serif; border:2px dashed #ed4245; margin: 20px auto; max-width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+              <h2 style="color:#ed4245; margin-top:0; margin-bottom:10px; font-size:20px;">⚠️ Fitur Chat AI Dimatikan Sementara ⚠️</h2>
               <p style="color:#b9bbbe; font-size:14px; line-height:1.6; margin:0;">
                 Co-Founder SkyTech sedang memperbarui modul database AI.<br>
                 Menu website lainnya tetap bisa Anda gunakan!
               </p>
             </div>
           `;
+          // Taruh kotak pengumuman di bagian atas kontainer chat tersebut
+          targetContainer.insertBefore(alertBox, targetContainer.firstChild);
         }
       }
-    }, 500); // Diberi jeda setengah detik biar HTML-nya siap dulu
+    };
+
+    // Jalankan pencarian berkala (interval) untuk memastikan kotak pengumuman terpasang sempurna
+    const maintenanceInterval = setInterval(injectAlert, 300);
+    // Simpan id interval agar bisa dimatikan jika maintenance dinonaktifkan
+    window.currentMaintenanceInterval = maintenanceInterval;
+
+  } else {
+    // Jika maintenance dimatikan di dashboard, hentikan interval dan kembalikan fungsi chat
+    if (window.currentMaintenanceInterval) {
+      clearInterval(window.currentMaintenanceInterval);
+    }
   }
 });
-
+  
 // =====================================================================
 // SKY AI LIVE TESTING - REAL-TIME COLLABORATIVE PLAYGROUND (GEMINI STABLE)
 // =====================================================================
