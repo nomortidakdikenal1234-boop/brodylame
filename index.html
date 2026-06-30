@@ -63,29 +63,47 @@ a {
 }
 
 /* =====================================================================
-   KEMBALIKAN NAVBAR UTAMA KE SEMULA (BERSIH & RAPI)
+   FIX ABSOLUT: MENGUNCI NAVBAR TETAP DI ATAS LAYAR UTAMA
    ===================================================================== */
 nav#navbar {
   position: fixed;
-  top: 0;
-  left: 0;
+  
+  /* WAJIB DIKUNCI DI SINI AGAR TIDAK ANJLOK KE BAWAH LAYAR */
+  top: 0 !important;
+  left: 0 !important;
+  
   width: 100%;
   z-index: 100000;
   background: rgba(2, 6, 19, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: 0 !important; /* Kembali normal tanpa kegeser banner */
+  
+  display: flex;
+  flex-direction: column; 
+  padding: 0 !important; /* Kembalikan 0 karena banner sudah pindah ke pojok bawah */
   transition: all 0.3s ease;
 }
 
+/* Pembungkus menu utama di dalam nav */
 nav#navbar .nav-main {
   width: 100%;
-  padding: 20px 6%; /* Kembali ke spacing awal yang presisi */
+  padding: 20px 6%; /* Spacing atas awal yang bersih dan proporsional */
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Menjaga Logo kiri & Menu kanan */
   align-items: center;
+  box-sizing: border-box;
 }
 
+/* Ketika di-scroll, menu mengecil secara proporsional */
+nav#navbar.scrolled {
+  background: rgba(2, 6, 19, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+nav#navbar.scrolled .nav-main {
+  padding: 12px 6%;
+}
+  
 /* =====================================================================
    FIX BAR MENU: LOGO MENTOK KIRI & MENU MENTOK KANAN
    ===================================================================== */
