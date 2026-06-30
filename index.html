@@ -141,10 +141,12 @@ nav#navbar.scrolled .nav-main {
   border-bottom: 1px solid rgba(255, 170, 0, 0.3);
   box-sizing: border-box;
   
-  /* TRIK ABSOLUTE: Lepas dari antrean, melayang di bawah navbar */
-  position: absolute !important;
-  top: 100% !important; /* Nempel pas di bawah batas bawah menu utama */
-  left: 0;
+position: absolute !important;
+  
+  /* GANTI DUA BARIS INI: */
+  top: calc(100% + 40px) !important; /* Nah, ganti angka 40px ini sesukamu (misal 60px atau 80px) */
+  margin-top: 0 !important;          /* Nol-kan saja margin-top nya biar gak tabrakan */
+}
   
   /* KASI JARAK TURUN DI SINI: Silakan ganti angka ini kalau mau kurang/lebih turun */
   margin-top: 80px !important; 
