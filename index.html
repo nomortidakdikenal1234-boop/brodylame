@@ -63,7 +63,7 @@ a {
 }
 
 /* =====================================================================
-   FIX: BAR MENU / NAVBAR CONTAINER
+   FIX: MENURUNKAN BAR MENU & BANNER AGAR TIDAK TERPOTONG LAYAR ATAS
    ===================================================================== */
 nav#navbar {
   position: fixed;
@@ -84,25 +84,29 @@ nav#navbar {
 /* Pembungkus menu utama di dalam nav */
 nav#navbar .nav-main {
   width: 100%;
-  padding: 20px 6%; 
+  
+  /* PERBAIKAN: Padding atas ditambah dari 20px menjadi 28px agar posisi menu turun */
+  padding: 28px 6% 20px 6%; 
+  
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: all 0.3s ease;
 }
 
-/* Ketika di-scroll, menu utama mengecil secara smooth */
+/* Ketika di-scroll, menu mengecil secara proporsional */
 nav#navbar.scrolled {
   background: rgba(2, 6, 19, 0.95);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 nav#navbar.scrolled .nav-main {
-  padding: 12px 6%;
+  /* Saat di-scroll, posisinya menyesuaikan kembali menjadi lebih rapat */
+  padding: 16px 6% 12px 6%;
 }
 
 /* =====================================================================
-   FIX: TAB PENGUMUMAN (100% DINAMIS DARI DASHBOARD)
+   TAB PENGUMUMAN (JARAK MARGIN DISESUAIKAN)
    ===================================================================== */
 .broadcast-banner {
   width: 100%;
@@ -112,24 +116,22 @@ nav#navbar.scrolled .nav-main {
   font-size: 13px;
   letter-spacing: 0.5px;
   
-  /* BARIS DIPERBAIKI: Disembunyikan dulu agar layar intro awal tidak rusak */
-  display: none; 
-  
+  display: none; /* Sesuai setelan sebelumnya untuk preloader */
   align-items: center;
   justify-content: center;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
   
-  margin-top: 6px; 
+  /* Memberi celah vertikal yang seimbang di bawah menu utama */
+  margin-top: 8px; 
   transition: margin-top 0.3s ease;
 }
 
-/* BARIS TAMBAHAN: Class trigger untuk memunculkan banner lewat JS */
 .broadcast-banner.show-banner {
   display: flex !important;
 }
 
 nav#navbar.scrolled .broadcast-banner {
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 /* =====================================================================
