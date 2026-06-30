@@ -86,11 +86,13 @@ nav#navbar {
 }
 
 /* =====================================================================
-   STRUKTUR 3 BAGIAN: LOGO (KIRI) | MENU (TENGAH) | LOGIN (KANAN)
+   STRUKTUR MENU UTAMA (UKURAN TIPIS DAN MEMBERI JARAK KE BANNER)
    ===================================================================== */
 nav#navbar .nav-main {
   width: 100%;
-  padding: 20px 6%;
+  padding: 20px 6% 20px 6% !important; /* Padding normal: Atas Kanan Bawah Kiri */
+  margin-bottom: 20px !important;       /* JAMIN TURUN: Memberi celah kosong di bawah menu */
+  
   display: flex !important;
   flex-direction: row !important;
   justify-content: space-between; 
@@ -114,7 +116,7 @@ nav#navbar .nav-main {
   align-items: center;
   gap: 24px;
   flex: 2;
-  justify-content: center; /* MEMBUAT MENU JADI NENGAH */
+  justify-content: center;
 }
 
 /* Kanan: Penyeimbang lebar & rata kanan */
@@ -124,41 +126,27 @@ nav#navbar .nav-main {
   justify-content: flex-end;
 }
 
-/* Ketika di-scroll */
+/* Ketika di-scroll (Menu mengecil, celah banner menyesuaikan) */
 nav#navbar.scrolled .nav-main {
-  padding: 12px 6%;
+  padding: 12px 6% 12px 6% !important;
+  margin-bottom: 12px !important;
 }
 
 /* =====================================================================
-   MENDORONG TAB PENGUMUMAN BIAR LEBIH TURUN KE BAWAH
+   TAB PENGUMUMAN
    ===================================================================== */
 .broadcast-banner {
   width: 100%;
-  background: rgba(255, 170, 0, 0.15); /* Menyesuaikan warna tema oranyemu */
+  background: rgba(255, 170, 0, 0.15); 
   border-top: 1px solid rgba(255, 170, 0, 0.3);
   border-bottom: 1px solid rgba(255, 170, 0, 0.3);
   display: none; 
   box-sizing: border-box;
-
-  /* PERBAIKAN 1: Tambahkan margin-top paksa di sini */
-  margin-top: 15px !important; /* Naikkan ke 20px kalau merasa kurang turun */
+  margin-top: 0 !important; /* Nol-kan margin-top agar patuh pada dorongan dari atas */
 }
 
-/* =====================================================================
-   ALTERNATIF AMAN: MEMBERI SPACE DI BAWAH NAV MENU
-   ===================================================================== */
-nav#navbar .nav-main {
-  width: 100%;
-  
-  /* PERBAIKAN 2: Ubah padding bawah (angka ketiga) dari 20px menjadi 25px atau 30px */
-  padding: 20px 6% 28px 6% !important; 
-  
-  display: flex !important;
-  flex-direction: row !important;
-  justify-content: space-between; 
-  align-items: center;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
+.broadcast-banner.show-banner {
+  display: block !important;
 }
 
 .banner-content {
@@ -183,7 +171,7 @@ nav#navbar .nav-main {
   border: none;
   color: rgba(255, 255, 255, 0.5);
   font-size: 18px;
-  cursor: none; /* Biar matuhin custom cursor kamu */
+  cursor: none; /* Mengikuti custom cursor */
   padding: 0;
 }
   
