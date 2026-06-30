@@ -75,17 +75,16 @@ nav#navbar {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   
-  /* Menggunakan flex-direction column agar banner otomatis berada di bawah bar utama */
   display: flex;
   flex-direction: column; 
-  padding: 0 !important; /* Di-force 0 agar banner penuh ke ujung kanan-kiri */
+  padding: 0 !important; 
   transition: all 0.3s ease;
 }
 
-/* Pembungkus menu utama di dalam nav (DISESUAIKAN DENGAN CLASS HTML: .nav-main) */
+/* Pembungkus menu utama di dalam nav */
 nav#navbar .nav-main {
   width: 100%;
-  padding: 20px 6%; /* Jarak padding default menu atas */
+  padding: 20px 6%; 
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -113,17 +112,20 @@ nav#navbar.scrolled .nav-main {
   font-size: 13px;
   letter-spacing: 0.5px;
   
-  /* HAPUS background: #ffaa00; agar warna dari dashboard tidak tertimpa */
-  /* HAPUS color: #000000; jika warna teks juga diatur dari dashboard */
+  /* BARIS DIPERBAIKI: Disembunyikan dulu agar layar intro awal tidak rusak */
+  display: none; 
   
-  display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
   
-  /* Tetap pertahankan margin ini agar posisinya turun dikit dan rapi */
   margin-top: 6px; 
   transition: margin-top 0.3s ease;
+}
+
+/* BARIS TAMBAHAN: Class trigger untuk memunculkan banner lewat JS */
+.broadcast-banner.show-banner {
+  display: flex !important;
 }
 
 nav#navbar.scrolled .broadcast-banner {
@@ -139,7 +141,6 @@ nav#navbar.scrolled .broadcast-banner {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Ditambah space-nya agar konten landing / tombol "LAUNCH SYSTEM" tidak tertabrak menu */
   padding: 210px 4% 60px 4%; 
   overflow: hidden;
 }
@@ -152,7 +153,10 @@ nav#navbar.scrolled .broadcast-banner {
   inset: 0;
   background-color: #01040f;
   background-image: radial-gradient(circle at center, #06112c 0%, #01040f 100%);
-  z-index: 10000;
+  
+  /* FIX: z-index dinaikkan jadi 200000 supaya berada di atas nav#navbar (100000) */
+  z-index: 200000 !important; 
+  
   display: flex;
   justify-content: center;
   align-items: center;
@@ -270,7 +274,7 @@ nav#navbar.scrolled .broadcast-banner {
 /* Progres Bar Loader Sci-Fi */
 .intro-loader-container {
   width: 100%;
-  display: none; /* Muncul setelah tombol diklik */
+  display: none; 
   flex-direction: column;
   gap: 10px;
 }
