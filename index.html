@@ -141,19 +141,20 @@ nav#navbar.scrolled .nav-main {
   border-bottom: 1px solid rgba(255, 170, 0, 0.3);
   box-sizing: border-box;
   
-  /* TRIK ABSOLUTE: Lepas dari antrean, melayang di bawah navbar */
+  /* Tetap pakai absolute */
   position: absolute !important;
-  left: 0;
+  top: 100% !important; 
+  left: 0 !important;
+  margin-top: 0 !important; /* Nol-kan margin-nya */
   
   /* =====================================================================
-     GANTI DUA BARIS INI BIAR MEMPAN DAN COBA REFRESH:
+     PANDUAN UTAMA: GESER PAKSA MENGGUNAKAN GRAFIS (TRANSFORM)
      ===================================================================== */
-  top: calc(100% + 80px) !important; /* <--- Ganti 40px ini kalau mau makin turun (misal: 60px atau 80px) */
-  margin-top: 0 !important;          /* <--- Di-nolkan saja biar gak tabrakan fungsinya */
-  
+  transform: translateY(40px) !important; /* <--- UBAH ANGKA 40px INI SECARA MANUAL */
+
   display: none; 
 }
-
+  
 /* Muncul jika dipicu dari script dashboard */
 .broadcast-banner.show-banner {
   display: block !important;
