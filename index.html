@@ -130,20 +130,35 @@ nav#navbar.scrolled .nav-main {
 }
 
 /* =====================================================================
-   TAB PENGUMUMAN (TETAP AMAN DI BAWAH NAVBAR TANPA TURUN LIAR)
+   MENDORONG TAB PENGUMUMAN BIAR LEBIH TURUN KE BAWAH
    ===================================================================== */
 .broadcast-banner {
   width: 100%;
-  background: rgba(0, 85, 255, 0.15); /* Sesuai warna oranye/biru databasemu */
-  border-top: 1px solid rgba(0, 85, 255, 0.2);
-  border-bottom: 1px solid rgba(0, 85, 255, 0.2);
+  background: rgba(255, 170, 0, 0.15); /* Menyesuaikan warna tema oranyemu */
+  border-top: 1px solid rgba(255, 170, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 170, 0, 0.3);
   display: none; 
   box-sizing: border-box;
 
-  /* =====================================================================
-     BAGIAN YANG HARUS KAMU UBAH / TAMBAHKAN:
-     ===================================================================== */
-  margin-top: 15px !important;   /* Tambah angka ini (misal 15px atau 20px) biar makin turun ke bawah */
+  /* PERBAIKAN 1: Tambahkan margin-top paksa di sini */
+  margin-top: 15px !important; /* Naikkan ke 20px kalau merasa kurang turun */
+}
+
+/* =====================================================================
+   ALTERNATIF AMAN: MEMBERI SPACE DI BAWAH NAV MENU
+   ===================================================================== */
+nav#navbar .nav-main {
+  width: 100%;
+  
+  /* PERBAIKAN 2: Ubah padding bawah (angka ketiga) dari 20px menjadi 25px atau 30px */
+  padding: 20px 6% 28px 6% !important; 
+  
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between; 
+  align-items: center;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .banner-content {
