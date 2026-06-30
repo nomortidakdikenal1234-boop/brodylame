@@ -325,16 +325,21 @@ nav#navbar.scrolled .broadcast-banner {
   border-radius: 50%;
   position: fixed;
   pointer-events: none;
-  z-index: 99999; 
+  
+  /* FIX: Naikkan z-index di atas preloader (200000) agar selalu kelihatan */
+  z-index: 999999 !important; 
+  
   transition: transform 0.1s ease-out; 
   transform: translate(-50%, -50%);
 }
+
 #custom-cursor.click-anim {
-  transform: translate(-50%, -50%) scale(2);
+  /* Tetap pertahankan posisi center saat animasi klik membesar */
+  transform: translate(-50%, -50%) scale(2) !important;
   background: rgba(0, 85, 255, 0.3);
   border-color: #ffffff;
 }
-
+  
 /* Interactive Star Rating Form */
 .star-rating-input {
   display: inline-flex;
