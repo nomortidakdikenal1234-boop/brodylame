@@ -136,23 +136,26 @@ nav#navbar.scrolled .nav-main {
    ===================================================================== */
 .broadcast-banner {
   width: 100%;
-  background: rgba(255, 170, 0, 0.15); /* Warna oranye tema kamu */
+  background: rgba(255, 170, 0, 0.15); 
   border-top: 1px solid rgba(255, 170, 0, 0.3);
   border-bottom: 1px solid rgba(255, 170, 0, 0.3);
   box-sizing: border-box;
   
-  /* Tetap pakai absolute */
-  position: absolute !important;
-  top: 100% !important; 
+  /* Bikin dia melayang independen dari navbar */
+  position: fixed !important;
   left: 0 !important;
-  margin-top: 0 !important; /* Nol-kan margin-nya */
+  z-index: 99999; /* Tepat di bawah navbar kamu */
   
   /* =====================================================================
-     PANDUAN UTAMA: GESER PAKSA MENGGUNAKAN GRAFIS (TRANSFORM)
+     DI SINI KAMU ATUR TURUNNYA SECARA MANUAL:
      ===================================================================== */
-  transform: translateY(10px) !important; /* <--- UBAH ANGKA 40px INI SECARA MANUAL */
+  top: 90px !important; /* Tinggal naikin nilainya (misal 100px, 110px) kalau kurang turun */
 
   display: none; 
+}
+
+.broadcast-banner.show-banner {
+  display: block !important;
 }
   
 /* Muncul jika dipicu dari script dashboard */
@@ -1707,9 +1710,7 @@ footer {
 <div id="custom-cursor"></div>
 
 <nav id="navbar">
-  
   <div class="nav-main">
-    
     <div class="nav-brand">
       <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Logo" />
       <span>Sky AI Website</span>
@@ -1730,17 +1731,13 @@ footer {
         <span>🔒</span> Login Admin
       </button>
     </div>
-
   </div>
-
-  <div class="broadcast-banner" id="broadcastBanner">
-    <div class="banner-content">
-      <span>📢 {dashboardData.bannerText}</span>
-      <button class="banner-close-btn" onclick="closeBanner()">×</button>
-    </div>
+</nav> <div class="broadcast-banner" id="broadcastBanner">
+  <div class="banner-content">
+    <span>📢 {dashboardData.bannerText}</span>
+    <button class="banner-close-btn" onclick="closeBanner()">×</button>
   </div>
-
-</nav>
+</div>
 
 <!-- HERO SECTION -->
 <div class="hero-wrapper" id="hero">
