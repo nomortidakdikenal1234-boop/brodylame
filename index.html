@@ -146,17 +146,14 @@ nav#navbar.scrolled .broadcast-banner {
 }
   
 /* =====================================================================
-   PRELOADER / LANDING INTRO 10 DETIK (SCI-FI STYLE)
+   PRELOADER / LANDING INTRO 10 DETIK (KURSOR SUDAH MUNCUL)
    ===================================================================== */
 #intro-overlay {
   position: fixed;
   inset: 0;
   background-color: #01040f;
   background-image: radial-gradient(circle at center, #06112c 0%, #01040f 100%);
-  
-  /* FIX: z-index dinaikkan jadi 200000 supaya berada di atas nav#navbar (100000) */
-  z-index: 200000 !important; 
-  
+  z-index: 200000 !important; /* Biar tetep di atas navbar pas awal load */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -173,7 +170,6 @@ nav#navbar.scrolled .broadcast-banner {
   align-items: center;
 }
 
-/* Container logo preloader melingkar */
 .intro-logo-wrapper {
   width: 160px;
   height: 160px;
@@ -181,7 +177,6 @@ nav#navbar.scrolled .broadcast-banner {
   margin-bottom: 35px;
 }
 
-/* Outer ring yang berputar */
 .intro-outer-ring {
   position: absolute;
   inset: 0;
@@ -189,14 +184,12 @@ nav#navbar.scrolled .broadcast-banner {
   border-radius: 50%;
   box-shadow: 0 0 20px rgba(0, 85, 255, 0.2);
 }
-/* Efek animasi putar ring luar saat aktif */
 .intro-outer-ring.spinning {
   animation: spinRing 10s linear infinite;
   border-color: var(--blue-glow);
   box-shadow: 0 0 35px rgba(0, 85, 255, 0.5);
 }
 
-/* Inner logo container */
 .intro-logo-container {
   position: absolute;
   inset: 12px;
@@ -216,7 +209,6 @@ nav#navbar.scrolled .broadcast-banner {
   object-fit: cover;
   transition: transform 0.5s ease;
 }
-/* Animasi logo dalam yang berputar */
 .intro-logo-container.spinning img {
   animation: spinLogo 10s linear infinite;
 }
@@ -259,7 +251,10 @@ nav#navbar.scrolled .broadcast-banner {
   font-size: 14px;
   font-weight: 700;
   border-radius: 8px;
-  cursor: none;
+  
+  /* FIX: kursor diubah jadi pointer (tangan penunjuk) biar muncul lagi normal */
+  cursor: pointer !important; 
+  
   letter-spacing: 1px;
   box-shadow: 0 5px 25px rgba(0, 85, 255, 0.4);
   transition: all 0.3s ease;
@@ -271,7 +266,6 @@ nav#navbar.scrolled .broadcast-banner {
   box-shadow: 0 8px 30px rgba(0, 85, 255, 0.6);
 }
 
-/* Progres Bar Loader Sci-Fi */
 .intro-loader-container {
   width: 100%;
   display: none; 
@@ -311,7 +305,6 @@ nav#navbar.scrolled .broadcast-banner {
   font-weight: bold;
 }
 
-/* --- PARTICLE BACKGROUND CANVAS --- */
 #bg-particles {
   position: fixed;
   top: 0;
