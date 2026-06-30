@@ -63,7 +63,7 @@ a {
 }
 
 /* =====================================================================
-   FIX: MENURUNKAN BAR MENU & BANNER AGAR TIDAK TERPOTONG LAYAR ATAS
+   FIX: NAVBAR CONTAINER (TURUN DARI TEPI ATAS BROWSER)
    ===================================================================== */
 nav#navbar {
   position: fixed;
@@ -77,36 +77,57 @@ nav#navbar {
   
   display: flex;
   flex-direction: column; 
-  padding: 0 !important; 
-  transition: all 0.3s ease;
-}
-
-/* Pembungkus menu utama di dalam nav */
-nav#navbar .nav-main {
-  width: 100%;
   
-  /* PERBAIKAN: Padding atas ditambah dari 20px menjadi 28px agar posisi menu turun */
-  padding: 28px 6% 20px 6%; 
-  
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  /* Perbaikan utama: Menggunakan padding atas di induk agar seluruh navbar + banner turun */
+  padding: 12px 0 0 0 !important; 
   transition: all 0.3s ease;
-}
-
-/* Ketika di-scroll, menu mengecil secara proporsional */
-nav#navbar.scrolled {
-  background: rgba(2, 6, 19, 0.95);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-nav#navbar.scrolled .nav-main {
-  /* Saat di-scroll, posisinya menyesuaikan kembali menjadi lebih rapat */
-  padding: 16px 6% 12px 6%;
 }
 
 /* =====================================================================
-   TAB PENGUMUMAN (JARAK MARGIN DISESUAIKAN)
+   FIX BAR MENU: LOGO MENTOK KIRI & MENU MENTOK KANAN
+   ===================================================================== */
+nav#navbar .nav-main {
+  width: 100%;
+  padding: 10px 6%; /* Mengembalikan ke padding default yang rapi */
+  
+  display: flex;
+  justify-content: space-between; /* MEMAKSA LOGO KE KIRI & MENU KE KANAN */
+  align-items: center;
+  box-sizing: border-box; /* Mencegah overflow lebar layar */
+  transition: all 0.3s ease;
+}
+
+/* Memastikan susunan logo rata kiri */
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+/* Memastikan susunan link rata kanan */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  justify-content: flex-end;
+}
+
+/* =====================================================================
+   EFEK SCROLLED (SAAT HALAMAN DI-SCROLL KE BAWAH)
+   ===================================================================== */
+nav#navbar.scrolled {
+  background: rgba(2, 6, 19, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 4px 0 0 0 !important; /* Menjadi sedikit lebih compact saat di-scroll */
+}
+
+nav#navbar.scrolled .nav-main {
+  padding: 8px 6%;
+}
+
+/* =====================================================================
+   TAB PENGUMUMAN (100% DINAMIS & PRESISI DI BAWAH MENU)
    ===================================================================== */
 .broadcast-banner {
   width: 100%;
@@ -116,18 +137,18 @@ nav#navbar.scrolled .nav-main {
   font-size: 13px;
   letter-spacing: 0.5px;
   
-  display: none; /* Sesuai setelan sebelumnya untuk preloader */
+  display: none; /* Sembunyi pas awal load / preloader */
   align-items: center;
   justify-content: center;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
   
-  /* Memberi celah vertikal yang seimbang di bawah menu utama */
-  margin-top: 8px; 
+  /* Celah vertikal manis antara menu atas dan banner */
+  margin-top: 10px; 
   transition: margin-top 0.3s ease;
 }
 
 .broadcast-banner.show-banner {
-  display: flex !important;
+  display: flex !important; /* Dipanggil via JS setelah tombol launch diklik */
 }
 
 nav#navbar.scrolled .broadcast-banner {
@@ -143,7 +164,8 @@ nav#navbar.scrolled .broadcast-banner {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 210px 4% 60px 4%; 
+  /* Padding atas ditambah sedikit agar konten website aman di bawah banner */
+  padding: 220px 4% 60px 4%; 
   overflow: hidden;
 }
   
