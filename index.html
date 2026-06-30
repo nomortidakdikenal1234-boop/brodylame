@@ -65,7 +65,7 @@ a {
 /* =====================================================================
    FIX: BAR MENU / NAVBAR CONTAINER
    ===================================================================== */
-nav {
+nav#navbar {
   position: fixed;
   top: 0;
   left: 0;
@@ -78,14 +78,14 @@ nav {
   /* Menggunakan flex-direction column agar banner otomatis berada di bawah bar utama */
   display: flex;
   flex-direction: column; 
-  padding: 0; /* Padding dipindah ke sub-container agar banner penuh ke ujung */
+  padding: 0 !important; /* Di-force 0 agar banner penuh ke ujung kanan-kiri */
   transition: all 0.3s ease;
 }
 
-/* Pembungkus menu utama di dalam nav */
-nav .nav-container {
+/* Pembungkus menu utama di dalam nav (DISESUAIKAN DENGAN CLASS HTML: .nav-main) */
+nav#navbar .nav-main {
   width: 100%;
-  padding: 20px 6%; /* Pindahan padding dari nav utama */
+  padding: 20px 6%; /* Jarak padding default menu atas */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -93,17 +93,17 @@ nav .nav-container {
 }
 
 /* Ketika di-scroll, menu utama mengecil secara smooth */
-nav.scrolled .nav-container {
-  padding: 12px 6%;
-}
-
-nav.scrolled {
+nav#navbar.scrolled {
   background: rgba(2, 6, 19, 0.95);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+nav#navbar.scrolled .nav-main {
+  padding: 12px 6%;
+}
+
 /* =====================================================================
-   FIX: TAB PENGUMUMAN (TIDAK AKAN TERTUTUP/NGUMPET LAGI)
+   FIX: TAB PENGUMUMAN (TURUN DIKIT & BERJARAK)
    ===================================================================== */
 .broadcast-banner {
   width: 100%;
@@ -121,6 +121,15 @@ nav.scrolled {
   align-items: center;
   justify-content: center;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  /* INI UNTUK TURUNIN DIKIT BANNERNYA BIAR ADA GAP */
+  margin-top: 6px; 
+  transition: margin-top 0.3s ease;
+}
+
+/* Sempurnakan jarak margin saat navbar mengecil ketika di-scroll */
+nav#navbar.scrolled .broadcast-banner {
+  margin-top: 4px;
 }
 
 /* =====================================================================
@@ -132,8 +141,8 @@ nav.scrolled {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Ditambah agar teks intro 'SKY AI WEBSITE' pas di tengah dan tidak terpotong navbar */
-  padding: 190px 4% 60px 4%; 
+  /* Ditambah space-nya agar konten landing / tombol "LAUNCH SYSTEM" tidak tertabrak menu */
+  padding: 210px 4% 60px 4%; 
   overflow: hidden;
 }
   
