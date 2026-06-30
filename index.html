@@ -63,7 +63,7 @@ a {
 }
 
 /* =====================================================================
-   KONTEN INDUK NAVBAR
+   KONTEN INDUK NAVBAR (BACKDROP BLUR TETAP TIPIS DI ATAS)
    ===================================================================== */
 nav#navbar {
   position: fixed;
@@ -81,17 +81,17 @@ nav#navbar {
   
   padding: 0 !important;
   height: auto !important;
-  overflow: visible !important;
+  overflow: visible !important; /* WAJIB visible agar banner absolute kelihatan di luar */
   transition: all 0.3s ease;
 }
 
 /* =====================================================================
-   STRUKTUR MENU UTAMA (UKURAN TIPIS DAN MEMBERI JARAK KE BANNER)
+   STRUKTUR MENU UTAMA (LOGO KIRI | MENU TENGAH | LOGIN KANAN)
    ===================================================================== */
 nav#navbar .nav-main {
   width: 100%;
-  padding: 20px 6% 20px 6% !important; /* Padding normal: Atas Kanan Bawah Kiri */
-  margin-bottom: 20px !important;       /* JAMIN TURUN: Memberi celah kosong di bawah menu */
+  padding: 20px 6% !important; /* Dikunci tipis rapi bawaan awal */
+  margin-bottom: 0 !important;  /* Nol-kan biar gak narik background blur ke bawah */
   
   display: flex !important;
   flex-direction: row !important;
@@ -101,7 +101,7 @@ nav#navbar .nav-main {
   transition: all 0.3s ease;
 }
 
-/* Kiri: Lebar fleksibel & rata kiri */
+/* Sisi Kiri */
 .nav-brand {
   display: flex;
   align-items: center;
@@ -110,7 +110,7 @@ nav#navbar .nav-main {
   justify-content: flex-start;
 }
 
-/* Tengah: Memaksa menu text berada tepat di tengah-tengah layar navbar */
+/* Sisi Tengah (Menu Nengah Presisi) */
 .nav-links {
   display: flex;
   align-items: center;
@@ -119,32 +119,40 @@ nav#navbar .nav-main {
   justify-content: center;
 }
 
-/* Kanan: Penyeimbang lebar & rata kanan */
+/* Sisi Kanan */
 .nav-auth {
   display: flex;
   flex: 1;
   justify-content: flex-end;
 }
 
-/* Ketika di-scroll (Menu mengecil, celah banner menyesuaikan) */
+/* Ketika di-scroll ke bawah (Menu atas mengecil smooth) */
 nav#navbar.scrolled .nav-main {
-  padding: 12px 6% 12px 6% !important;
-  margin-bottom: 12px !important;
+  padding: 12px 6% !important;
 }
 
 /* =====================================================================
-   TAB PENGUMUMAN
+   TAB PENGUMUMAN (TURUN DI LUAR NAVBAR, GAK BAKAL MERUSAK LAYOUT)
    ===================================================================== */
 .broadcast-banner {
   width: 100%;
-  background: rgba(255, 170, 0, 0.15); 
+  background: rgba(255, 170, 0, 0.15); /* Warna oranye tema kamu */
   border-top: 1px solid rgba(255, 170, 0, 0.3);
   border-bottom: 1px solid rgba(255, 170, 0, 0.3);
-  display: none; 
   box-sizing: border-box;
-  margin-top: 0 !important; /* Nol-kan margin-top agar patuh pada dorongan dari atas */
+  
+  /* TRIK ABSOLUTE: Lepas dari antrean, melayang di bawah navbar */
+  position: absolute !important;
+  top: 100% !important; /* Nempel pas di bawah batas bawah menu utama */
+  left: 0;
+  
+  /* KASI JARAK TURUN DI SINI: Silakan ganti angka ini kalau mau kurang/lebih turun */
+  margin-top: 20px !important; 
+  
+  display: none; 
 }
 
+/* Muncul jika dipicu dari script dashboard */
 .broadcast-banner.show-banner {
   display: block !important;
 }
@@ -171,7 +179,7 @@ nav#navbar.scrolled .nav-main {
   border: none;
   color: rgba(255, 255, 255, 0.5);
   font-size: 18px;
-  cursor: none; /* Mengikuti custom cursor */
+  cursor: none; /* Patuh sama custom cursor game kamu */
   padding: 0;
 }
   
