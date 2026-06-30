@@ -37,6 +37,11 @@ body {
   cursor: none; /* Kursor asli dimatikan */
 }
 
+/* Penyesuaian otomatis jika banner pengumuman aktif agar konten utama terdorong rapi */
+body.has-banner {
+  padding-top: 45px !important;
+}
+
 /* Scrollbar kustom premium */
 ::-webkit-scrollbar {
   width: 8px;
@@ -55,6 +60,33 @@ body {
 a {
   text-decoration: none;
   color: inherit;
+}
+
+/* =====================================================================
+   FIX: BANNER BROADCAST GLOBAL (LAYER PALING DEPAN / DI ATAS NAV BAR)
+   ===================================================================== */
+.broadcast-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 12px 20px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 13.5px;
+  letter-spacing: 0.5px;
+  background: linear-gradient(90deg, #0033aa, #0055ff, #0033aa);
+  color: #ffffff;
+  
+  /* Angka z-index dibuat sangat tinggi melampaui preloader (10000) & navbar */
+  z-index: 999999 !important; 
+  
+  box-shadow: 0 4px 20px rgba(0, 85, 255, 0.4);
+  display: none; /* Muncul dinamis via JavaScript/Firebase jika ada teks */
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
 }
 
 /* =====================================================================
