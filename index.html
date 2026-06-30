@@ -63,15 +63,12 @@ a {
 }
 
 /* =====================================================================
-   FIX ABSOLUT: MENGUNCI NAVBAR TETAP DI ATAS LAYAR UTAMA
+   KEMBALI KE AWAL: BAR MENU / NAVBAR CONTAINER ASLI
    ===================================================================== */
 nav#navbar {
   position: fixed;
-  
-  /* WAJIB DIKUNCI DI SINI AGAR TIDAK ANJLOK KE BAWAH LAYAR */
-  top: 0 !important;
-  left: 0 !important;
-  
+  top: 0;
+  left: 0;
   width: 100%;
   z-index: 100000;
   background: rgba(2, 6, 19, 0.4);
@@ -79,105 +76,22 @@ nav#navbar {
   -webkit-backdrop-filter: blur(12px);
   
   display: flex;
-  flex-direction: column; 
-  padding: 0 !important; /* Kembalikan 0 karena banner sudah pindah ke pojok bawah */
+  flex-direction: row; /* Balikin ke baris horizontal biasa */
+  justify-content: space-between; /* Kunci Logo di kiri, Menu di kanan */
+  align-items: center;
+  padding: 20px 6% !important; /* Spacing default awal kamu */
   transition: all 0.3s ease;
 }
 
-/* Pembungkus menu utama di dalam nav */
-nav#navbar .nav-main {
-  width: 100%;
-  padding: 20px 6%; /* Spacing atas awal yang bersih dan proporsional */
-  display: flex;
-  justify-content: space-between; /* Menjaga Logo kiri & Menu kanan */
-  align-items: center;
-  box-sizing: border-box;
-}
-
-/* Ketika di-scroll, menu mengecil secara proporsional */
+/* Ketika di-scroll, menu mengecil secara smooth */
 nav#navbar.scrolled {
   background: rgba(2, 6, 19, 0.95);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-nav#navbar.scrolled .nav-main {
-  padding: 12px 6%;
-}
-  
-/* =====================================================================
-   FIX BAR MENU: LOGO MENTOK KIRI & MENU MENTOK KANAN
-   ===================================================================== */
-nav#navbar .nav-main {
-  width: 100%;
-  padding: 10px 6%; /* Mengembalikan ke padding default yang rapi */
-  
-  display: flex;
-  justify-content: space-between; /* MEMAKSA LOGO KE KIRI & MENU KE KANAN */
-  align-items: center;
-  box-sizing: border-box; /* Mencegah overflow lebar layar */
-  transition: all 0.3s ease;
-}
-
-/* Memastikan susunan logo rata kiri */
-.nav-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  justify-content: flex-start;
-}
-
-/* Memastikan susunan link rata kanan */
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  justify-content: flex-end;
+  padding: 12px 6% !important;
 }
 
 /* =====================================================================
-   EFEK SCROLLED (SAAT HALAMAN DI-SCROLL KE BAWAH)
-   ===================================================================== */
-nav#navbar.scrolled {
-  background: rgba(2, 6, 19, 0.95);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 4px 0 0 0 !important; /* Menjadi sedikit lebih compact saat di-scroll */
-}
-
-nav#navbar.scrolled .nav-main {
-  padding: 8px 6%;
-}
-
-/* =====================================================================
-   TAB PENGUMUMAN (100% DINAMIS & PRESISI DI BAWAH MENU)
-   ===================================================================== */
-.broadcast-banner {
-  width: 100%;
-  padding: 10px 20px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.5px;
-  
-  display: none; /* Sembunyi pas awal load / preloader */
-  align-items: center;
-  justify-content: center;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  
-  /* Celah vertikal manis antara menu atas dan banner */
-  margin-top: 10px; 
-  transition: margin-top 0.3s ease;
-}
-
-.broadcast-banner.show-banner {
-  display: flex !important; /* Dipanggil via JS setelah tombol launch diklik */
-}
-
-nav#navbar.scrolled .broadcast-banner {
-  margin-top: 6px;
-}
-
-/* =====================================================================
-   KONTEN UTAMA (HERO WRAPPER)
+   KONTEN UTAMA (HERO WRAPPER DEFAULT)
    ===================================================================== */
 .hero-wrapper {
   position: relative;
@@ -185,8 +99,7 @@ nav#navbar.scrolled .broadcast-banner {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Padding atas ditambah sedikit agar konten website aman di bawah banner */
-  padding: 220px 4% 60px 4%; 
+  padding: 210px 4% 60px 4%; 
   overflow: hidden;
 }
   
