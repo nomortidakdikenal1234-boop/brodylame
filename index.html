@@ -63,7 +63,7 @@ a {
 }
 
 /* =====================================================================
-   FIX: BANNER BROADCAST GLOBAL (LAYER PALING DEPAN / DI ATAS NAV BAR)
+   FIX: BANNER PENGUMUMAN (BERADA DI PALING ATAS DOKUMEN)
    ===================================================================== */
 .broadcast-banner {
   position: fixed;
@@ -78,15 +78,55 @@ a {
   background: linear-gradient(90deg, #0033aa, #0055ff, #0033aa);
   color: #ffffff;
   
-  /* Angka z-index dibuat sangat tinggi melampaui preloader (10000) & navbar */
-  z-index: 999999 !important; 
-  
+  /* z-index super tinggi agar tidak tertutup elemen background apapun */
+  z-index: 100000 !important; 
   box-shadow: 0 4px 20px rgba(0, 85, 255, 0.4);
-  display: none; /* Muncul dinamis via JavaScript/Firebase jika ada teks */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+  display: flex; /* Atau diset dinamis via JS */
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
+}
+
+/* =====================================================================
+   FIX: BAR MENU / NAVBAR (IKUT TURUN JIKA BANNER AKTIF)
+   ===================================================================== */
+nav {
+  position: fixed;
+  /* JIKA BANNER AKTIF: top harus bergeser turun sesuai tinggi banner (sekitar 44px) */
+  top: 44px; 
+  left: 0;
+  width: 100%;
+  padding: 20px 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  /* z-index navbar sedikit di bawah banner pengumuman agar rapi saat scroll */
+  z-index: 99999; 
+  background: rgba(2, 6, 19, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: top 0.3s ease, padding 0.4s ease, background 0.4s ease;
+}
+
+/* Ketika halaman di-scroll ke bawah */
+nav.scrolled {
+  top: 0; /* Kembalikan ke paling atas saat banner sudah ter-scroll lewat */
+  background: rgba(2, 6, 19, 0.9);
+  padding: 15px 6%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* HERO WRAPPER: Tambahkan padding atas agar konten utama tidak tertutup navbar */
+.hero-wrapper {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 180px 4% 60px 4%; /* Ditambah sedikit biar space atas longgar */
+  overflow: hidden;
 }
 
 /* =====================================================================
