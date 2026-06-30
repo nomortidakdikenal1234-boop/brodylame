@@ -63,72 +63,77 @@ a {
 }
 
 /* =====================================================================
-   FIX: BANNER PENGUMUMAN (BERADA DI PALING ATAS DOKUMEN)
-   ===================================================================== */
-.broadcast-banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 12px 20px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 13.5px;
-  letter-spacing: 0.5px;
-  background: linear-gradient(90deg, #0033aa, #0055ff, #0033aa);
-  color: #ffffff;
-  
-  /* z-index super tinggi agar tidak tertutup elemen background apapun */
-  z-index: 100000 !important; 
-  box-shadow: 0 4px 20px rgba(0, 85, 255, 0.4);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  
-  display: flex; /* Atau diset dinamis via JS */
-  align-items: center;
-  justify-content: center;
-}
-
-/* =====================================================================
-   FIX: BAR MENU / NAVBAR (IKUT TURUN JIKA BANNER AKTIF)
+   1. BAR MENU / NAVBAR (TETAP DI PALING ATAS - TOP: 0)
    ===================================================================== */
 nav {
   position: fixed;
-  /* JIKA BANNER AKTIF: top harus bergeser turun sesuai tinggi banner (sekitar 44px) */
-  top: 44px; 
+  top: 0;
   left: 0;
   width: 100%;
   padding: 20px 6%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
-  /* z-index navbar sedikit di bawah banner pengumuman agar rapi saat scroll */
-  z-index: 99999; 
+  z-index: 100000; /* Layer paling atas */
   background: rgba(2, 6, 19, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: top 0.3s ease, padding 0.4s ease, background 0.4s ease;
+  transition: all 0.4s ease;
 }
 
-/* Ketika halaman di-scroll ke bawah */
+/* Ketika di-scroll ke bawah, padding navbar mengecil agar makin sleek */
 nav.scrolled {
-  top: 0; /* Kembalikan ke paling atas saat banner sudah ter-scroll lewat */
-  background: rgba(2, 6, 19, 0.9);
   padding: 15px 6%;
+  background: rgba(2, 6, 19, 0.9);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* HERO WRAPPER: Tambahkan padding atas agar konten utama tidak tertutup navbar */
+/* =====================================================================
+   2. FIX: TAB PENGUMUMAN (DITARUH FIX DI BAWAH NAVBAR)
+   ===================================================================== */
+.broadcast-banner {
+  position: fixed;
+  /* Ditempatkan pas di bawah ruang navbar awal */
+  top: 68px; /* Menyesuaikan perkiraan tinggi default navbar kamu */
+  left: 0;
+  width: 100%;
+  padding: 10px 20px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  background: linear-gradient(90deg, #ff9900, #ffb700, #ff9900); /* Warna oranye/kuning hangat sesuai screenshot */
+  color: #000000; /* Teks hitam agar kontras dan terbaca jelas */
+  
+  z-index: 99999; /* Tepat di bawah navbar sedikit */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  transition: top 0.4s ease; /* Biar smooth saat navbar mengecil */
+}
+
+/* Ikut bergeser naik sedikit saat navbar mengecil (ketika di-scroll) */
+nav.scrolled + .broadcast-banner,
+.broadcast-banner.navbar-scrolled {
+  top: 58px; 
+}
+
+/* =====================================================================
+   3. HERO WRAPPER (KONTEN UTAMA - DIDORONG DI BAWAH NAVBAR & BANNER)
+   ===================================================================== */
 .hero-wrapper {
   position: relative;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 180px 4% 60px 4%; /* Ditambah sedikit biar space atas longgar */
+  /* Padding top ditambah agar teks intro 'SKY AI WEBSITE' tidak tertutup banner */
+  padding: 160px 4% 60px 4%; 
   overflow: hidden;
 }
-
+  
 /* =====================================================================
    PRELOADER / LANDING INTRO 10 DETIK (SCI-FI STYLE)
    ===================================================================== */
