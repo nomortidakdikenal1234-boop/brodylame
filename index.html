@@ -63,35 +63,55 @@ a {
 }
 
 /* =====================================================================
-   KEMBALI KE AWAL: KODE NAVBAR ASLI & STABIL 100%
-   ==================================================================== */
+   RESET TOTAL: NAVBAR ASLI AMAN & STABIL 100%
+   ===================================================================== */
 nav#navbar {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 0 !important;
+  left: 0 !important;
   width: 100%;
   z-index: 100000;
   background: rgba(2, 6, 19, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   
-  /* Layout default horizontal */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 6% !important;
+  /* Susun elemen ke bawah secara vertikal: baris menu dulu, baru banner */
+  display: flex !important;
+  flex-direction: column !important; 
+  align-items: stretch;
+  padding: 12px 0 0 0 !important; /* Spacing atas dari langit-langit browser */
+  height: auto !important;
+  overflow: visible !important;
   transition: all 0.3s ease;
 }
 
-/* Ketika di-scroll, menu mengecil secara smooth */
-nav#navbar.scrolled {
-  background: rgba(2, 6, 19, 0.95);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 12px 6% !important;
+/* Penataan Bar Menu Utama (Logo kiri, Menu kanan) */
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Supaya baris menu utama ditaruh melebar penuh sebelum banner */
+nav#navbar > .nav-brand, 
+nav#navbar > .nav-links {
+  display: none; /* diabaikan, gunakan container pembungkus jika ada flex row */
+}
+
+/* Jalur alternatif jika HTML kamu langsung menaruh anak elemen di dalam nav: */
+/* Kita buat wrapper bayangan agar space-between tetap jalan di flex-column */
+nav#navbar {
+  padding: 12px 6% 0 6% !important;
 }
 
 /* =====================================================================
-   KONTEN UTAMA (HERO WRAPPER DEFAULT)
+   KONTEN UTAMA HERO GAME/PAGE
    ===================================================================== */
 .hero-wrapper {
   position: relative;
@@ -1623,12 +1643,12 @@ footer {
 <!-- Custom Cursor -->
 <div id="custom-cursor"></div>
 
-<!-- FIXED NAVBAR -->
 <nav id="navbar">
   <div class="nav-brand">
     <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Logo" />
     <span>Sky AI Website</span>
   </div>
+  
   <div class="nav-links">
     <a href="#hero" onclick="scrollToId('hero'); return false;">Home</a>
     <a href="#developer" onclick="scrollToId('developer'); return false;">Developer</a>
@@ -1640,15 +1660,13 @@ footer {
     <button class="nav-login-btn" onclick="openAdmin()" id="nav-admin-btn">
       <span>🔒</span> Login Admin
     </button>
+  </div> <div class="broadcast-banner" id="broadcastBanner">
+    <div class="banner-content">
+      <span id="bannerText">📢 {dashboardData.bannerText}</span>
+      <button class="banner-close-btn" onclick="closeBanner()">×</button>
     </div>
   </div>
-
-<div class="broadcast-banner" id="broadcastBanner">
-  <div class="banner-content">
-    <span>📢 {dashboardData.bannerText}</span>
-    <button class="banner-close-btn" onclick="closeBanner()">×</button>
-  </div>
-</div>
+</nav>
 
 <!-- HERO SECTION -->
 <div class="hero-wrapper" id="hero">
