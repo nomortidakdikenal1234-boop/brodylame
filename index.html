@@ -63,65 +63,68 @@ a {
 }
 
 /* =====================================================================
-   1. BAR MENU / NAVBAR (TETAP DI PALING ATAS - TOP: 0)
+   FIX: BAR MENU / NAVBAR CONTAINER
    ===================================================================== */
 nav {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  padding: 20px 6%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 100000; /* Layer paling atas */
+  z-index: 100000;
   background: rgba(2, 6, 19, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: all 0.4s ease;
+  
+  /* Menggunakan flex-direction column agar banner otomatis berada di bawah bar utama */
+  display: flex;
+  flex-direction: column; 
+  padding: 0; /* Padding dipindah ke sub-container agar banner penuh ke ujung */
+  transition: all 0.3s ease;
 }
 
-/* Ketika di-scroll ke bawah, padding navbar mengecil agar makin sleek */
+/* Pembungkus menu utama di dalam nav */
+nav .nav-container {
+  width: 100%;
+  padding: 20px 6%; /* Pindahan padding dari nav utama */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+/* Ketika di-scroll, menu utama mengecil secara smooth */
+nav.scrolled .nav-container {
+  padding: 12px 6%;
+}
+
 nav.scrolled {
-  padding: 15px 6%;
-  background: rgba(2, 6, 19, 0.9);
+  background: rgba(2, 6, 19, 0.95);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* =====================================================================
-   2. FIX: TAB PENGUMUMAN (DITARUH FIX DI BAWAH NAVBAR)
+   FIX: TAB PENGUMUMAN (TIDAK AKAN TERTUTUP/NGUMPET LAGI)
    ===================================================================== */
 .broadcast-banner {
-  position: fixed;
-  /* Ditempatkan pas di bawah ruang navbar awal */
-  top: 68px; /* Menyesuaikan perkiraan tinggi default navbar kamu */
-  left: 0;
   width: 100%;
   padding: 10px 20px;
   text-align: center;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 13px;
   letter-spacing: 0.5px;
-  background: linear-gradient(90deg, #ff9900, #ffb700, #ff9900); /* Warna oranye/kuning hangat sesuai screenshot */
-  color: #000000; /* Teks hitam agar kontras dan terbaca jelas */
   
-  z-index: 99999; /* Tepat di bawah navbar sedikit */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  /* Warna kuning/oranye sesuai screenshot */
+  background: #ffaa00; 
+  color: #000000;
   
-  display: flex; 
+  display: flex;
   align-items: center;
   justify-content: center;
-  transition: top 0.4s ease; /* Biar smooth saat navbar mengecil */
-}
-
-/* Ikut bergeser naik sedikit saat navbar mengecil (ketika di-scroll) */
-nav.scrolled + .broadcast-banner,
-.broadcast-banner.navbar-scrolled {
-  top: 58px; 
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 /* =====================================================================
-   3. HERO WRAPPER (KONTEN UTAMA - DIDORONG DI BAWAH NAVBAR & BANNER)
+   KONTEN UTAMA (HERO WRAPPER)
    ===================================================================== */
 .hero-wrapper {
   position: relative;
@@ -129,8 +132,8 @@ nav.scrolled + .broadcast-banner,
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Padding top ditambah agar teks intro 'SKY AI WEBSITE' tidak tertutup banner */
-  padding: 160px 4% 60px 4%; 
+  /* Ditambah agar teks intro 'SKY AI WEBSITE' pas di tengah dan tidak terpotong navbar */
+  padding: 190px 4% 60px 4%; 
   overflow: hidden;
 }
   
@@ -1670,6 +1673,11 @@ footer {
     <button class="nav-login-btn" onclick="openAdmin()" id="nav-admin-btn">
       <span>🔒</span> Login Admin
     </button>
+    </div>
+  </div>
+
+  <div class="broadcast-banner">
+    📢 TEST TEST
   </div>
 </nav>
 
