@@ -63,7 +63,7 @@ a {
 }
 
 /* =====================================================================
-   FIX: NAVBAR CONTAINER (TURUN DARI TEPI ATAS BROWSER)
+   KEMBALIKAN NAVBAR UTAMA KE SEMULA (BERSIH & RAPI)
    ===================================================================== */
 nav#navbar {
   position: fixed;
@@ -74,13 +74,16 @@ nav#navbar {
   background: rgba(2, 6, 19, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  
-  display: flex;
-  flex-direction: column; 
-  
-  /* Perbaikan utama: Menggunakan padding atas di induk agar seluruh navbar + banner turun */
-  padding: 12px 0 0 0 !important; 
+  padding: 0 !important; /* Kembali normal tanpa kegeser banner */
   transition: all 0.3s ease;
+}
+
+nav#navbar .nav-main {
+  width: 100%;
+  padding: 20px 6%; /* Kembali ke spacing awal yang presisi */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* =====================================================================
@@ -1709,8 +1712,12 @@ footer {
     </div>
   </div>
 
-<div class="broadcast-banner" id="broadcastBanner"></div>
-</nav>
+<div class="broadcast-banner" id="broadcastBanner">
+  <div class="banner-content">
+    <span>📢 {dashboardData.bannerText}</span>
+    <button class="banner-close-btn" onclick="closeBanner()">×</button>
+  </div>
+</div>
 
 <!-- HERO SECTION -->
 <div class="hero-wrapper" id="hero">
