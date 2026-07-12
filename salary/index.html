@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Penggajian Staf & Pemantau Status</title>
+    <!-- Tailwind CSS Play CDN & Dark Mode Class Configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- html2canvas untuk Ekspor ke Gambar/Foto -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Smooth transitions for high fidelity dark mode animation */
+        div, nav, form, table, tbody, tr, td, th, input, select, button, section, h3, h2, span, p, label {
+            transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                        border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                        color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.4s ease;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen">
+
+    <!-- Top Navigation -->
+    <nav class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-600/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">PayStaff <span class="text-indigo-600 dark:text-indigo-400 font-medium text-sm">Pro</span></span>
+                        <span class="text-xs block text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">Status & Gaji Monitor</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <!-- Smooth Animated Theme Toggle Button -->
+                    <button onclick="toggleTheme()" id="themeToggleBtn" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all duration-300 flex items-center justify-center text-slate-600 dark:text-slate-300" title="Ubah Mode Tampilan">
+                        <div class="relative w-5 h-5 overflow-hidden flex items-center justify-center">
+                            <!-- Sun Icon -->
+                            <svg id="sunIcon" class="absolute h-5 w-5 transform transition-all duration-500 rotate-0 scale-100 dark:-rotate-90 dark:scale-0 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 2.293a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM17 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zm-2.293 4.707a1 1 0 010 1.414l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 0zM10 17a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.707 14.707a1 1 0 010 1.414l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 0zM3 10a1 1 0 011-1h1a1 1 0 110 2H4a1 1 0 01-1-1zm2.707-5.707a1 1 0 011.414 0l.707.707a1 1 0 11-1.414 1.414l-.707-.707a1 1 0 010-1.414zM10 6a4 4 0 100 8 4 4 0 000-8z" />
+                            </svg>
+                            <!-- Moon Icon -->
+                            <svg id="moonIcon" class="absolute h-5 w-5 transform transition-all duration-500 rotate-90 scale-0 dark:rotate-0 dark:scale-100 text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                            </svg>
+                        </div>
+                    </button>
+
+                    <!-- Reset Database Button -->
+                    <button onclick="requestResetData()" class="text-xs font-bold bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 px-3.5 py-2.5 rounded-xl transition-all border border-rose-100 dark:border-rose-900 flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        <span class="hidden sm:inline">Kosongkan Database</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Dashboard Summary Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Stat 1 -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Total Biaya Gaji</span>
+                    <h3 id="statTotalPayroll" class="text-3xl font-extrabold text-slate-900 dark:text-white">$0</h3>
+                </div>
+                <div class="bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 p-4 rounded-2xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Stat 2 -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Sudah Dibayarkan</span>
+                    <h3 id="statPaid" class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">$0</h3>
+                </div>
+                <div class="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 p-4 rounded-2xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Stat 3 -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Belum Dibayarkan</span>
+                    <h3 id="statUnpaid" class="text-3xl font-extrabold text-rose-500 dark:text-rose-400">$0</h3>
+                </div>
+                <div class="bg-rose-50 dark:bg-rose-950/40 text-rose-500 dark:text-rose-400 p-4 rounded-2xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Stat 4 -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Total Karyawan</span>
+                    <h3 id="statTotalStaff" class="text-3xl font-extrabold text-slate-900 dark:text-white">0 Orang</h3>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 p-4 rounded-2xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Side: Interactive Input Form -->
+            <div class="lg:col-span-4">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden sticky top-24">
+                    <div class="bg-indigo-950 text-white p-6">
+                        <h2 class="text-lg font-bold tracking-tight">Kalkulator Penggajian</h2>
+                        <p class="text-indigo-200 text-xs mt-1">Sistem hitung otomatis dengan penentuan status gajian.</p>
+                    </div>
+
+                    <form id="payrollForm" class="p-6 space-y-5">
+                        <!-- Input Nama -->
+                        <div>
+                            <label for="staffName" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Nama Lengkap Staf</label>
+                            <input type="text" id="staffName" required
+                                   class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-3 text-sm focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-all placeholder-slate-400 font-medium"
+                                   placeholder="Masukkan nama staf...">
+                        </div>
+
+                        <!-- Pilih Jabatan -->
+                        <div>
+                            <label for="staffRole" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Pilihan Jabatan</label>
+                            <select id="staffRole" onchange="handleRoleChange()"
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-all cursor-pointer">
+                                <option value="training">Training ($35 / pekerjaan)</option>
+                                <option value="junior">Junior ($40 / pekerjaan)</option>
+                                <option value="senior_mkt">Senior / MKT ($45 / pekerjaan)</option>
+                                <option value="highstaff">Highstaff ($750 / pekerjaan)</option>
+                                <option value="hrd">HRD ($750 / pek. + $100 / interview)</option>
+                                <option value="cro">CRO ($1000 / pekerjaan)</option>
+                            </select>
+                        </div>
+
+                        <!-- Status Gaji Awal -->
+                        <div>
+                            <label for="initialStatus" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Status Pembayaran</label>
+                            <select id="initialStatus"
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl px-4 py-3 text-sm font-semibold focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-all cursor-pointer">
+                                <option value="Belum" class="text-rose-600 dark:text-rose-400 font-bold">🔴 Belum Gajian</option>
+                                <option value="Sudah" class="text-emerald-600 dark:text-emerald-400 font-bold">🟢 Sudah Gajian</option>
+                            </select>
+                        </div>
+
+                        <!-- Jumlah Pekerjaan standard -->
+                        <div>
+                            <label id="jobLabel" for="taskCount" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Jumlah Pekerjaan Selesai</label>
+                            <div class="flex rounded-xl shadow-sm">
+                                <button type="button" onclick="adjustInput('taskCount', -1)" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-4 rounded-l-xl border border-r-0 border-slate-200 dark:border-slate-700 transition-all font-bold text-lg">-</button>
+                                <input type="number" id="taskCount" min="1" value="1" required oninput="calculatePreview()"
+                                       class="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white px-4 py-3 text-sm text-center font-bold focus:bg-white focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                                <button type="button" onclick="adjustInput('taskCount', 1)" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-4 rounded-r-xl border border-l-0 border-slate-200 dark:border-slate-700 transition-all font-bold text-lg">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Input Khusus HRD -->
+                        <div id="hrdInterviewContainer" class="hidden transition-all duration-300">
+                            <label for="interviewCount" class="block text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Jumlah Interview (Khusus HRD)
+                            </label>
+                            <div class="flex rounded-xl shadow-sm">
+                                <button type="button" onclick="adjustInput('interviewCount', -1)" class="bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 px-4 rounded-l-xl border border-r-0 border-emerald-200 dark:border-emerald-800 transition-all font-bold text-lg">-</button>
+                                <input type="number" id="interviewCount" min="0" value="0" oninput="calculatePreview()"
+                                       class="w-full bg-emerald-50/50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-slate-800 dark:text-white px-4 py-3 text-sm text-center font-bold focus:bg-white focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                                <button type="button" onclick="adjustInput('interviewCount', 1)" class="bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 px-4 rounded-r-xl border border-l-0 border-emerald-200 dark:border-emerald-800 transition-all font-bold text-lg">+</button>
+                            </div>
+                            <p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium mt-1.5">* Tambahan komisi sebesar $100 per interview</p>
+                        </div>
+
+                        <!-- Hasil Kalkulasi Sementara (Preview) -->
+                        <div class="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 space-y-1.5">
+                            <div class="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                <span>Rumus Perhitungan:</span>
+                                <span id="previewFormula" class="font-semibold text-slate-700 dark:text-slate-300">1 Job × $35</span>
+                            </div>
+                            <div class="flex justify-between items-end border-t border-slate-100 dark:border-slate-800 pt-2 mt-1">
+                                <span class="text-sm font-bold text-slate-700 dark:text-slate-300">Estimasi Gaji:</span>
+                                <span id="previewTotal" class="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">$35</span>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl transition duration-200 shadow-lg shadow-indigo-600/10 hover:shadow-indigo-600/20 flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Tambahkan & Catat Gaji
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Side: Data Table & Filters -->
+            <div class="lg:col-span-8 space-y-6">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                    
+                    <!-- Table Header & Export Button -->
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Daftar Transaksi Slip Gaji</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Kelola status, unduh file excel (.CSV), atau jadikan slip gaji sebagai Gambar.</p>
+                        </div>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <button onclick="exportCSV()" class="w-full sm:w-auto text-xs bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold py-2.5 px-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-2 shadow-sm transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Ekspor Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filters Area -->
+                    <div class="p-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 grid grid-cols-1 md:grid-cols-12 gap-3">
+                        <div class="relative md:col-span-6">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </span>
+                            <input type="text" id="searchBar" oninput="renderPayrollList()" placeholder="Cari berdasarkan nama staff..." 
+                                   class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl pl-10 pr-4 py-2.5 text-xs focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium">
+                        </div>
+                        <div class="md:col-span-3">
+                            <select id="filterRole" onchange="renderPayrollList()" 
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-semibold cursor-pointer">
+                                <option value="all">Semua Jabatan</option>
+                                <option value="training">Training</option>
+                                <option value="junior">Junior</option>
+                                <option value="senior_mkt">Senior / MKT</option>
+                                <option value="highstaff">Highstaff</option>
+                                <option value="hrd">HRD</option>
+                                <option value="cro">CRO</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-3">
+                            <select id="filterStatus" onchange="renderPayrollList()" 
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-semibold cursor-pointer">
+                                <option value="all">Semua Status</option>
+                                <option value="Belum">🔴 Belum Gajian</option>
+                                <option value="Sudah">🟢 Sudah Gajian</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Table Data -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 dark:bg-slate-800 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
+                                    <th class="p-4 pl-6">Staf / Informasi</th>
+                                    <th class="p-4">Jabatan</th>
+                                    <th class="p-4 text-center">Beban Kerja</th>
+                                    <th class="p-4 text-right">Rincian</th>
+                                    <th class="p-4 text-right">Total Gaji</th>
+                                    <th class="p-4 text-center">Status Pembayaran</th>
+                                    <th class="p-4 text-center pr-6">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payrollTableBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
+                                <!-- Konten dinamis dari JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Empty Placeholder -->
+                    <div id="emptyState" class="p-16 text-center hidden">
+                        <div class="max-w-xs mx-auto">
+                            <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-400 dark:text-slate-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                </svg>
+                            </div>
+                            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300">Daftar Gaji Kosong</h3>
+                            <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Silakan masukkan data staf pada panel kalkulator di sebelah kiri Anda.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal Slip Gaji Detail (Bisa Diekspor Gambar) -->
+    <div id="receiptModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto py-8">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden border border-slate-100 dark:border-slate-850 transform scale-95 transition-all duration-300 my-auto" id="receiptModalContent">
+            
+            <!-- INI BAGIAN SLIP YANG AKAN DI-CAPTURE SEBAGAI GAMBAR -->
+            <!-- Kita tambahkan ID penanda khusus agar rendering warna saat ekspor gambar tetap solid -->
+            <div id="receiptToCapture" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 p-8 space-y-6">
+                <!-- Kop Slip Gaji -->
+                <div class="flex justify-between items-start border-b border-slate-100 dark:border-slate-800 pb-4">
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-3.5 h-3.5 rounded bg-indigo-600"></div>
+                            <span class="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-tight">PayStaff Corp</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Automated Receipt</p>
+                    </div>
+                    <div class="text-right">
+                        <span id="modalStatusBadge" class="inline-block text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">Belum Gajian</span>
+                    </div>
+                </div>
+
+                <!-- Judul Slip -->
+                <div>
+                    <span class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider block">Nama Lengkap Staff</span>
+                    <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white leading-tight" id="modalStaffName">Budi Santoso</h3>
+                    <p class="text-[11px] text-indigo-600 dark:text-indigo-400 font-bold mt-1" id="modalRecordId">No. Seri: PAY-823901</p>
+                </div>
+                
+                <!-- Metadata Info -->
+                <div class="grid grid-cols-2 gap-4 text-xs bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                    <div>
+                        <span class="block text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase mb-0.5">Jabatan</span>
+                        <span class="text-slate-800 dark:text-slate-200 text-sm font-bold" id="modalRole">HRD</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase mb-0.5">Tanggal Cetak</span>
+                        <span class="text-slate-800 dark:text-slate-200 text-sm font-bold" id="modalDate">12/07/2026</span>
+                    </div>
+                </div>
+
+                <!-- Perincian item -->
+                <div class="pt-2 space-y-3">
+                    <h4 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Rincian Perhitungan</h4>
+                    
+                    <div class="flex justify-between text-sm" id="modalItemMain">
+                        <span class="text-slate-600 dark:text-slate-400" id="modalMainLabel">Pekerjaan Utama (10 Job)</span>
+                        <span class="font-bold text-slate-900 dark:text-white" id="modalMainCost">$7,500</span>
+                    </div>
+
+                    <div class="flex justify-between text-sm hidden" id="modalItemInterview">
+                        <span class="text-slate-600 dark:text-slate-400" id="modalInterviewLabel">Interview Komisi (5 Orang)</span>
+                        <span class="font-bold text-slate-900 dark:text-white" id="modalInterviewCost">$500</span>
+                    </div>
+                </div>
+
+                <!-- Total Akhir -->
+                <div class="border-t-2 border-slate-900 dark:border-slate-700 pt-5 flex justify-between items-center">
+                    <span class="text-base font-extrabold text-slate-900 dark:text-white">Total Gaji Bersih</span>
+                    <span class="text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 tracking-tight" id="modalGrandTotal">$8,000</span>
+                </div>
+
+                <!-- Catatan Tambahan -->
+                <div class="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100/50 dark:border-indigo-900/30 rounded-2xl p-4 text-center">
+                    <p class="text-[11px] font-semibold text-indigo-800 dark:text-indigo-300 leading-relaxed">Terima kasih atas dedikasi dan kerja keras Anda bagi pertumbuhan perusahaan kita.</p>
+                </div>
+            </div>
+            <!-- SELESAI BAGIAN CAPTURE -->
+
+            <!-- Modal Footer (Tidak akan masuk ke capture gambar) -->
+            <div class="px-8 pb-8 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 pt-6 flex flex-col gap-2">
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="exportToImage()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-3.5 px-3 rounded-xl shadow-lg shadow-emerald-600/10 transition-all flex items-center justify-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Ekspor Gambar
+                    </button>
+                    <button onclick="window.print()" class="w-full bg-slate-800 hover:bg-slate-950 text-white text-xs font-bold py-3.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        Cetak Slip
+                    </button>
+                </div>
+                <button onclick="closeReceiptModal()" class="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold py-3 rounded-xl transition-all">
+                    Tutup Detail
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal (Replacing window.confirm/alert for sandbox safety) -->
+    <div id="confirmModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-sm w-full mx-4 p-6 border border-slate-100 dark:border-slate-850 transform scale-95 transition-all duration-300" id="confirmModalContent">
+            <div class="w-12 h-12 bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 rounded-2xl flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white" id="confirmTitle">Konfirmasi Hapus</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed" id="confirmText">Apakah Anda yakin ingin melakukan tindakan ini?</p>
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeConfirmModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold py-3 rounded-xl transition-all">
+                    Batal
+                </button>
+                <button id="confirmProceedBtn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-3 rounded-xl transition-all shadow-lg shadow-rose-600/10">
+                    Ya, Lanjutkan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Custom -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-16 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-slate-900 dark:bg-slate-850 text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center space-x-3 max-w-sm border border-slate-800 dark:border-slate-700">
+            <div class="p-1 rounded-lg bg-emerald-500/20 text-emerald-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-white leading-none">Berhasil</p>
+                <p class="text-[11px] text-slate-400 mt-1" id="toastMessage">Data telah diperbarui secara lokal.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script Logic -->
+    <script>
+        // Konfigurasi Rate Gaji Sesuai Permintaan Baru
+        const baseRates = {
+            training: 35,       // Marketing Training: $35
+            junior: 40,         // Junior: $40
+            senior_mkt: 45,     // Senior / MKT: $45
+            highstaff: 750,     // Highstaff: $750 per pekerjaan
+            hrd: 750,           // HRD: $750 dasar per pekerjaan
+            hrd_interview: 100, // HRD tambahan: $100 per interview
+            cro: 1000           // CRO: $1000 per pekerjaan
+        };
+
+        // Memuat database utama dari local storage
+        let payrollRecords = JSON.parse(localStorage.getItem('paystaff_records_v3')) || [];
+
+        // Penanganan Tema (GELAP/TERANG)
+        function initTheme() {
+            const savedTheme = localStorage.getItem('paystaff_theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('paystaff_theme', isDark ? 'dark' : 'light');
+            showToast(isDark ? 'Mode Gelap diaktifkan' : 'Mode Terang diaktifkan');
+        }
+
+        // Penanganan Perubahan Dropdown Jabatan
+        function handleRoleChange() {
+            const role = document.getElementById('staffRole').value;
+            const hrdContainer = document.getElementById('hrdInterviewContainer');
+            const jobLabel = document.getElementById('jobLabel');
+
+            if (role === 'hrd') {
+                hrdContainer.classList.remove('hidden');
+                jobLabel.textContent = "Jumlah Pekerjaan Utama";
+            } else {
+                hrdContainer.classList.add('hidden');
+                document.getElementById('interviewCount').value = 0;
+                jobLabel.textContent = "Jumlah Pekerjaan Selesai";
+            }
+            calculatePreview();
+        }
+
+        // Pengatur tombol tambah/kurang angka (+/-)
+        function adjustInput(inputId, val) {
+            const elem = document.getElementById(inputId);
+            let current = parseInt(elem.value) || 0;
+            current += val;
+            if (inputId === 'taskCount' && current < 1) current = 1; // Minimal pekerjaan = 1
+            if (inputId === 'interviewCount' && current < 0) current = 0; // Minimal interview = 0
+            elem.value = current;
+            calculatePreview();
+        }
+
+        // Penghitungan preview real-time pada formulir input
+        function calculatePreview() {
+            const role = document.getElementById('staffRole').value;
+            const tasks = parseInt(document.getElementById('taskCount').value) || 1;
+            const interviews = parseInt(document.getElementById('interviewCount').value) || 0;
+            const previewFormula = document.getElementById('previewFormula');
+            const previewTotal = document.getElementById('previewTotal');
+
+            let total = 0;
+
+            if (role === 'hrd') {
+                const baseCost = tasks * baseRates.hrd;
+                const interviewCost = interviews * baseRates.hrd_interview;
+                total = baseCost + interviewCost;
+                previewFormula.textContent = `(${tasks} Job × $${baseRates.hrd}) + (${interviews} Intv. × $${baseRates.hrd_interview})`;
+            } else {
+                const rate = baseRates[role];
+                total = tasks * rate;
+                previewFormula.textContent = `${tasks} Job × $${rate}`;
+            }
+
+            previewTotal.textContent = `$${total.toLocaleString('en-US')}`;
+        }
+
+        // Mengambil Label yang Sesuai untuk Masing-masing Role
+        function getRoleLabel(role) {
+            switch(role) {
+                case 'training': return 'Marketing Training';
+                case 'junior': return 'Junior';
+                case 'senior_mkt': return 'Senior / MKT';
+                case 'highstaff': return 'Highstaff';
+                case 'hrd': return 'HRD';
+                case 'cro': return 'CRO';
+                default: return 'Staf';
+            }
+        }
+
+        // Handler saat Form di-Submit
+        document.getElementById('payrollForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nameInput = document.getElementById('staffName');
+            const name = nameInput.value.trim();
+            const role = document.getElementById('staffRole').value;
+            const status = document.getElementById('initialStatus').value;
+            const tasks = parseInt(document.getElementById('taskCount').value) || 1;
+            const interviews = parseInt(document.getElementById('interviewCount').value) || 0;
+
+            let totalSalary = 0;
+            let calculationDetail = '';
+
+            if (role === 'hrd') {
+                const baseJobSalary = tasks * baseRates.hrd;
+                const interviewSalary = interviews * baseRates.hrd_interview;
+                totalSalary = baseJobSalary + interviewSalary;
+                calculationDetail = `${tasks} Job ($${baseRates.hrd}) + ${interviews} Intv. ($${baseRates.hrd_interview})`;
+            } else {
+                totalSalary = tasks * baseRates[role];
+                calculationDetail = `${tasks} Job × $${baseRates[role]}`;
+            }
+
+            const record = {
+                id: 'PAY-' + Date.now().toString().slice(-6),
+                name: name,
+                role: role,
+                status: status, // "Belum" atau "Sudah"
+                tasks: tasks,
+                interviews: interviews,
+                totalSalary: totalSalary,
+                detail: calculationDetail,
+                date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' })
+            };
+
+            payrollRecords.unshift(record);
+            localStorage.setItem('paystaff_records_v3', JSON.stringify(payrollRecords));
+
+            // Reset field input
+            nameInput.value = '';
+            document.getElementById('taskCount').value = 1;
+            document.getElementById('interviewCount').value = 0;
+            document.getElementById('staffRole').value = 'training';
+            document.getElementById('initialStatus').value = 'Belum';
+            handleRoleChange(); // trigger refresh state
+
+            renderPayrollList();
+            showToast(`Slip gaji untuk ${name} berhasil disimpan!`);
+        });
+
+        // Toggle Status Pembayaran Langsung dari Tabel
+        function togglePaymentStatus(id) {
+            const index = payrollRecords.findIndex(item => item.id === id);
+            if (index !== -1) {
+                const oldStatus = payrollRecords[index].status;
+                const newStatus = oldStatus === 'Sudah' ? 'Belum' : 'Sudah';
+                payrollRecords[index].status = newStatus;
+                localStorage.setItem('paystaff_records_v3', JSON.stringify(payrollRecords));
+                renderPayrollList();
+                showToast(`Status pembayaran ${payrollRecords[index].name} diubah menjadi: ${newStatus === 'Sudah' ? 'Sudah Gajian' : 'Belum Gajian'}`);
+            }
+        }
+
+        // Merender seluruh data slip gaji ke dalam tabel
+        function renderPayrollList() {
+            const tableBody = document.getElementById('payrollTableBody');
+            const emptyState = document.getElementById('emptyState');
+            const searchBar = document.getElementById('searchBar').value.toLowerCase();
+            const filterRole = document.getElementById('filterRole').value;
+            const filterStatus = document.getElementById('filterStatus').value;
+
+            const filtered = payrollRecords.filter(item => {
+                const matchName = item.name.toLowerCase().includes(searchBar);
+                const matchRole = filterRole === 'all' || item.role === filterRole;
+                const matchStatus = filterStatus === 'all' || item.status === filterStatus;
+                return matchName && matchRole && matchStatus;
+            });
+
+            tableBody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+
+                filtered.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.className = "hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-all group border-b border-slate-100 dark:border-slate-800/80";
+
+                    // Badge status untuk tabel
+                    const statusBadgeHTML = item.status === 'Sudah' 
+                        ? `<button onclick="togglePaymentStatus('${item.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/60 hover:bg-emerald-100 transition-all flex items-center gap-1 mx-auto">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Sudah Gajian
+                           </button>`
+                        : `<button onclick="togglePaymentStatus('${item.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-100 dark:border-rose-900/60 hover:bg-rose-100 transition-all flex items-center gap-1 mx-auto">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span> Belum Gajian
+                           </button>`;
+
+                    row.innerHTML = `
+                        <td class="p-4 pl-6 cursor-pointer" onclick="openReceipt('${item.id}')">
+                            <div class="font-bold text-slate-800 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">${item.name}</div>
+                            <div class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">No: ${item.id} • ${item.date}</div>
+                        </td>
+                        <td class="p-4">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${getRoleBadgeClass(item.role)}">
+                                ${getRoleLabel(item.role)}
+                            </span>
+                        </td>
+                        <td class="p-4 text-center font-bold text-slate-600 dark:text-slate-300">
+                            ${item.tasks} Job ${item.role === 'hrd' ? `<span class="block text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">+ ${item.interviews} Intv.</span>` : ''}
+                        </td>
+                        <td class="p-4 text-right text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                            ${item.detail}
+                        </td>
+                        <td class="p-4 text-right font-extrabold text-slate-900 dark:text-white text-base">
+                            $${item.totalSalary.toLocaleString('en-US')}
+                        </td>
+                        <td class="p-4 text-center">
+                            ${statusBadgeHTML}
+                        </td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center space-x-1">
+                                <button onclick="openReceipt('${item.id}')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" title="Detail / Ekspor">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </button>
+                                <button onclick="requestDeleteRecord('${item.id}')" class="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all" title="Hapus Data">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            updateStats();
+        }
+
+        // Pewarnaan Tag Badge Jabatan
+        function getRoleBadgeClass(role) {
+            switch(role) {
+                case 'training': return 'bg-cyan-50 dark:bg-cyan-950/30 text-cyan-700 dark:text-cyan-400 border border-cyan-100 dark:border-cyan-900/40';
+                case 'junior': return 'bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 border border-sky-100 dark:border-sky-900/40';
+                case 'senior_mkt': return 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900/40';
+                case 'highstaff': return 'bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/40';
+                case 'hrd': return 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40';
+                case 'cro': return 'bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 border border-rose-100 dark:border-rose-900/40';
+                default: return 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-800';
+            }
+        }
+
+        // Memperbarui Nilai Metrik Statistik di Bagian Atas Dashboard
+        function updateStats() {
+            let totalPayroll = 0;
+            let paidTotal = 0;
+            let unpaidTotal = 0;
+
+            payrollRecords.forEach(item => {
+                totalPayroll += item.totalSalary;
+                if (item.status === 'Sudah') {
+                    paidTotal += item.totalSalary;
+                } else {
+                    unpaidTotal += item.totalSalary;
+                }
+            });
+
+            const totalStaff = payrollRecords.length;
+
+            document.getElementById('statTotalPayroll').textContent = `$${totalPayroll.toLocaleString('en-US')}`;
+            document.getElementById('statPaid').textContent = `$${paidTotal.toLocaleString('en-US')}`;
+            document.getElementById('statUnpaid').textContent = `$${unpaidTotal.toLocaleString('en-US')}`;
+            document.getElementById('statTotalStaff').textContent = `${totalStaff} Orang`;
+        }
+
+        // Safe Custom Confirmation Dialogs
+        let currentConfirmAction = null;
+
+        function openConfirmModal(title, text, action) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmText').textContent = text;
+            currentConfirmAction = action;
+
+            const modal = document.getElementById('confirmModal');
+            const content = document.getElementById('confirmModalContent');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirmModal');
+            const content = document.getElementById('confirmModalContent');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            currentConfirmAction = null;
+        }
+
+        // Bind Confirm Proceed Button
+        document.getElementById('confirmProceedBtn').addEventListener('click', () => {
+            if (currentConfirmAction) {
+                currentConfirmAction();
+            }
+            closeConfirmModal();
+        });
+
+        // Request Hapus Rekor Gaji Tertentu
+        function requestDeleteRecord(id) {
+            const item = payrollRecords.find(item => item.id === id);
+            if (!item) return;
+
+            openConfirmModal(
+                "Konfirmasi Hapus", 
+                `Apakah Anda yakin ingin menghapus data slip gaji untuk ${item.name}? Data yang terhapus tidak dapat dipulihkan kembali.`,
+                () => {
+                    const index = payrollRecords.findIndex(r => r.id === id);
+                    if (index !== -1) {
+                        payrollRecords.splice(index, 1);
+                        localStorage.setItem('paystaff_records_v3', JSON.stringify(payrollRecords));
+                        renderPayrollList();
+                        showToast(`Data slip gaji ${item.name} berhasil dihapus.`);
+                    }
+                }
+            );
+        }
+
+        // Reset Total Database dengan Konfirmasi Aman Custom
+        function requestResetData() {
+            openConfirmModal(
+                "Kosongkan Database",
+                "Apakah Anda yakin ingin menghapus seluruh data penggajian dari sistem? Tindakan ini bersifat permanen.",
+                () => {
+                    payrollRecords = [];
+                    localStorage.removeItem('paystaff_records_v3');
+                    renderPayrollList();
+                    showToast("Basis data berhasil dikosongkan.");
+                }
+            );
+        }
+
+        // Membuka Dialog Detail Kuitansi Slip Gaji (Receipt Modal)
+        function openReceipt(id) {
+            const item = payrollRecords.find(x => x.id === id);
+            if (!item) return;
+
+            document.getElementById('modalStaffName').textContent = item.name;
+            document.getElementById('modalRecordId').textContent = `No. Seri: ${item.id}`;
+            document.getElementById('modalRole').textContent = getRoleLabel(item.role);
+            document.getElementById('modalDate').textContent = item.date;
+
+            // Atur Badge Status di Modal
+            const modalStatus = document.getElementById('modalStatusBadge');
+            if (item.status === 'Sudah') {
+                modalStatus.textContent = 'Sudah Gajian';
+                modalStatus.className = 'inline-block text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/60';
+            } else {
+                modalStatus.textContent = 'Belum Gajian';
+                modalStatus.className = 'inline-block text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-rose-50 text-rose-600 border border-rose-100 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/60';
+            }
+
+            const modalItemMain = document.getElementById('modalItemMain');
+            const modalMainLabel = document.getElementById('modalMainLabel');
+            const modalMainCost = document.getElementById('modalMainCost');
+
+            const modalItemInterview = document.getElementById('modalItemInterview');
+            const modalInterviewLabel = document.getElementById('modalInterviewLabel');
+            const modalInterviewCost = document.getElementById('modalInterviewCost');
+
+            if (item.role === 'hrd') {
+                modalMainLabel.textContent = `Pekerjaan Utama HRD (${item.tasks} Job)`;
+                modalMainCost.textContent = `$${(item.tasks * baseRates.hrd).toLocaleString('en-US')}`;
+
+                modalItemInterview.classList.remove('hidden');
+                modalInterviewLabel.textContent = `Komisi Interview (${item.interviews} Orang)`;
+                modalInterviewCost.textContent = `$${(item.interviews * baseRates.hrd_interview).toLocaleString('en-US')}`;
+            } else {
+                modalMainLabel.textContent = `Pekerjaan Selesai (${item.tasks} Job)`;
+                modalMainCost.textContent = `$${item.totalSalary.toLocaleString('en-US')}`;
+                modalItemInterview.classList.add('hidden');
+            }
+
+            document.getElementById('modalGrandTotal').textContent = `$${item.totalSalary.toLocaleString('en-US')}`;
+
+            // Simpan ID aktif untuk referensi ekspor gambar
+            currentActiveReceiptId = item.id;
+            currentActiveReceiptName = item.name;
+
+            // Animasi transisi membuka modal
+            const modal = document.getElementById('receiptModal');
+            const content = document.getElementById('receiptModalContent');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        let currentActiveReceiptId = '';
+        let currentActiveReceiptName = '';
+
+        // Ekspor Area Slip Gaji ke Gambar PNG (html2canvas)
+        function exportToImage() {
+            const captureArea = document.getElementById('receiptToCapture');
+            
+            showToast("Memproses gambar...");
+
+            // Deteksi jika tema saat ini gelap, kita paksa style ekspor agar tetap bersih / kontras optimal
+            const isDarkModeActive = document.documentElement.classList.contains('dark');
+
+            html2canvas(captureArea, {
+                scale: 2.5, // Resolusi ultra tinggi agar teks di foto sangat tajam
+                backgroundColor: isDarkModeActive ? "#1e293b" : "#ffffff", // Menyesuaikan latar belakang ekspor dengan tema aktif
+                useCORS: true
+            }).then(canvas => {
+                const image = canvas.toDataURL("image/png");
+                const downloadLink = document.createElement("a");
+                const fileName = `Slip_Gaji_${currentActiveReceiptName.replace(/\s+/g, '_')}_${currentActiveReceiptId}.png`;
+                
+                downloadLink.href = image;
+                downloadLink.download = fileName;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                
+                showToast("Gambar slip gaji diunduh!");
+            }).catch(err => {
+                console.error("Gagal mengekspor gambar:", err);
+                showToast("Ada kendala ekspor gambar");
+            });
+        }
+
+        // Menutup Dialog Slip Gaji
+        function closeReceiptModal() {
+            const modal = document.getElementById('receiptModal');
+            const content = document.getElementById('receiptModalContent');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+        }
+
+        // Sistem Ekspor Data Ke Format CSV
+        function exportCSV() {
+            if (payrollRecords.length === 0) {
+                showToast("Database kosong!");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "ID,Nama Staf,Jabatan,Pekerjaan (Job),Interview (HRD),Total Gaji Bersih,Status Pembayaran,Tanggal Input\n";
+
+            payrollRecords.forEach(item => {
+                const row = [
+                    item.id,
+                    `"${item.name.replace(/"/g, '""')}"`,
+                    getRoleLabel(item.role),
+                    item.tasks,
+                    item.interviews,
+                    item.totalSalary,
+                    item.status === 'Sudah' ? 'Sudah Gajian' : 'Belum Gajian',
+                    item.date
+                ].join(",");
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const downloadLink = document.createElement("a");
+            downloadLink.setAttribute("href", encodedUri);
+            downloadLink.setAttribute("download", `Laporan_Gaji_PayStaff_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(downloadLink);
+
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            showToast("Laporan slip gaji berhasil diekspor ke format CSV.");
+        }
+
+        // Animasi Tampilan Toast Pemberitahuan
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+
+            toast.classList.remove('opacity-0', 'translate-y-16', 'pointer-events-none');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-16', 'pointer-events-none');
+            }, 3000);
+        }
+
+        // Inisialisasi visual saat pertama kali dimuat
+        window.onload = function() {
+            initTheme();
+            handleRoleChange();
+            renderPayrollList();
+        }
+    </script>
+</body>
+</html>
