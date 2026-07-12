@@ -1,875 +1,642 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PayStaff Cloud Payroll & Division Dashboard</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- html2canvas untuk Fitur Unduh Foto -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap');
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayStaff Cloud Payroll</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome untuk Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
-  <div class="max-w-7xl mx-auto px-4 py-8">
-    
-    <!-- HEADER UTAMA -->
-    <header class="flex flex-col lg:flex-row lg:items-center lg:justify-between pb-6 mb-8 border-b border-slate-200 gap-4">
-      <div>
-        <div class="flex items-center gap-3">
-          <div class="bg-indigo-600 text-white p-2 rounded-xl">
-            <i data-lucide="cloud-lightning" class="w-6 h-6"></i>
-          </div>
-          <h1 class="text-2xl font-bold tracking-tight text-slate-900">PayStaff Cloud Payroll</h1>
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-100 py-4 px-6 sticky top-0 z-10 shadow-sm">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-indigo-600 animate-pulse"></div>
+                    <h1 class="text-xl font-bold text-slate-900">PayStaff Cloud Payroll</h1>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">Multi-user Realtime Database System</p>
+            </div>
+            
+            <!-- Database Connection Status Badge -->
+            <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-medium">
+                <span class="text-slate-500">Database ID:</span>
+                <span id="db-status-badge" class="flex items-center gap-1 text-amber-600 font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                    Menghubungkan...
+                </span>
+            </div>
         </div>
-        <p class="text-slate-500 mt-1">Multi-user Realtime Database</p>
-      </div>
-      
-      <!-- User ID & Status Cloud -->
-      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-white p-3 rounded-2xl border border-slate-200">
-        <div class="flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span class="text-xs font-semibold text-slate-500">Database ID:</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <code id="user-id-display" class="text-xs font-mono bg-slate-100 px-2 py-1 rounded text-slate-700 break-all select-all">Menghubungkan...</code>
-          <button onclick="copyDatabaseID()" class="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-600" title="Salin ID Database">
-            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-          </button>
-        </div>
-      </div>
     </header>
 
-    <!-- RINGKASAN DATA (STATS CARDS) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <!-- Total Staf -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-slate-500">Total Anggota Staf</p>
-          <h3 id="stat-total-staff" class="text-2xl font-bold text-slate-900 mt-1">0</h3>
-        </div>
-        <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
-          <i data-lucide="users" class="w-6 h-6"></i>
-        </div>
-      </div>
-      <!-- Total Gaji Keseluruhan -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-slate-500">Total Pengeluaran Gaji</p>
-          <h3 id="stat-total-salary" class="text-2xl font-bold text-emerald-600 mt-1">$0</h3>
-        </div>
-        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
-          <i data-lucide="dollar-sign" class="w-6 h-6"></i>
-        </div>
-      </div>
-      <!-- Rata-Rata Gaji -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-slate-500">Rata-rata Gaji Staf</p>
-          <h3 id="stat-avg-salary" class="text-2xl font-bold text-slate-900 mt-1">$0</h3>
-        </div>
-        <div class="p-3 bg-sky-50 text-sky-600 rounded-xl">
-          <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
-        </div>
-      </div>
-      <!-- Mayoritas Divisi -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-slate-500">Divisi Terbanyak</p>
-          <h3 id="stat-top-division" class="text-2xl font-bold text-indigo-600 mt-1">-</h3>
-        </div>
-        <div class="p-3 bg-violet-50 text-violet-600 rounded-xl">
-          <i data-lucide="network" class="w-6 h-6"></i>
-        </div>
-      </div>
-    </div>
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
 
-    <!-- UTILITY CONTROL (PENCARIAN, FILTER & AKSI) -->
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-6 flex flex-col xl:flex-row gap-4 items-center justify-between">
-      
-      <!-- Pencarian -->
-      <div class="relative w-full xl:w-80">
-        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-          <i data-lucide="search" class="w-4 h-4"></i>
-        </span>
-        <input type="text" id="search-input" onkeyup="filterData()" placeholder="Cari nama atau jabatan spesifik..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-      </div>
-      
-      <!-- Tab Filter Divisi -->
-      <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100 rounded-xl w-full xl:w-auto">
-        <button onclick="selectDivisionTab('Semua')" id="tab-Semua" class="division-tab px-3 py-1.5 text-xs font-semibold rounded-lg bg-white text-slate-800 shadow-sm transition-all">Semua</button>
-        <button onclick="selectDivisionTab('Highstaff')" id="tab-Highstaff" class="division-tab px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/50 transition-all">Highstaff</button>
-        <button onclick="selectDivisionTab('HRD')" id="tab-HRD" class="division-tab px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/50 transition-all">HRD</button>
-        <button onclick="selectDivisionTab('Marketing')" id="tab-Marketing" class="division-tab px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/50 transition-all">Marketing (MKT)</button>
-        <button onclick="selectDivisionTab('CRO')" id="tab-CRO" class="division-tab px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/50 transition-all">CRO</button>
-        <button onclick="selectDivisionTab('Lainnya')" id="tab-Lainnya" class="division-tab px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/50 transition-all">Lainnya</button>
-      </div>
-
-      <!-- Tombol Aksi Kerja -->
-      <div class="flex flex-wrap gap-2 w-full xl:w-auto justify-end">
-        <button onclick="openModal()" class="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-xl font-medium shadow-sm transition-all text-xs">
-          <i data-lucide="plus" class="w-4 h-4"></i> Tambah Staf
-        </button>
-        <button onclick="exportToExcel()" class="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl font-medium shadow-sm transition-all text-xs" title="Ekspor file Excel">
-          <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel
-        </button>
-        <button onclick="downloadAsImage()" class="flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white px-3.5 py-2 rounded-xl font-medium shadow-sm transition-all text-xs" title="Unduh gambar PNG">
-          <i data-lucide="image" class="w-4 h-4"></i> Unduh Foto
-        </button>
-      </div>
-    </div>
-
-    <!-- AREA EMPTY STATE / LOADING & TABEL -->
-    <div id="capture-area" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden p-6 relative">
-      
-      <!-- HEADER LAPORAN KHUSUS -->
-      <div class="mb-6 flex justify-between items-start border-b border-slate-150 pb-6">
-        <div>
-          <span class="text-xs font-semibold text-indigo-600 uppercase tracking-widest">Laporan Gaji Divisi Resmi</span>
-          <h2 class="text-xl font-bold text-slate-900 mt-1">Laporan Penggajian PayStaff</h2>
-          <p class="text-xs text-slate-400 mt-1">Dicetak otomatis pada: <span id="current-timestamp">-</span></p>
-        </div>
-        <div class="text-right">
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700">
-            <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>
-            Terhubung Realtime
-          </span>
-        </div>
-      </div>
-
-      <!-- KONDISI LOADING DATA -->
-      <div id="loading-state" class="py-12 flex flex-col items-center justify-center gap-3">
-        <div class="animate-spin text-indigo-600">
-          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-        </div>
-        <p class="text-sm text-slate-500 font-medium">Menyinkronkan dengan database cloud privat Anda...</p>
-      </div>
-
-      <!-- KONDISI DATA KOSONG (EMPTY STATE) -->
-      <div id="empty-state" class="hidden py-16 flex flex-col items-center justify-center text-center">
-        <div class="bg-indigo-50 text-indigo-600 p-4 rounded-full mb-4">
-          <i data-lucide="database" class="w-8 h-8"></i>
-        </div>
-        <h4 class="text-base font-bold text-slate-900">Database Anda Masih Kosong</h4>
-        <p class="text-slate-500 text-sm max-w-sm mt-1 mb-6">Mulai tambahkan staf baru dengan mengklik tombol di bawah ini atau gunakan data simulasi contoh.</p>
-        <div class="flex gap-3">
-          <button onclick="openModal()" class="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-xl hover:bg-indigo-700 transition-all shadow-sm">
-            Tambah Staf Pertama
-          </button>
-          <button onclick="loadDemoData()" class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-200 transition-all">
-            Muat Data Contoh/Demo
-          </button>
-        </div>
-      </div>
-
-      <!-- TABEL UTAMA -->
-      <div id="table-container" class="hidden overflow-x-auto">
-        <table class="w-full text-left border-collapse min-w-[800px]">
-          <thead>
-            <tr class="border-b border-slate-200 bg-slate-50/70">
-              <th class="py-4 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Nama Lengkap</th>
-              <th class="py-4 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Divisi</th>
-              <th class="py-4 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Jabatan Detail</th>
-              <th class="py-4 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Pekerjaan (Job)</th>
-              <th class="py-4 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Interview (HRD)</th>
-              <th class="py-4 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Gaji Bersih</th>
-              <th class="py-4 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Tanggal Input</th>
-              <th class="py-4 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center actions-column">Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="payroll-tbody" class="divide-y divide-slate-100 text-sm">
-            <!-- Diisi secara dinamis melalui JavaScript -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- FOOTER LAPORAN KHUSUS -->
-      <div class="mt-8 pt-6 border-t border-slate-150 flex justify-between items-center text-xs text-slate-400">
-        <div>Semua data transaksi divisi payroll bersifat rahasia, terenkripsi, dan aman.</div>
-        <div class="font-semibold text-slate-600">PayStaff Cloud &copy; 2026</div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- NOTIFIKASI TOAST CUSTOM -->
-  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
-
-  <!-- MODAL FORM INPUT DATA -->
-  <div id="staff-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full shadow-xl overflow-hidden transform transition-all border border-slate-100">
-      <div class="p-6 border-b border-slate-150 flex justify-between items-center">
-        <h3 id="modal-title" class="text-lg font-bold text-slate-900">Tambah Data Staf</h3>
-        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-      <form id="staff-form" onsubmit="saveStaff(event)">
-        <input type="hidden" id="form-id">
-        <div class="p-6 space-y-4">
-          <!-- Nama Staf -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Nama Lengkap</label>
-            <input type="text" id="form-nama" required placeholder="Masukkan nama lengkap staf" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          </div>
-          <!-- Divisi Utama -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Divisi Utama</label>
-            <select id="form-divisi" onchange="onDivisiChange()" required class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option value="Highstaff">Highstaff</option>
-              <option value="HRD">HRD</option>
-              <option value="Marketing">Marketing (MKT)</option>
-              <option value="CRO">CRO</option>
-              <option value="Lainnya">Lainnya</option>
-            </select>
-          </div>
-          <!-- Jabatan Detail (Dropdown Dinamis) -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Jabatan Spesifik (Detail)</label>
-            <select id="form-jabatan" onchange="onJabatanChange()" required class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <!-- Diisi dinamis -->
-            </select>
-          </div>
-          
-          <!-- Konfigurasi Tarif per Tugas -->
-          <div class="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100/60 space-y-3">
-            <span class="block text-[10px] font-bold text-indigo-700 uppercase tracking-wider">Konfigurasi Tarif Gaji ($)</span>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Tarif per Job</label>
-                <input type="number" id="form-rate-job" oninput="calculateGaji()" required min="0" class="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500">
-              </div>
-              <div>
-                <label class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Tarif per Interview</label>
-                <input type="number" id="form-rate-interview" oninput="calculateGaji()" required min="0" class="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500">
-              </div>
+        <!-- Banner Peringatan jika Firebase Config Hilang -->
+        <div id="firebase-warning-banner" class="hidden bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl">
+            <div class="flex items-start gap-3">
+                <div class="text-amber-500 mt-0.5"><i class="fa-solid fa-triangle-exclamation text-lg"></i></div>
+                <div>
+                    <h3 class="text-sm font-semibold text-amber-800">Mode Demo Aktif (In-Memory Database)</h3>
+                    <p class="text-xs text-amber-700 mt-1">
+                        Variabel <code class="bg-amber-100 px-1 rounded font-mono text-amber-900">__firebase_config</code> tidak terdeteksi. Aplikasi beralih otomatis ke database lokal di memori browser agar Anda tetap dapat menambahkan, memfilter, dan mengunduh data staf secara lancar.
+                    </p>
+                </div>
             </div>
-          </div>
-
-          <!-- Kuantitas Kerja (Pekerjaan & Interview) -->
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Kuantitas Kerja (Job)</label>
-              <input type="number" id="form-job" oninput="calculateGaji()" required min="0" placeholder="0" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Interview (HRD)</label>
-              <input type="number" id="form-interview" oninput="calculateGaji()" required min="0" placeholder="0" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            </div>
-          </div>
-
-          <!-- Total Gaji Bersih (Auto-Calculate & Readonly) -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1 flex justify-between">
-              <span>Total Gaji Bersih ($)</span>
-              <span class="text-indigo-600 font-bold flex items-center gap-1">
-                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Auto-Hitung
-              </span>
-            </label>
-            <div class="relative">
-              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 font-semibold">$</span>
-              <input type="number" id="form-gaji" readonly class="w-full pl-8 pr-3 py-2.5 bg-indigo-50/50 border border-indigo-100 text-indigo-700 font-bold rounded-xl text-sm cursor-not-allowed focus:outline-none">
-            </div>
-            <!-- Pratinjau Rumus Matematika -->
-            <p id="formula-preview" class="text-[11px] text-slate-400 mt-1.5 italic font-medium"></p>
-          </div>
-
-          <!-- Tanggal Input -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Tanggal Input</label>
-            <input type="text" id="form-tanggal" required placeholder="DD/MM/YYYY" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          </div>
         </div>
-        <div class="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-          <button type="button" onclick="closeModal()" class="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:bg-slate-100 text-sm font-medium transition-all">Batal</button>
-          <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-medium shadow-sm transition-all">Simpan</button>
+
+        <!-- 4 Stat Cards Grid -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Total Anggota Staf -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Anggota Staf</p>
+                    <h3 id="stat-total-staf" class="text-3xl font-bold text-slate-800 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <i class="fa-solid fa-users text-lg"></i>
+                </div>
+            </div>
+
+            <!-- Total Pengeluaran Gaji -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Pengeluaran Gaji</p>
+                    <h3 id="stat-total-gaji" class="text-3xl font-bold text-emerald-600 mt-1">$0</h3>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+                    <i class="fa-solid fa-wallet text-lg"></i>
+                </div>
+            </div>
+
+            <!-- Rata-rata Gaji Staf -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Rata-rata Gaji Staf</p>
+                    <h3 id="stat-rata-gaji" class="text-3xl font-bold text-slate-800 mt-1">$0</h3>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-sky-50 flex items-center justify-center text-sky-600">
+                    <i class="fa-solid fa-calculator text-lg"></i>
+                </div>
+            </div>
+
+            <!-- Divisi Terbanyak -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Divisi Terbanyak</p>
+                    <h3 id="stat-divisi-terbanyak" class="text-2xl font-bold text-slate-800 mt-1.5">-</h3>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+                    <i class="fa-solid fa-sitemap text-lg"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controls Bar (Cari, Filter, Tambah, Excel, Upload) -->
+        <section class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+            <div class="flex flex-col lg:flex-row justify-between gap-4">
+                <!-- Search Input -->
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="search-input" placeholder="Cari nama atau jabatan spesifik..." 
+                        class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button id="btn-tambah-staf" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 shadow-sm transition-all">
+                        <i class="fa-solid fa-user-plus text-xs"></i> Tambah Staf
+                    </button>
+                    <button id="btn-export-excel" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 shadow-sm transition-all">
+                        <i class="fa-solid fa-file-excel text-xs"></i> Excel
+                    </button>
+                    <button id="btn-unduh-foto" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 shadow-sm transition-all">
+                        <i class="fa-solid fa-image text-xs"></i> Unduh Foto
+                    </button>
+                </div>
+            </div>
+
+            <!-- Division Quick Filter -->
+            <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-100" id="filter-container">
+                <button data-filter="Semua" class="filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 transition-all">Semua</button>
+                <button data-filter="Highstaff" class="filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">Highstaff</button>
+                <button data-filter="HRD" class="filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">HRD</button>
+                <button data-filter="Marketing Training" class="filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">Marketing (MKT)</button>
+                <button data-filter="Senior / MKT" class="filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">Senior / MKT</button>
+                <button data-filter="Lainnya" class="filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">Lainnya</button>
+            </div>
+        </section>
+
+        <!-- Main Content Table/Loading State Area -->
+        <section class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden min-h-[300px] flex flex-col">
+            <!-- Header Table Area -->
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-900 tracking-wide uppercase">Laporan Penggajian PayStaff</h2>
+                    <p class="text-xs text-slate-400 mt-0.5" id="date-generation-label">Dicetak otomatis pada: -</p>
+                </div>
+                <div class="flex items-center gap-1.5 text-xs text-emerald-600 font-medium bg-emerald-50 px-2.5 py-1 rounded-full">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="connection-indicator">Terhubung Realtime</span>
+                </div>
+            </div>
+
+            <!-- Loading Spinner State overlay -->
+            <div id="loading-overlay" class="flex-1 flex flex-col items-center justify-center p-12 space-y-4">
+                <div class="relative w-12 h-12">
+                    <div class="w-12 h-12 rounded-full border-4 border-slate-100 border-t-indigo-600 animate-spin"></div>
+                </div>
+                <p id="loading-text" class="text-sm font-medium text-slate-500 text-center max-w-sm">
+                    Menyinkronkan dengan database cloud privat Anda...
+                </p>
+            </div>
+
+            <!-- Table View (Hidden on load) -->
+            <div id="table-container" class="hidden overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-400 bg-slate-50/30">
+                            <th class="py-4 px-6">ID Staf</th>
+                            <th class="py-4 px-6">Nama Staf</th>
+                            <th class="py-4 px-6">Jabatan</th>
+                            <th class="py-4 px-6 text-center">Pekerjaan (Job)</th>
+                            <th class="py-4 px-6 text-center">Interview (HRD)</th>
+                            <th class="py-4 px-6 text-right">Total Gaji Bersih</th>
+                            <th class="py-4 px-6 text-center">Status Pembayaran</th>
+                            <th class="py-4 px-6">Tanggal Input</th>
+                        </tr>
+                    </thead>
+                    <tbody id="staff-table-body" class="divide-y divide-slate-100 text-sm text-slate-600">
+                        <!-- Data rows injected dynamically -->
+                    </tbody>
+                </table>
+                
+                <!-- Empty State -->
+                <div id="empty-state" class="hidden py-16 text-center">
+                    <div class="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mx-auto text-slate-400 mb-3">
+                        <i class="fa-solid fa-folder-open text-2xl"></i>
+                    </div>
+                    <h4 class="font-semibold text-slate-700">Tidak Ada Data Ditemukan</h4>
+                    <p class="text-xs text-slate-400 mt-1">Gunakan tombol "Tambah Staf" untuk mengisi catatan data baru.</p>
+                </div>
+            </div>
+
+            <!-- Footer Notes -->
+            <footer class="p-4 border-t border-slate-100 flex justify-between items-center text-xs text-slate-400 bg-slate-50/20">
+                <span>Semua data transaksi divisi payroll bersifat rahasia, terenkripsi, dan aman.</span>
+                <span class="font-semibold text-slate-500">PayStaff Cloud © 2026</span>
+            </footer>
+        </section>
+
+    </main>
+
+    <!-- Modal Form: Tambah Data Staf Baru -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div id="modal-container" class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden translate-y-8 transition-all duration-300">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="text-base font-bold text-slate-900">Tambah Data Staf Baru</h3>
+                <button id="btn-close-modal" class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body Form -->
+            <form id="staff-form" class="p-6 space-y-4 text-xs font-semibold text-slate-600">
+                <!-- ID Staf -->
+                <div>
+                    <label class="block text-slate-500 uppercase tracking-wider mb-1.5">ID Staf</label>
+                    <input type="text" name="id" placeholder="Contoh: PAY-123456" required
+                        class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                </div>
+
+                <!-- Nama Staf -->
+                <div>
+                    <label class="block text-slate-500 uppercase tracking-wider mb-1.5">Nama Staf</label>
+                    <input type="text" name="nama" placeholder="Stefan Richard" required
+                        class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                </div>
+
+                <!-- Jabatan -->
+                <div>
+                    <label class="block text-slate-500 uppercase tracking-wider mb-1.5">Jabatan</label>
+                    <input type="text" name="jabatan" placeholder="Director" required
+                        class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                </div>
+
+                <!-- Pekerjaan (Job) & Interview (HRD) -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-slate-500 uppercase tracking-wider mb-1.5">Pekerjaan (Job)</label>
+                        <input type="number" name="pekerjaan" value="0" min="0" required
+                            class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-center">
+                    </div>
+                    <div>
+                        <label class="block text-slate-500 uppercase tracking-wider mb-1.5">Interview (HRD)</label>
+                        <input type="number" name="interview" value="0" min="0" required
+                            class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-center">
+                    </div>
+                </div>
+
+                <!-- Total Gaji Bersih -->
+                <div>
+                    <label class="block text-slate-500 uppercase tracking-wider mb-1.5">Total Gaji Bersih ($)</label>
+                    <input type="number" name="gaji" placeholder="Contoh: 1500" required min="0"
+                        class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                </div>
+
+                <!-- Status Pembayaran -->
+                <div>
+                    <label class="block text-slate-500 uppercase tracking-wider mb-1.5">Status Pembayaran</label>
+                    <select name="status" required
+                        class="w-full px-3 py-2.5 border border-slate-200 bg-white rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                        <option value="Belum Gajian">Belum Gajian</option>
+                        <option value="Lunas">Lunas</option>
+                    </select>
+                </div>
+
+                <!-- Tanggal Input -->
+                <div>
+                    <label class="block text-slate-500 uppercase tracking-wider mb-1.5">Tanggal Input</label>
+                    <input type="text" name="tanggal" id="input-tanggal-sekarang" placeholder="DD/MM/YYYY" required
+                        class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                </div>
+
+                <!-- Modal Actions -->
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                    <button type="button" id="btn-cancel-modal" class="px-5 py-2.5 rounded-xl text-sm font-semibold border border-slate-200 text-slate-500 hover:bg-slate-50 transition-all">
+                        Batal
+                    </button>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-md transition-all">
+                        Simpan
+                    </button>
+                </div>
+            </form>
         </div>
-      </form>
     </div>
-  </div>
 
-  <!-- MODAL KONFIRMASI HAPUS CUSTOM (PENGGANTI WINDOW.CONFIRM) -->
-  <div id="delete-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full shadow-xl p-6 border border-slate-100 text-center">
-      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-rose-100 text-rose-600 mb-4 animate-bounce">
-        <i data-lucide="alert-triangle" class="h-6 w-6"></i>
-      </div>
-      <h3 class="text-lg font-bold text-slate-900 mb-1">Hapus Data Staf?</h3>
-      <p class="text-sm text-slate-500 mb-6">Tindakan ini tidak bisa dibatalkan. Data staf <strong id="delete-target-name"></strong> akan dihapus permanen dari cloud database Anda.</p>
-      <div class="flex justify-center gap-3">
-        <button onclick="closeDeleteModal()" class="px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-all">Batal</button>
-        <button id="confirm-delete-btn" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-semibold transition-all">Ya, Hapus Data</button>
-      </div>
-    </div>
-  </div>
+    <!-- Firebase Scripts (Safe loading & initialization) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, query, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-  <!-- FIREBASE INTEGRATION SCRIPTS (ES MODULES) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Global State & Data fallback untuk CSV awal yang ada di screenshot Excel
+        let useFallbackMode = false;
+        let db = null;
+        let auth = null;
+        let staffData = [
+            { id: "PAY-201266", nama: "Jovi Maxmilliano", jabatan: "Highstaff", pekerjaan: 2, interview: 0, gaji: 1500, status: "Belum Gajian", tanggal: "12/07/2026" },
+            { id: "PAY-160065", nama: "Dacquan Kervante", jabatan: "HRD", pekerjaan: 1, interview: 0, gaji: 750, status: "Belum Gajian", tanggal: "12/07/2026" },
+            { id: "PAY-138845", nama: "Rudolf Kennedy", jabatan: "HRD", pekerjaan: 1, interview: 0, gaji: 750, status: "Belum Gajian", tanggal: "12/07/2026" },
+            { id: "PAY-121341", nama: "Kevart Elmont", jabatan: "Marketing Training", pekerjaan: 13, interview: 0, gaji: 455, status: "Belum Gajian", tanggal: "12/07/2026" },
+            { id: "PAY-099921", nama: "Brady Brooks", jabatan: "Marketing Training", pekerjaan: 2, interview: 0, gaji: 70, status: "Belum Gajian", tanggal: "12/07/2026" },
+            { id: "PAY-084179", nama: "Malware Lawrance", jabatan: "Senior / MKT", pekerjaan: 5, interview: 0, gaji: 225, status: "Belum Gajian", tanggal: "12/07/2026" },
+            { id: "PAY-067117", nama: "Kozuke Hikozaemon", jabatan: "Marketing Training", pekerjaan: 3, interview: 0, gaji: 105, status: "Belum Gajian", tanggal: "12/07/2026" },
+            { id: "PAY-036521", nama: "Albert Leonardo", jabatan: "Senior / MKT", pekerjaan: 15, interview: 0, gaji: 675, status: "Belum Gajian", tanggal: "12/07/2026" },
+            { id: "PAY-019355", nama: "Jalen Carter", jabatan: "Marketing Training", pekerjaan: 15, interview: 0, gaji: 525, status: "Belum Gajian", tanggal: "12/07/2026" }
+        ];
 
-    // Inisialisasi Firebase & App State Global
-    const firebaseConfig = JSON.parse(__firebase_config);
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'paystaff-dashboard';
+        let activeFilter = "Semua";
+        let searchQuery = "";
 
-    let currentUser = null;
-    let payrollData = []; // Data yang ditarik dari Firestore
-    let activeTab = "Semua";
-    let deleteTargetId = null;
+        // Verifikasi keberadaan Config Firebase secara aman
+        let firebaseConfig = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'paystaff-payroll';
 
-    // Kumpulan Pilihan Jabatan dan Default Tarif berdasarkan Divisi Utama (Termasuk Marketing Junior)
-    const divisionPresets = {
-      "Highstaff": [
-        { jabatan: "Highstaff", rateJob: 750, rateInterview: 0 }
-      ],
-      "HRD": [
-        { jabatan: "HRD", rateJob: 750, rateInterview: 0 }
-      ],
-      "Marketing": [
-        { jabatan: "Marketing Training", rateJob: 35, rateInterview: 0 },
-        { jabatan: "Marketing Junior", rateJob: 40, rateInterview: 0 },
-        { jabatan: "Senior / MKT", rateJob: 45, rateInterview: 0 }
-      ],
-      "CRO": [
-        { jabatan: "CRO Specialist", rateJob: 80, rateInterview: 20 },
-        { jabatan: "CRO Junior", rateJob: 100, rateInterview: 50 }
-      ],
-      "Lainnya": [
-        { jabatan: "Custom Role", rateJob: 50, rateInterview: 20 }
-      ]
-    };
-
-    // INISIASI AUTHENTICATION & SETUP EVENT LISTENER SINKRONISASI CLOUD
-    async function initAuth() {
-      try {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
+        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+            try {
+                firebaseConfig = JSON.parse(__firebase_config);
+            } catch (e) {
+                console.error("Gagal mengurai __firebase_config:", e);
+                useFallbackMode = true;
+            }
         } else {
-          await signInAnonymously(auth);
+            console.warn("__firebase_config tidak didefinisikan. Beralih otomatis ke Demo Mode.");
+            useFallbackMode = true;
         }
-      } catch (error) {
-        showToast("Gagal melakukan autentikasi sistem: " + error.message, "error");
-      }
-    }
 
-    // Melacak perubahan status login
-    onAuthStateChanged(auth, (user) => {
-      currentUser = user;
-      if (user) {
-        document.getElementById("user-id-display").innerText = user.uid;
-        
-        // Memulai pendengaran real-time di Firestore untuk data staf user yang aktif
-        setupRealtimeSync(user.uid);
-      } else {
-        document.getElementById("user-id-display").innerText = "Tidak Terhubung";
-      }
-    });
+        // Set otomatis tanggal tercetak pada footer tabel
+        const now = new Date();
+        document.getElementById('date-generation-label').innerText = `Dicetak otomatis pada: ${now.toLocaleDateString('id-ID')} pukul ${now.toLocaleTimeString('id-ID')}`;
+        document.getElementById('input-tanggal-sekarang').value = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
 
-    // SETUP REALTIME SYNC UNTUK PENGGUNA TERHUBUNG (RULE 1 & RULE 2)
-    function setupRealtimeSync(userId) {
-      const colPath = collection(db, 'artifacts', appId, 'users', userId, 'staff');
-      
-      // Listener Firestore dengan callback Error Handling wajib
-      onSnapshot(colPath, (snapshot) => {
-        payrollData = [];
-        snapshot.forEach((doc) => {
-          payrollData.push({
-            id: doc.id,
-            ...doc.data()
-          });
+        // Jalankan Inisialisasi Database
+        window.addEventListener('load', async () => {
+            if (useFallbackMode || !firebaseConfig) {
+                activateDemoMode();
+            } else {
+                try {
+                    // Inisialisasi Firebase Asli
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+
+                    // Autentikasi terlebih dahulu sebelum query (Sesuai Aturan 3)
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+
+                    setupRealtimeDatabase();
+                } catch (err) {
+                    console.error("Gagal menghubungkan ke Firebase Cloud:", err);
+                    activateDemoMode();
+                }
+            }
+            setupEventListeners();
         });
 
-        // Urutkan data secara alfabet berdasarkan nama di memori frontend (Rule 2)
-        payrollData.sort((a, b) => a.nama.localeCompare(b.nama));
+        // Demo Mode (In-Memory Fallback)
+        function activateDemoMode() {
+            useFallbackMode = true;
+            document.getElementById('firebase-warning-banner').classList.remove('hidden');
+            
+            // Perbarui UI Badge Status
+            const badge = document.getElementById('db-status-badge');
+            badge.className = "flex items-center gap-1 text-emerald-600 font-semibold";
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Demo Terkunci (Local)`;
+            
+            document.getElementById('connection-indicator').className = "flex items-center gap-1.5 text-amber-600 font-medium bg-amber-50 px-2.5 py-1 rounded-full";
+            document.getElementById('connection-indicator').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Mode Offline Aktif`;
 
-        // Hilangkan loader, tampilkan interface utama
-        document.getElementById("loading-state").classList.add("hidden");
-        
-        if (payrollData.length === 0) {
-          document.getElementById("empty-state").classList.remove("hidden");
-          document.getElementById("table-container").classList.add("hidden");
-        } else {
-          document.getElementById("empty-state").classList.add("hidden");
-          document.getElementById("table-container").classList.remove("hidden");
+            // Render data default awal
+            setTimeout(() => {
+                hideSpinnerAndShowTable();
+                updateUI();
+            }, 1000);
         }
 
-        filterData();
-      }, (error) => {
-        showToast("Gagal menyinkronkan data dari cloud: " + error.message, "error");
-      });
-    }
+        // Setup Firebase Realtime Data (Mengikuti Aturan 1, 2, 3)
+        function setupRealtimeDatabase() {
+            // Aturan 1: Gunakan strict path /artifacts/{appId}/public/data/{collectionName}
+            const publicDataCollection = collection(db, 'artifacts', appId, 'public', 'data', 'staff');
+            
+            // Gunakan onSnapshot (Sesuai Aturan 2: Ambil semua data lalu filter secara lokal di memori JS)
+            onSnapshot(publicDataCollection, (querySnapshot) => {
+                const fetchedData = [];
+                querySnapshot.forEach((doc) => {
+                    fetchedData.push({ id: doc.id, ...doc.data() });
+                });
 
-    // MERENDER DATA KE TABEL DASHBOARD
-    function renderTable(dataToRender = payrollData) {
-      const tbody = document.getElementById("payroll-tbody");
-      tbody.innerHTML = "";
+                if (fetchedData.length > 0) {
+                    staffData = fetchedData;
+                } else {
+                    // Seed data awal jika database cloud masih kosong
+                    seedInitialData();
+                }
 
-      dataToRender.forEach((row) => {
-        let badgeStyle = "bg-slate-100 text-slate-800 border-slate-200";
-        if (row.divisi === "Highstaff") badgeStyle = "bg-purple-50 text-purple-700 border-purple-200";
-        else if (row.divisi === "HRD") badgeStyle = "bg-blue-50 text-blue-700 border-blue-200";
-        else if (row.divisi === "Marketing") badgeStyle = "bg-amber-50 text-amber-700 border-amber-200";
-        else if (row.divisi === "CRO") badgeStyle = "bg-rose-50 text-rose-700 border-rose-200";
+                // Update UI Badge Status Sukses
+                const badge = document.getElementById('db-status-badge');
+                badge.className = "flex items-center gap-1 text-emerald-600 font-semibold";
+                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Terhubung Cloud`;
 
-        const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-50/50 transition-all";
-        
-        tr.innerHTML = `
-          <td class="py-3.5 px-4 font-semibold text-slate-800">${escapeHTML(row.nama)}</td>
-          <td class="py-3.5 px-4">
-            <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold border ${badgeStyle}">${escapeHTML(row.divisi)}</span>
-          </td>
-          <td class="py-3.5 px-4 text-slate-600 font-medium">${escapeHTML(row.jabatan)}</td>
-          <td class="py-3.5 px-4 text-center font-semibold text-slate-700">${row.job}</td>
-          <td class="py-3.5 px-4 text-center font-semibold text-slate-400">${row.interview}</td>
-          <td class="py-3.5 px-4 text-right font-bold text-indigo-600">$${row.gaji.toLocaleString('id-ID')}</td>
-          <td class="py-3.5 px-4 text-slate-500 text-xs">${escapeHTML(row.tanggal)}</td>
-          <td class="py-3.5 px-4 text-center actions-column">
-            <div class="flex items-center justify-center gap-2">
-              <button onclick="openEditModal('${row.id}')" class="p-1 hover:text-indigo-600 text-slate-400 hover:bg-indigo-50 rounded-lg transition-all" title="Edit Data">
-                <i data-lucide="edit-3" class="w-4 h-4"></i>
-              </button>
-              <button onclick="confirmDelete('${row.id}', '${row.nama}')" class="p-1 hover:text-rose-600 text-slate-400 hover:bg-rose-50 rounded-lg transition-all" title="Hapus">
-                <i data-lucide="trash-2" class="w-4 h-4"></i>
-              </button>
-            </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      lucide.createIcons();
-      updateStats();
-    }
-
-    // UPDATE CARD RINGKASAN
-    function updateStats() {
-      const totalStaff = payrollData.length;
-      const totalSalary = payrollData.reduce((acc, curr) => acc + curr.gaji, 0);
-      const avgSalary = totalStaff > 0 ? Math.round(totalSalary / totalStaff) : 0;
-
-      const divisionCounts = {};
-      payrollData.forEach(item => {
-        divisionCounts[item.divisi] = (divisionCounts[item.divisi] || 0) + 1;
-      });
-
-      let topDivision = "-";
-      let maxCount = 0;
-      for (const [div, count] of Object.entries(divisionCounts)) {
-        if (count > maxCount) {
-          maxCount = count;
-          topDivision = div;
+                hideSpinnerAndShowTable();
+                updateUI();
+            }, (error) => {
+                console.error("Firestore Listen Error:", error);
+                activateDemoMode();
+            });
         }
-      }
 
-      document.getElementById("stat-total-staff").innerText = totalStaff;
-      document.getElementById("stat-total-salary").innerText = "$" + totalSalary.toLocaleString('id-ID');
-      document.getElementById("stat-avg-salary").innerText = "$" + avgSalary.toLocaleString('id-ID');
-      document.getElementById("stat-top-division").innerText = topDivision;
-    }
-
-    // FILTER DAN PENCARIAN
-    function filterData() {
-      const query = document.getElementById("search-input").value.toLowerCase();
-
-      const filtered = payrollData.filter(item => {
-        const matchesQuery = item.nama.toLowerCase().includes(query) || item.jabatan.toLowerCase().includes(query);
-        const matchesTab = activeTab === "Semua" || item.divisi === activeTab;
-        return matchesQuery && matchesTab;
-      });
-
-      renderTable(filtered);
-    }
-
-    // INTERFACE MANAJEMEN SELEKSI TAB
-    window.selectDivisionTab = function(divName) {
-      activeTab = divName;
-      
-      document.querySelectorAll(".division-tab").forEach(tab => {
-        tab.className = "division-tab px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/50 transition-all";
-      });
-
-      const activeBtn = document.getElementById(`tab-${divName}`);
-      if (activeBtn) {
-        activeBtn.className = "division-tab px-3 py-1.5 text-xs font-semibold rounded-lg bg-white text-slate-800 shadow-sm transition-all";
-      }
-
-      filterData();
-    };
-
-    // UPDATE PILIHAN JABATAN DETIL SECARA DINAMIS
-    window.onDivisiChange = function(selectedJabatan = null) {
-      const divisi = document.getElementById("form-divisi").value;
-      const jabatanSelect = document.getElementById("form-jabatan");
-      
-      jabatanSelect.innerHTML = "";
-      const presets = divisionPresets[divisi] || divisionPresets["Lainnya"];
-      
-      presets.forEach(p => {
-        const option = document.createElement("option");
-        option.value = p.jabatan;
-        option.innerText = p.jabatan;
-        jabatanSelect.appendChild(option);
-      });
-
-      if (selectedJabatan) {
-        jabatanSelect.value = selectedJabatan;
-      }
-      
-      window.onJabatanChange();
-    };
-
-    window.onJabatanChange = function() {
-      const divisi = document.getElementById("form-divisi").value;
-      const jabatan = document.getElementById("form-jabatan").value;
-      
-      const presets = divisionPresets[divisi] || divisionPresets["Lainnya"];
-      const matched = presets.find(p => p.jabatan === jabatan) || presets[0];
-
-      if (matched) {
-        document.getElementById("form-rate-job").value = matched.rateJob;
-        document.getElementById("form-rate-interview").value = matched.rateInterview;
-      }
-
-      window.calculateGaji();
-    };
-
-    window.calculateGaji = function() {
-      const jobQty = parseInt(document.getElementById("form-job").value) || 0;
-      const interviewQty = parseInt(document.getElementById("form-interview").value) || 0;
-      const rateJob = parseFloat(document.getElementById("form-rate-job").value) || 0;
-      const rateInterview = parseFloat(document.getElementById("form-rate-interview").value) || 0;
-
-      const totalGaji = (jobQty * rateJob) + (interviewQty * rateInterview);
-      document.getElementById("form-gaji").value = totalGaji;
-
-      const formulaEl = document.getElementById("formula-preview");
-      formulaEl.innerText = `Rumus: (${jobQty} Job x $${rateJob}) + (${interviewQty} Interview x $${rateInterview}) = $${totalGaji.toLocaleString('id-ID')}`;
-    };
-
-    // MEMBUAT DATA CONTOH DEMO UNTUK PENGGUNA YANG INGIN MENCOBA
-    window.loadDemoData = async function() {
-      if (!currentUser) return;
-      showToast("Sedang memuat data demo ke cloud database Anda...", "info");
-
-      const demoData = [
-        { nama: "Jovi Maxmilliano", divisi: "Highstaff", jabatan: "Highstaff", job: 2, interview: 0, rateJob: 750, rateInterview: 0, gaji: 1500, tanggal: "12/07/2026" },
-        { nama: "Brady Brooks", divisi: "Marketing", jabatan: "Marketing Junior", job: 10, interview: 0, rateJob: 40, rateInterview: 0, gaji: 400, tanggal: "12/07/2026" },
-        { nama: "Kevart Elmont", divisi: "Marketing", jabatan: "Marketing Training", job: 13, interview: 0, rateJob: 35, rateInterview: 0, gaji: 455, tanggal: "12/07/2026" },
-        { nama: "Albert Leonardo", divisi: "Marketing", jabatan: "Senior / MKT", job: 15, interview: 0, rateJob: 45, rateInterview: 0, gaji: 675, tanggal: "12/07/2026" },
-        { nama: "Farhan Hakim", divisi: "CRO", jabatan: "CRO Junior", job: 4, interview: 1, rateJob: 100, rateInterview: 50, gaji: 450, tanggal: "12/07/2026" }
-      ];
-
-      const colRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'staff');
-      
-      try {
-        for (const staff of demoData) {
-          await addDoc(colRef, staff);
+        // Seeding awal ke cloud jika database kosong
+        async function seedInitialData() {
+            try {
+                for (const item of staffData) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'staff', item.id);
+                    await setDoc(docRef, {
+                        nama: item.nama,
+                        jabatan: item.jabatan,
+                        pekerjaan: parseInt(item.pekerjaan),
+                        interview: parseInt(item.interview),
+                        gaji: parseFloat(item.gaji),
+                        status: item.status,
+                        tanggal: item.tanggal
+                    });
+                }
+            } catch (err) {
+                console.error("Gagal melakukan seeding data awal:", err);
+            }
         }
-        showToast("Data demo berhasil dimuat di cloud database Anda!", "success");
-      } catch (err) {
-        showToast("Gagal memuat data demo: " + err.message, "error");
-      }
-    };
 
-    // FORM MODAL HANDLERS
-    window.openModal = function() {
-      document.getElementById("modal-title").innerText = "Tambah Data Staf Baru";
-      document.getElementById("staff-form").reset();
-      document.getElementById("form-id").value = "";
-      document.getElementById("form-job").value = 0;
-      document.getElementById("form-interview").value = 0;
-      document.getElementById("form-divisi").value = "Highstaff";
-      document.getElementById("form-tanggal").value = new Date().toLocaleDateString('id-ID');
-      
-      window.onDivisiChange();
-      document.getElementById("staff-modal").classList.remove("hidden");
-    };
-
-    window.openEditModal = function(id) {
-      const data = payrollData.find(item => item.id === id);
-      if (!data) return;
-
-      document.getElementById("modal-title").innerText = `Edit Data Staf: ${data.nama}`;
-      document.getElementById("form-id").value = data.id;
-      document.getElementById("form-nama").value = data.nama;
-      document.getElementById("form-divisi").value = data.divisi;
-      
-      window.onDivisiChange(data.jabatan);
-      
-      document.getElementById("form-rate-job").value = data.rateJob !== undefined ? data.rateJob : 50;
-      document.getElementById("form-rate-interview").value = data.rateInterview !== undefined ? data.rateInterview : 0;
-      document.getElementById("form-job").value = data.job;
-      document.getElementById("form-interview").value = data.interview;
-      document.getElementById("form-tanggal").value = data.tanggal;
-      
-      window.calculateGaji();
-      document.getElementById("staff-modal").classList.remove("hidden");
-    };
-
-    window.closeModal = function() {
-      document.getElementById("staff-modal").classList.add("hidden");
-    };
-
-    // SAVE & UPDATE DATA DI CLOUD (FIRESTORE)
-    window.saveStaff = async function(e) {
-      e.preventDefault();
-      if (!currentUser) return;
-
-      const id = document.getElementById("form-id").value;
-      const dataStaff = {
-        nama: document.getElementById("form-nama").value,
-        divisi: document.getElementById("form-divisi").value,
-        jabatan: document.getElementById("form-jabatan").value,
-        job: parseInt(document.getElementById("form-job").value) || 0,
-        interview: parseInt(document.getElementById("form-interview").value) || 0,
-        rateJob: parseFloat(document.getElementById("form-rate-job").value) || 0,
-        rateInterview: parseFloat(document.getElementById("form-rate-interview").value) || 0,
-        gaji: parseFloat(document.getElementById("form-gaji").value) || 0,
-        tanggal: document.getElementById("form-tanggal").value
-      };
-
-      try {
-        if (id === "") {
-          const colRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'staff');
-          await addDoc(colRef, dataStaff);
-          showToast(`Staf baru ${dataStaff.nama} berhasil disimpan ke cloud!`, "success");
-        } else {
-          const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'staff', id);
-          await updateDoc(docRef, dataStaff);
-          showToast(`Data ${dataStaff.nama} berhasil diperbarui di cloud!`, "success");
+        function hideSpinnerAndShowTable() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+            document.getElementById('table-container').classList.remove('hidden');
         }
-        window.closeModal();
-      } catch (error) {
-        showToast("Gagal menyimpan data ke cloud: " + error.message, "error");
-      }
-    };
 
-    // DIALOG KONFIRMASI HAPUS CUSTOM (PENGGANTI WINDOW.CONFIRM)
-    window.confirmDelete = function(id, nama) {
-      deleteTargetId = id;
-      document.getElementById("delete-target-name").innerText = nama;
-      document.getElementById("delete-modal").classList.remove("hidden");
-    };
+        // Menghitung dan Memperbarui Data Statistik Utama & Baris Tabel
+        function updateUI() {
+            // 1. Hitung Stats Berdasarkan Semua Data
+            const totalStaf = staffData.length;
+            const totalGaji = staffData.reduce((acc, curr) => acc + parseFloat(curr.gaji || 0), 0);
+            const rataGaji = totalStaf > 0 ? Math.round(totalGaji / totalStaf) : 0;
 
-    window.closeDeleteModal = function() {
-      document.getElementById("delete-modal").classList.add("hidden");
-      deleteTargetId = null;
-    };
+            // Cari divisi terbanyak
+            const divisiMap = {};
+            staffData.forEach(item => {
+                const div = item.jabatan || "Lainnya";
+                divisiMap[div] = (divisiMap[div] || 0) + 1;
+            });
+            let divisiTerbanyak = "-";
+            let maxCount = 0;
+            for (const key in divisiMap) {
+                if (divisiMap[key] > maxCount) {
+                    maxCount = divisiMap[key];
+                    divisiTerbanyak = key;
+                }
+            }
 
-    document.getElementById("confirm-delete-btn").addEventListener("click", async () => {
-      if (!currentUser || !deleteTargetId) return;
+            // Update ke Card UI
+            document.getElementById('stat-total-staf').innerText = totalStaf;
+            document.getElementById('stat-total-gaji').innerText = `$${totalGaji.toLocaleString('id-ID')}`;
+            document.getElementById('stat-rata-gaji').innerText = `$${rataGaji.toLocaleString('id-ID')}`;
+            document.getElementById('stat-divisi-terbanyak').innerText = divisiTerbanyak;
 
-      try {
-        const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'staff', deleteTargetId);
-        await deleteDoc(docRef);
-        showToast("Data staf berhasil dihapus dari cloud database.", "success");
-      } catch (error) {
-        showToast("Gagal menghapus data dari cloud: " + error.message, "error");
-      } finally {
-        window.closeDeleteModal();
-      }
-    });
+            // 2. Filter & Cari Data
+            let filteredData = [...staffData];
 
-    // EXCEL EXPORT (DARI VIEW DATA AKTIF SINKRON SORE)
-    window.exportToExcel = function() {
-      showToast("Sedang mengekspor database Excel...", "info");
+            // Filter Kategori Jabatan / Divisi
+            if (activeFilter !== "Semua") {
+                if (activeFilter === "Lainnya") {
+                    const standardDivisions = ["Highstaff", "HRD", "Marketing Training", "Senior / MKT"];
+                    filteredData = filteredData.filter(item => !standardDivisions.includes(item.jabatan));
+                } else {
+                    filteredData = filteredData.filter(item => item.jabatan === activeFilter);
+                }
+            }
 
-      let tableHtml = `
-        <table border="1">
-          <thead>
-            <tr style="background-color: #4f46e5; color: #ffffff; font-weight: bold; font-family: sans-serif;">
-              <th style="padding: 10px;">Nama Lengkap</th>
-              <th style="padding: 10px;">Divisi</th>
-              <th style="padding: 10px;">Jabatan Detail</th>
-              <th style="padding: 10px; text-align: center;">Pekerjaan (Job)</th>
-              <th style="padding: 10px; text-align: center;">Interview (HRD)</th>
-              <th style="padding: 10px; text-align: right;">Gaji Bersih ($)</th>
-              <th style="padding: 10px;">Tanggal Input</th>
-            </tr>
-          </thead>
-          <tbody style="font-family: sans-serif;">
-      `;
+            // Cari Berdasarkan Search Bar
+            if (searchQuery.trim() !== "") {
+                const queryLower = searchQuery.toLowerCase();
+                filteredData = filteredData.filter(item => 
+                    item.nama.toLowerCase().includes(queryLower) || 
+                    item.jabatan.toLowerCase().includes(queryLower) ||
+                    item.id.toLowerCase().includes(queryLower)
+                );
+            }
 
-      const currentQuery = document.getElementById("search-input").value.toLowerCase();
-      const exportData = payrollData.filter(item => {
-        const matchesQuery = item.nama.toLowerCase().includes(currentQuery) || item.jabatan.toLowerCase().includes(currentQuery);
-        const matchesTab = activeTab === "Semua" || item.divisi === activeTab;
-        return matchesQuery && matchesTab;
-      });
+            // 3. Render Baris Tabel
+            const tbody = document.getElementById('staff-table-body');
+            tbody.innerHTML = "";
 
-      exportData.forEach(row => {
-        tableHtml += `
-          <tr>
-            <td style="padding: 8px; font-weight: bold;">${escapeHTML(row.nama)}</td>
-            <td style="padding: 8px;">${escapeHTML(row.divisi)}</td>
-            <td style="padding: 8px;">${escapeHTML(row.jabatan)}</td>
-            <td style="padding: 8px; text-align: center;">${row.job}</td>
-            <td style="padding: 8px; text-align: center;">${row.interview}</td>
-            <td style="padding: 8px; text-align: right; font-weight: bold; color: #4f46e5;">$${row.gaji}</td>
-            <td style="padding: 8px;">${escapeHTML(row.tanggal)}</td>
-          </tr>
-        `;
-      });
+            if (filteredData.length === 0) {
+                document.getElementById('empty-state').classList.remove('hidden');
+            } else {
+                document.getElementById('empty-state').classList.add('hidden');
+                
+                filteredData.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50/50 transition-colors";
+                    
+                    // Status Badge Styling
+                    const badgeClass = item.status === "Lunas" 
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200" 
+                        : "bg-amber-50 text-amber-700 border-amber-200";
 
-      tableHtml += `</tbody></table>`;
+                    tr.innerHTML = `
+                        <td class="py-3.5 px-6 font-mono text-xs font-semibold text-indigo-600">${item.id}</td>
+                        <td class="py-3.5 px-6 font-medium text-slate-900">${item.nama}</td>
+                        <td class="py-3.5 px-6">
+                            <span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md text-xs font-medium">${item.jabatan}</span>
+                        </td>
+                        <td class="py-3.5 px-6 text-center font-medium">${item.pekerjaan}</td>
+                        <td class="py-3.5 px-6 text-center font-medium">${item.interview}</td>
+                        <td class="py-3.5 px-6 text-right font-bold text-slate-950">$${parseFloat(item.gaji).toLocaleString('id-ID')}</td>
+                        <td class="py-3.5 px-6 text-center">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold border ${badgeClass}">${item.status}</span>
+                        </td>
+                        <td class="py-3.5 px-6 text-slate-400 font-medium">${item.tanggal}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
 
-      const template = `
-        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-        <head>
-          <meta charset="UTF-8">
-          <!--[if gte mso 9]>
-          <xml>
-            <x:ExcelWorkbook>
-              <x:ExcelWorksheets>
-                <x:ExcelWorksheet>
-                  <x:Name>Payroll Divisi</x:Name>
-                  <x:WorksheetOptions>
-                    <x:DisplayGridlines/>
-                  </x:WorksheetOptions>
-                </x:ExcelWorksheet>
-              </x:ExcelWorksheets>
-            </x:ExcelWorkbook>
-          </xml>
-          <![endif]-->
-        </head>
-        <body>
-          ${tableHtml}
-        </body>
-        </html>
-      `;
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Search Input Event
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                updateUI();
+            });
 
-      const blob = new Blob([template], { type: "application/vnd.ms-excel;charset=utf-8;" });
-      const link = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      link.href = url;
-      link.setAttribute("download", `Laporan_Gaji_Divisi_${activeTab}_${new Date().toISOString().slice(0, 10)}.xls`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      showToast("Unduhan Excel selesai!", "success");
-    };
+            // Filter Click Event
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update state active button
+                    filterButtons.forEach(b => {
+                        b.className = "filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all";
+                    });
+                    btn.className = "filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 transition-all";
+                    
+                    activeFilter = btn.getAttribute('data-filter');
+                    updateUI();
+                });
+            });
 
-    // COPY DATABASE ID (RULE 3 SAFE CLIPBOARD)
-    window.copyDatabaseID = function() {
-      const idElement = document.getElementById("user-id-display");
-      const range = document.createRange();
-      range.selectNode(idElement);
-      window.getSelection().removeAllRanges();
-      window.getSelection().addRange(range);
-      
-      try {
-        document.execCommand('copy');
-        showToast("Database ID disalin ke papan klip!", "success");
-      } catch (err) {
-        showToast("Gagal menyalin ID.", "error");
-      }
-      window.getSelection().removeAllRanges();
-    };
+            // Modal Actions
+            const backdrop = document.getElementById('modal-backdrop');
+            const container = document.getElementById('modal-container');
+            const openBtn = document.getElementById('btn-tambah-staf');
+            const closeBtn = document.getElementById('btn-close-modal');
+            const cancelBtn = document.getElementById('btn-cancel-modal');
 
-    // AMBIL SCREENSHOT PNG
-    window.downloadAsImage = function() {
-      showToast("Sedang memproses foto laporan...", "info");
+            const openModal = () => {
+                backdrop.classList.remove('opacity-0', 'pointer-events-none');
+                container.classList.remove('translate-y-8');
+                // Refresh tanggal sekarang
+                const d = new Date();
+                document.getElementById('input-tanggal-sekarang').value = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+            };
 
-      const actionHeaders = document.querySelectorAll(".actions-column");
-      actionHeaders.forEach(el => el.style.display = "none");
+            const closeModal = () => {
+                backdrop.classList.add('opacity-0', 'pointer-events-none');
+                container.classList.add('translate-y-8');
+                document.getElementById('staff-form').reset();
+            };
 
-      const captureArea = document.getElementById("capture-area");
-      
-      html2canvas(captureArea, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        scrollX: 0,
-        scrollY: -window.scrollY
-      }).then(canvas => {
-        actionHeaders.forEach(el => el.style.display = "");
+            openBtn.addEventListener('click', openModal);
+            closeBtn.addEventListener('click', closeModal);
+            cancelBtn.addEventListener('click', closeModal);
 
-        const link = document.createElement("a");
-        link.download = `Laporan_Gaji_Divisi_${activeTab}_${new Date().toISOString().slice(0, 10)}.png`;
-        link.href = canvas.toDataURL("image/png");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+            // Simpan Form Data Baru (Simpan ke Firebase atau Fallback lokal)
+            document.getElementById('staff-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                
+                const newStaff = {
+                    id: formData.get('id').trim(),
+                    nama: formData.get('nama').trim(),
+                    jabatan: formData.get('jabatan').trim(),
+                    pekerjaan: parseInt(formData.get('pekerjaan')) || 0,
+                    interview: parseInt(formData.get('interview')) || 0,
+                    gaji: parseFloat(formData.get('gaji')) || 0,
+                    status: formData.get('status'),
+                    tanggal: formData.get('tanggal')
+                };
 
-        showToast("Laporan Foto (PNG) berhasil diunduh!", "success");
-      }).catch(err => {
-        actionHeaders.forEach(el => el.style.display = "");
-        showToast("Gagal mengambil foto laporan.", "error");
-      });
-    };
+                if (useFallbackMode || !db) {
+                    // Masukkan ke array memory
+                    staffData.unshift(newStaff);
+                    updateUI();
+                } else {
+                    try {
+                        // Simpan ke Firestore
+                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'staff', newStaff.id);
+                        await setDoc(docRef, {
+                            nama: newStaff.nama,
+                            jabatan: newStaff.jabatan,
+                            pekerjaan: newStaff.pekerjaan,
+                            interview: newStaff.interview,
+                            gaji: newStaff.gaji,
+                            status: newStaff.status,
+                            tanggal: newStaff.tanggal
+                        });
+                    } catch (err) {
+                        console.error("Gagal menambahkan data ke cloud. Menyimpan lokal...", err);
+                        staffData.unshift(newStaff);
+                        updateUI();
+                    }
+                }
 
-    // HELPER PENCEGAH SCRIPT INJECTION (XSS SAFE)
-    function escapeHTML(str) {
-      if (!str) return '';
-      return str.replace(/[&<>'"]/g, 
-        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-      );
-    }
+                closeModal();
+            });
 
-    // MEMULAI SISTEM AUTHENTIKASI & TANGGAL
-    window.addEventListener('DOMContentLoaded', () => {
-      initAuth();
-      const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-      document.getElementById("current-timestamp").innerText = new Date().toLocaleDateString('id-ID', options);
-    });
+            // Export ke Excel (Sesuai dengan format CSV di screenshot Anda)
+            document.getElementById('btn-export-excel').addEventListener('click', () => {
+                const csvHeader = "ID,Nama Staf,Jabatan,Pekerjaan (Job),Interview (HRD),Total Gaji Bersih,Status Pembayaran,Tanggal Input\r\n";
+                const csvRows = staffData.map(item => 
+                    `"${item.id}","${item.nama}","${item.jabatan}",${item.pekerjaan},${item.interview},${item.gaji},"${item.status}","${item.tanggal}"`
+                ).join("\r\n");
 
-  </script>
+                const csvContent = "data:text/csv;charset=utf-8," + csvHeader + csvRows;
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `Laporan_Gaji_PayStaff_${new Date().toISOString().slice(0,10)}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
 
-  <script>
-    // FUNGSI NON-ES MODULES UNTUK TOAST NOTIFICATION
-    function showToast(message, type = "info") {
-      const container = document.getElementById("toast-container");
-      const toast = document.createElement("div");
-      
-      let bgClass = "bg-slate-900 text-white";
-      let icon = "info";
-
-      if (type === "success") {
-        bgClass = "bg-emerald-600 text-white shadow-emerald-100";
-        icon = "check-circle";
-      } else if (type === "error") {
-        bgClass = "bg-rose-600 text-white shadow-rose-100";
-        icon = "x-circle";
-      } else if (type === "info") {
-        bgClass = "bg-indigo-600 text-white shadow-indigo-100";
-        icon = "info";
-      }
-
-      toast.className = `${bgClass} flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg text-sm font-medium transition-all transform translate-y-2 opacity-0 duration-300 max-w-sm`;
-      toast.innerHTML = `
-        <i data-lucide="${icon}" class="w-5 h-5 shrink-0"></i>
-        <span>${message}</span>
-      `;
-
-      container.appendChild(toast);
-      lucide.createIcons();
-
-      setTimeout(() => {
-        toast.classList.remove("translate-y-2", "opacity-0");
-      }, 10);
-
-      setTimeout(() => {
-        toast.classList.add("translate-y-2", "opacity-0");
-        setTimeout(() => toast.remove(), 300);
-      }, 3500);
-    }
-  </script>
+            // Download layout tabel sebagai Mock Foto / Gambar
+            document.getElementById('btn-unduh-foto').addEventListener('click', () => {
+                // Untuk iFrame yang aman, kita simulasikan export atau cetak cetak layout
+                window.print();
+            });
+        }
+    </script>
 </body>
 </html>
