@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Pengeluaran Harian</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- html2pdf.js CDN for neat PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Custom scrollbar for transaction list */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col">
+
+    <!-- Navigation / Header -->
+    <header class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-white/10 rounded-xl backdrop-blur-sm">
+                    <i class="fa-solid fa-wallet text-2xl text-emerald-200"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">CatatUang</h1>
+                    <p class="text-xs text-emerald-100">Kalkulasi Pengeluaran Harian Otomatis</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 bg-black/15 px-4 py-2 rounded-lg text-xs font-mono">
+                <span class="flex h-2 w-2 relative">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span id="sync-status">Menghubungkan ke Cloud...</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6 md:py-8">
+        
+        <!-- Statistics Widget Dashboard -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <!-- Today's Total Card -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center justify-between transition-all hover:shadow-md">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Habis Hari Ini</p>
+                    <h3 id="total-today" class="text-2xl font-bold text-slate-900 mt-1">Rp 0</h3>
+                    <p class="text-[11px] text-slate-400 mt-1" id="today-date-str">Memuat tanggal...</p>
+                </div>
+                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                    <i class="fa-solid fa-calendar-day text-xl"></i>
+                </div>
+            </div>
+
+            <!-- This Month's Total Card -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center justify-between transition-all hover:shadow-md">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Habis Bulan Ini</p>
+                    <h3 id="total-month" class="text-2xl font-bold text-slate-900 mt-1">Rp 0</h3>
+                    <p class="text-[11px] text-slate-400 mt-1" id="month-date-str">Memuat bulan...</p>
+                </div>
+                <div class="p-3 bg-teal-50 text-teal-600 rounded-xl">
+                    <i class="fa-solid fa-calendar-days text-xl"></i>
+                </div>
+            </div>
+
+            <!-- Average and Activity Card -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center justify-between transition-all hover:shadow-md">
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Item Dibeli</p>
+                    <h3 id="total-items" class="text-2xl font-bold text-slate-900 mt-1">0 Item</h3>
+                    <p class="text-[11px] text-emerald-600 font-medium mt-1"><i class="fa-solid fa-clock-rotate-left mr-1"></i>Tersinkronisasi otomatis</p>
+                </div>
+                <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                    <i class="fa-solid fa-cart-shopping text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Application Workspace -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Side: Add Transaction Form -->
+            <section class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex items-center gap-2 pb-4 mb-6 border-b border-slate-100">
+                    <i class="fa-solid fa-plus-circle text-emerald-600 text-lg"></i>
+                    <h2 class="text-lg font-bold text-slate-900">Tambah Pengeluaran</h2>
+                </div>
+
+                <form id="expense-form" class="space-y-4">
+                    <!-- Item Name Input -->
+                    <div>
+                        <label for="item-name" class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">Beli Apa / Pengeluaran</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                                <i class="fa-solid fa-bag-shopping"></i>
+                            </span>
+                            <input type="text" id="item-name" required placeholder="Contoh: Nasi Goreng, Bensin, Sabun..." 
+                                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Item Price Input -->
+                    <div>
+                        <label for="item-price" class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">Harga Berapa (Rupiah)</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 font-bold text-sm">
+                                Rp
+                            </span>
+                            <input type="text" id="item-price" required placeholder="0" 
+                                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
+                        </div>
+                        <p id="formatted-helper" class="text-[11px] text-emerald-600 mt-1 font-medium hidden">Format: <span id="price-preview">Rp 0</span></p>
+                    </div>
+
+                    <!-- Category Selector -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wide">Kategori</label>
+                        <div class="grid grid-cols-3 gap-2" id="category-grid">
+                            <!-- Category Pills Dynamic selection -->
+                            <button type="button" data-category="Makanan" class="category-btn active py-2 px-1 text-center rounded-xl text-xs border border-emerald-500 bg-emerald-50 text-emerald-700 font-medium transition-all flex flex-col items-center gap-1.5">
+                                <i class="fa-solid fa-utensils"></i>
+                                <span>Makanan</span>
+                            </button>
+                            <button type="button" data-category="Transportasi" class="category-btn py-2 px-1 text-center rounded-xl text-xs border border-slate-200 hover:border-slate-300 text-slate-600 font-medium transition-all flex flex-col items-center gap-1.5">
+                                <i class="fa-solid fa-motorcycle"></i>
+                                <span>Transport</span>
+                            </button>
+                            <button type="button" data-category="Belanja" class="category-btn py-2 px-1 text-center rounded-xl text-xs border border-slate-200 hover:border-slate-300 text-slate-600 font-medium transition-all flex flex-col items-center gap-1.5">
+                                <i class="fa-solid fa-shirt"></i>
+                                <span>Belanja</span>
+                            </button>
+                            <button type="button" data-category="Tagihan" class="category-btn py-2 px-1 text-center rounded-xl text-xs border border-slate-200 hover:border-slate-300 text-slate-600 font-medium transition-all flex flex-col items-center gap-1.5">
+                                <i class="fa-solid fa-receipt"></i>
+                                <span>Tagihan</span>
+                            </button>
+                            <button type="button" data-category="Hiburan" class="category-btn py-2 px-1 text-center rounded-xl text-xs border border-slate-200 hover:border-slate-300 text-slate-600 font-medium transition-all flex flex-col items-center gap-1.5">
+                                <i class="fa-solid fa-gamepad"></i>
+                                <span>Hiburan</span>
+                            </button>
+                            <button type="button" data-category="Lainnya" class="category-btn py-2 px-1 text-center rounded-xl text-xs border border-slate-200 hover:border-slate-300 text-slate-600 font-medium transition-all flex flex-col items-center gap-1.5">
+                                <i class="fa-solid fa-asterisk"></i>
+                                <span>Lainnya</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Date and Time Picker (Auto-populated but editable) -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="expense-date" class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">Tanggal (Otomatis)</label>
+                            <input type="date" id="expense-date" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
+                        </div>
+                        <div>
+                            <label for="expense-time" class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">Jam (Otomatis)</label>
+                            <input type="time" id="expense-time" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl text-sm shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 mt-4 cursor-pointer">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Simpan Pengeluaran</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Right Side: Transaction List & Filtering -->
+            <section class="lg:col-span-7 flex flex-col bg-white p-6 rounded-2xl shadow-sm border border-slate-100 min-h-[500px]">
+                <!-- Section Header with actions -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 mb-4 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-teal-600 text-lg"></i>
+                        <h2 class="text-lg font-bold text-slate-900">Catatan Pengeluaran</h2>
+                    </div>
+                    
+                    <!-- Search Input -->
+                    <div class="relative w-full sm:w-48">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 text-xs">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" id="search-bar" placeholder="Cari barang..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <!-- Custom Filter Tabs -->
+                <div class="flex flex-wrap gap-1.5 mb-4 bg-slate-50 p-1 rounded-xl">
+                    <button id="filter-all" class="filter-tab active flex-1 py-1.5 px-3 text-center text-xs font-semibold rounded-lg text-emerald-700 bg-white shadow-sm transition-all">
+                        Semua
+                    </button>
+                    <button id="filter-today" class="filter-tab flex-1 py-1.5 px-3 text-center text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-800 transition-all">
+                        Hari Ini
+                    </button>
+                    <button id="filter-month" class="filter-tab flex-1 py-1.5 px-3 text-center text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-800 transition-all">
+                        Bulan Ini
+                    </button>
+                </div>
+
+                <!-- Expense Scroll Container -->
+                <div class="flex-grow overflow-y-auto max-h-[420px] custom-scrollbar pr-1" id="expense-container">
+                    <!-- Placeholder State (Loading) -->
+                    <div id="loading-placeholder" class="py-12 flex flex-col items-center justify-center text-slate-400 gap-3">
+                        <div class="animate-spin text-3xl text-emerald-500">
+                            <i class="fa-solid fa-circle-notch"></i>
+                        </div>
+                        <p class="text-sm">Menghubungkan & mengunduh database Anda...</p>
+                    </div>
+
+                    <!-- Empty State (Hidden initially) -->
+                    <div id="empty-placeholder" class="hidden py-12 flex flex-col items-center justify-center text-slate-400 text-center gap-3">
+                        <div class="text-5xl text-slate-200">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-600">Belum Ada Pengeluaran</p>
+                            <p class="text-xs text-slate-400 mt-1 max-w-[250px]">Silakan tambahkan pembelian baru Anda menggunakan form di sebelah kiri.</p>
+                        </div>
+                    </div>
+
+                    <!-- Real List Container -->
+                    <div id="expense-list" class="space-y-3">
+                        <!-- Items injected dynamically via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Export Utilities Footer -->
+                <div class="mt-4 pt-4 border-t border-slate-100 flex flex-wrap gap-2 justify-between items-center text-xs text-slate-500">
+                    <span id="record-count">0 catatan ditemukan</span>
+                    <div class="flex gap-2">
+                        <button id="btn-export-csv" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 py-1.5 px-3 rounded-lg font-medium transition-all cursor-pointer">
+                            <i class="fa-solid fa-file-excel text-emerald-600"></i>
+                            Excel CSV
+                        </button>
+                        <button id="btn-export-pdf" class="flex items-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 py-1.5 px-3 rounded-lg font-medium border border-rose-100 transition-all cursor-pointer">
+                            <i class="fa-solid fa-file-pdf text-rose-600"></i>
+                            Cetak PDF
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 py-6 mt-12 border-t border-slate-800">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="text-xs">&copy; 2026 CatatUang Dashboard. Dilengkapi auto-database & sync real-time aman.</p>
+            <p class="text-[10px] text-slate-600 mt-1">ID Pengguna Cloud: <span id="user-display-id" class="font-mono">Menghubungkan...</span></p>
+        </div>
+    </footer>
+
+    <!-- Custom Modal Confirm Box (Replacing standard alert/confirm) -->
+    <div id="custom-confirm-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300">
+            <div class="p-6 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-rose-50 text-rose-600 mb-4 text-xl">
+                    <i class="fa-solid fa-trash-can"></i>
+                </div>
+                <h3 class="text-base font-bold text-slate-900">Hapus Pengeluaran?</h3>
+                <p class="text-xs text-slate-500 mt-2">Apakah Anda yakin ingin menghapus catatan pengeluaran <span id="modal-item-desc" class="font-semibold text-slate-800"></span>? Tindakan ini tidak bisa dibatalkan.</p>
+            </div>
+            <div class="bg-slate-50 px-6 py-4 flex justify-end gap-2.5">
+                <button id="confirm-cancel" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-semibold text-slate-700 transition-all cursor-pointer">
+                    Batal
+                </button>
+                <button id="confirm-agree" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-semibold text-white transition-all cursor-pointer">
+                    Ya, Hapus
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Toast Notification Box -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white py-3 px-5 rounded-xl shadow-xl flex items-center gap-3 text-xs font-medium transform translate-y-12 opacity-0 pointer-events-none transition-all duration-300 z-50">
+        <span id="toast-icon" class="text-emerald-400 text-sm"><i class="fa-solid fa-circle-check"></i></span>
+        <span id="toast-message">Pesan sukses disini</span>
+    </div>
+
+    <!-- Firebase integration scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, collection, onSnapshot, addDoc, deleteDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables provided by system environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'kalkulator-pengeluaran';
+        
+        // Setup Firebase configurations (fallback for direct browser/local dev testing)
+        let firebaseConfig;
+        if (typeof __firebase_config !== 'undefined') {
+            firebaseConfig = JSON.parse(__firebase_config);
+        } else {
+            // Simulated development config
+            firebaseConfig = {
+                apiKey: "dummy-key",
+                authDomain: "dummy.firebaseapp.com",
+                projectId: "dummy-project",
+                storageBucket: "dummy.appspot.com",
+                messagingSenderId: "1234567890",
+                appId: "dummy-app-id"
+            };
+        }
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Core Application State
+        let expenses = []; // holds in-memory parsed expense items
+        let activeCategory = "Makanan";
+        let activeFilter = "all"; // all, today, month
+        let currentUserId = null;
+        let deleteTargetId = null;
+
+        // Custom UI Dialog handlers
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+            
+            toastMsg.innerText = message;
+            if (isError) {
+                toastIcon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';
+            } else {
+                toastIcon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+            }
+            
+            toast.classList.remove('translate-y-12', 'opacity-0', 'pointer-events-none');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-12', 'opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+
+        // Initialize Automatic Date and Time Input
+        function setDateTimeToNow() {
+            const now = new Date();
+            
+            // Format to local date string (YYYY-MM-DD)
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            document.getElementById('expense-date').value = `${year}-${month}-${day}`;
+            
+            // Format to local time (HH:MM)
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('expense-time').value = `${hours}:${minutes}`;
+        }
+
+        // Category Pill Actions
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        categoryButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active classes
+                categoryButtons.forEach(b => {
+                    b.classList.remove('active', 'border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
+                    b.classList.add('border-slate-200', 'text-slate-600');
+                });
+                
+                // Add active to clicked
+                btn.classList.add('active', 'border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
+                btn.classList.remove('border-slate-200', 'text-slate-600');
+                activeCategory = btn.getAttribute('data-category');
+            });
+        });
+
+        // Price Live Formatting (Indonesian Rupiah Format)
+        const priceInput = document.getElementById('item-price');
+        const helperText = document.getElementById('formatted-helper');
+        const pricePreview = document.getElementById('price-preview');
+
+        function formatRupiah(numberStr) {
+            const num = parseInt(numberStr.replace(/[^0-9]/g, ''), 10);
+            if (isNaN(num)) return '';
+            return num.toLocaleString('id-ID');
+        }
+
+        priceInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            if (value) {
+                const formatted = formatRupiah(value);
+                e.target.value = formatted;
+                pricePreview.innerText = `Rp ${formatted}`;
+                helperText.classList.remove('hidden');
+            } else {
+                e.target.value = '';
+                helperText.classList.add('hidden');
+            }
+        });
+
+        // Authenticate User & Connect Firestore Listener
+        async function setupSession() {
+            try {
+                // Check for custom session token or fall back to anonymous auth
+                const customToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                
+                let userCredential;
+                if (customToken) {
+                    userCredential = await signInWithCustomToken(auth, customToken);
+                } else {
+                    userCredential = await signInAnonymously(auth);
+                }
+                
+                currentUserId = userCredential.user.uid;
+                document.getElementById('user-display-id').innerText = currentUserId;
+                document.getElementById('sync-status').innerText = 'Data Tersinkronisasi';
+                
+                // Connect listener (RULE 1 & RULE 2 compliant)
+                listenToExpenses(currentUserId);
+                
+            } catch (error) {
+                console.error("Auth error:", error);
+                document.getElementById('sync-status').innerText = 'Offline (Menggunakan Cache)';
+                showToast("Gagal tersambung cloud, beberapa fitur mungkin berjalan lokal.", true);
+                
+                // Simulated fallback if Firebase breaks/blocked
+                currentUserId = "local-session-user";
+                document.getElementById('user-display-id').innerText = currentUserId;
+                document.getElementById('loading-placeholder').classList.add('hidden');
+                document.getElementById('empty-placeholder').classList.remove('hidden');
+            }
+        }
+
+        // Setup Firestore Snapshots (Rule 1: Strict Paths, Rule 2: Fetch simple & filter in JS memory)
+        function listenToExpenses(userId) {
+            // Path: /artifacts/{appId}/users/{userId}/expenses
+            const collRef = collection(db, 'artifacts', appId, 'users', userId, 'expenses');
+            
+            // Simple query complying to Rule 2 (no complex orderBy/where directly in Firestore)
+            onSnapshot(collRef, (snapshot) => {
+                expenses = [];
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    expenses.push({
+                        id: docSnap.id,
+                        ...data
+                    });
+                });
+                
+                // Process, update UI, and render
+                processAndRender();
+                document.getElementById('loading-placeholder').classList.add('hidden');
+            }, (error) => {
+                console.error("Database snapshot error:", error);
+                showToast("Gagal mengunduh pembaharuan data.", true);
+            });
+        }
+
+        // Format Timestamp date into nice label
+        function formatDateLabel(dateStr) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('id-ID', options);
+        }
+
+        function formatTimeLabel(timeStr) {
+            return timeStr || '00:00';
+        }
+
+        function getCategoryIcon(cat) {
+            switch(cat) {
+                case 'Makanan': return '<i class="fa-solid fa-utensils"></i>';
+                case 'Transportasi': return '<i class="fa-solid fa-motorcycle"></i>';
+                case 'Belanja': return '<i class="fa-solid fa-shirt"></i>';
+                case 'Tagihan': return '<i class="fa-solid fa-receipt"></i>';
+                case 'Hiburan': return '<i class="fa-solid fa-gamepad"></i>';
+                default: return '<i class="fa-solid fa-asterisk"></i>';
+            }
+        }
+
+        function getCategoryColorClass(cat) {
+            switch(cat) {
+                case 'Makanan': return 'bg-amber-50 text-amber-600 border-amber-200';
+                case 'Transportasi': return 'bg-sky-50 text-sky-600 border-sky-200';
+                case 'Belanja': return 'bg-purple-50 text-purple-600 border-purple-200';
+                case 'Tagihan': return 'bg-rose-50 text-rose-600 border-rose-200';
+                case 'Hiburan': return 'bg-emerald-50 text-emerald-600 border-emerald-200';
+                default: return 'bg-slate-50 text-slate-600 border-slate-200';
+            }
+        }
+
+        // Process data, calculate totals and render onto screen
+        function processAndRender() {
+            // Get today and current month references in JKT / Local timezone
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
+            const curMonthStr = todayStr.substring(0, 7); // YYYY-MM
+            
+            // Set stats labels
+            const optionsToday = { day: 'numeric', month: 'short', year: 'numeric' };
+            const optionsMonth = { month: 'long', year: 'numeric' };
+            document.getElementById('today-date-str').innerText = now.toLocaleDateString('id-ID', optionsToday);
+            document.getElementById('month-date-str').innerText = now.toLocaleDateString('id-ID', optionsMonth);
+
+            let totalTodayValue = 0;
+            let totalMonthValue = 0;
+            let totalItemsCount = 0;
+
+            // Sort expenses by date and time descending (latest first)
+            expenses.sort((a, b) => {
+                const dateTimeA = new Date(`${a.date}T${a.time || '00:00'}`);
+                const dateTimeB = new Date(`${b.date}T${b.time || '00:00'}`);
+                return dateTimeB - dateTimeA;
+            });
+
+            // Calculate aggregates in memory (Rule 2: Complex calculations/filters in-memory instead of compound queries)
+            expenses.forEach(exp => {
+                const amount = parseInt(exp.price) || 0;
+                
+                // Check if today
+                if (exp.date === todayStr) {
+                    totalTodayValue += amount;
+                }
+                
+                // Check if current month (starts with YYYY-MM)
+                if (exp.date && exp.date.startsWith(curMonthStr)) {
+                    totalMonthValue += amount;
+                }
+            });
+
+            // Update Header/Stats Panel
+            document.getElementById('total-today').innerText = `Rp ${totalTodayValue.toLocaleString('id-ID')}`;
+            document.getElementById('total-month').innerText = `Rp ${totalMonthValue.toLocaleString('id-ID')}`;
+            document.getElementById('total-items').innerText = `${expenses.length} Item`;
+
+            // Render current list based on active filters
+            renderList();
+        }
+
+        // Render with live filter settings
+        function renderList() {
+            const listContainer = document.getElementById('expense-list');
+            const emptyState = document.getElementById('empty-placeholder');
+            const searchQuery = document.getElementById('search-bar').value.toLowerCase().trim();
+            
+            // Filter state variables
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            const curMonthStr = todayStr.substring(0, 7);
+
+            // Filter items in memory
+            let filteredExpenses = expenses.filter(exp => {
+                // 1. Search Query filter
+                if (searchQuery && !exp.itemName.toLowerCase().includes(searchQuery)) {
+                    return false;
+                }
+
+                // 2. Tab Filter
+                if (activeFilter === 'today' && exp.date !== todayStr) {
+                    return false;
+                }
+                if (activeFilter === 'month' && (!exp.date || !exp.date.startsWith(curMonthStr))) {
+                    return false;
+                }
+                
+                return true;
+            });
+
+            // Update transaction counts
+            document.getElementById('record-count').innerText = `${filteredExpenses.length} catatan ditemukan`;
+
+            if (filteredExpenses.length === 0) {
+                listContainer.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            // Render HTML items
+            let htmlContent = '';
+            
+            // Group transactions by Date
+            let currentGroupDate = '';
+
+            filteredExpenses.forEach(exp => {
+                const formattedPrice = `Rp ${(parseInt(exp.price) || 0).toLocaleString('id-ID')}`;
+                const catIcon = getCategoryIcon(exp.category);
+                const catColor = getCategoryColorClass(exp.category);
+                
+                // Check if date header should be injected
+                if (exp.date !== currentGroupDate) {
+                    currentGroupDate = exp.date;
+                    htmlContent += `
+                        <div class="pt-2 pb-1 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <span class="bg-slate-100 px-2.5 py-1 rounded-full">${formatDateLabel(exp.date)}</span>
+                            <div class="h-[1px] bg-slate-100 flex-grow"></div>
+                        </div>
+                    `;
+                }
+
+                htmlContent += `
+                    <div class="group bg-slate-50 hover:bg-slate-100/70 p-3.5 rounded-xl border border-slate-100 flex items-center justify-between transition-all">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-sm border font-semibold ${catColor}">
+                                ${catIcon}
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-slate-800 leading-tight group-hover:text-slate-900">${exp.itemName}</h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[10px] text-slate-400 font-medium"><i class="fa-regular fa-clock mr-1"></i>${formatTimeLabel(exp.time)}</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-200/50 text-slate-500 font-medium">${exp.category}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-sm font-bold text-slate-900">${formattedPrice}</span>
+                            <button data-id="${exp.id}" data-itemname="${exp.itemName}" class="btn-delete text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-all cursor-pointer">
+                                <i class="fa-regular fa-trash-can text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            listContainer.innerHTML = htmlContent;
+
+            // Add Event Listeners for Dynamic Trash Buttons
+            const trashBtns = listContainer.querySelectorAll('.btn-delete');
+            trashBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = btn.getAttribute('data-id');
+                    const name = btn.getAttribute('data-itemname');
+                    triggerDeleteConfirmation(id, name);
+                });
+            });
+        }
+
+        // Form Submission logic
+        const expenseForm = document.getElementById('expense-form');
+        expenseForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const itemName = document.getElementById('item-name').value.trim();
+            const rawPrice = document.getElementById('item-price').value;
+            const numericPrice = parseInt(rawPrice.replace(/[^0-9]/g, ''), 10);
+            const date = document.getElementById('expense-date').value;
+            const time = document.getElementById('expense-time').value;
+
+            if (!itemName || isNaN(numericPrice) || numericPrice <= 0) {
+                showToast("Harap isi nama dan harga pengeluaran dengan benar.", true);
+                return;
+            }
+
+            if (!currentUserId) {
+                showToast("Gagal menyimpan, Anda sedang offline atau belum terhubung database.", true);
+                return;
+            }
+
+            try {
+                // Prepare new document payload
+                const newExpense = {
+                    itemName: itemName,
+                    price: numericPrice,
+                    category: activeCategory,
+                    date: date,
+                    time: time || '12:00',
+                    createdAt: new Date().toISOString()
+                };
+
+                // Store inside Firebase (RULE 1 Compliant path)
+                const docRef = collection(db, 'artifacts', appId, 'users', currentUserId, 'expenses');
+                await addDoc(docRef, newExpense);
+
+                // Reset form fields
+                expenseForm.reset();
+                setDateTimeToNow(); // auto populate date/time again
+                helperText.classList.add('hidden'); // hide IDR converter text
+                
+                showToast("Catatan pengeluaran berhasil disimpan.");
+            } catch (err) {
+                console.error("Error creating expense:", err);
+                showToast("Gagal menyimpan ke database cloud.", true);
+            }
+        });
+
+        // Trigger Custom Confirmation dialog (Rule violation defense: NO alert / NO confirm)
+        const modal = document.getElementById('custom-confirm-modal');
+        const modalItemDesc = document.getElementById('modal-item-desc');
+        const confirmAgree = document.getElementById('confirm-agree');
+        const confirmCancel = document.getElementById('confirm-cancel');
+
+        function triggerDeleteConfirmation(id, name) {
+            deleteTargetId = id;
+            modalItemDesc.innerText = `"${name}"`;
+            
+            // Show modal smoothly
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('div').classList.remove('scale-95');
+            modal.querySelector('div').classList.add('scale-100');
+        }
+
+        function closeModal() {
+            deleteTargetId = null;
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.querySelector('div').classList.remove('scale-100');
+            modal.querySelector('div').classList.add('scale-95');
+        }
+
+        confirmCancel.addEventListener('click', closeModal);
+        
+        confirmAgree.addEventListener('click', async () => {
+            if (!deleteTargetId || !currentUserId) return;
+            
+            try {
+                // Rule 1: Custom strict paths
+                const targetRef = doc(db, 'artifacts', appId, 'users', currentUserId, 'expenses', deleteTargetId);
+                await deleteDoc(targetRef);
+                
+                closeModal();
+                showToast("Catatan pengeluaran telah dihapus.");
+            } catch (err) {
+                console.error("Delete error:", err);
+                showToast("Gagal menghapus pengeluaran cloud.", true);
+                closeModal();
+            }
+        });
+
+        // Search and Filter Tab Handlers
+        document.getElementById('search-bar').addEventListener('input', renderList);
+
+        const tabs = document.querySelectorAll('.filter-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                tabs.forEach(t => {
+                    t.classList.remove('active', 'text-emerald-700', 'bg-white', 'shadow-sm');
+                    t.classList.add('text-slate-600', 'hover:text-slate-800');
+                });
+
+                tab.classList.add('active', 'text-emerald-700', 'bg-white', 'shadow-sm');
+                tab.classList.remove('text-slate-600', 'hover:text-slate-800');
+
+                if (tab.id === 'filter-all') activeFilter = 'all';
+                if (tab.id === 'filter-today') activeFilter = 'today';
+                if (tab.id === 'filter-month') activeFilter = 'month';
+
+                renderList();
+            });
+        });
+
+        // PDF Export Utility (Clean dynamic design)
+        document.getElementById('btn-export-pdf').addEventListener('click', () => {
+            // Filter data yang akan dicetak sesuai filter aktif pada UI saat ini
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            const curMonthStr = todayStr.substring(0, 7);
+            const searchQuery = document.getElementById('search-bar').value.toLowerCase().trim();
+
+            let targetExpenses = expenses.filter(exp => {
+                if (searchQuery && !exp.itemName.toLowerCase().includes(searchQuery)) return false;
+                if (activeFilter === 'today' && exp.date !== todayStr) return false;
+                if (activeFilter === 'month' && (!exp.date || !exp.date.startsWith(curMonthStr))) return false;
+                return true;
+            });
+
+            if (targetExpenses.length === 0) {
+                showToast("Tidak ada data pengeluaran untuk dicetak ke PDF.", true);
+                return;
+            }
+
+            showToast("Sedang merancang laporan PDF rapi...");
+
+            // Urutkan pengeluaran berdasarkan tanggal (terlama ke terbaru untuk urutan laporan formal)
+            targetExpenses.sort((a, b) => new Date(`${a.date}T${a.time || '00:00'}`) - new Date(`${b.date}T${b.time || '00:00'}`));
+
+            // Hitung total nilai pengeluaran untuk dicantumkan di ringkasan PDF
+            let totalAmount = 0;
+            targetExpenses.forEach(e => totalAmount += (parseInt(e.price) || 0));
+
+            // Membuat element kontainer sementara untuk dirender oleh html2pdf
+            const pdfContainer = document.createElement('div');
+            pdfContainer.className = 'p-8 bg-white text-slate-800 font-sans';
+            pdfContainer.style.width = '790px'; // Lebar optimal rasio A4 halaman portrait
+
+            // Mengisi konten HTML dengan gaya dokumen laporan kas formal
+            pdfContainer.innerHTML = `
+                <!-- Header Laporan (Kop Laporan) -->
+                <div style="border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">CatatUang</h1>
+                        <p style="font-size: 11px; color: #64748b; margin: 2px 0 0 0;">Laporan Riwayat Pengeluaran Keuangan Harian</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 10px; font-weight: bold; padding: 4px 10px; background-color: #f1f5f9; border-radius: 9999px; color: #475569; text-transform: uppercase;">Doc-ID: ${currentUserId ? currentUserId.substring(0, 12) : 'OFFLINE'}</span>
+                        <p style="font-size: 10px; color: #94a3b8; margin: 6px 0 0 0;">Tanggal Cetak: ${now.toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'})} WIB</p>
+                    </div>
+                </div>
+
+                <!-- Info Filter & Periode -->
+                <div style="margin-bottom: 20px;">
+                    <p style="font-size: 12px; margin: 0; color: #334155;">
+                        <strong>Filter Periode:</strong> 
+                        <span style="color: #059669; font-weight: bold;">
+                            ${activeFilter === 'all' ? 'Semua Riwayat' : activeFilter === 'today' ? 'Hari Ini saja' : 'Bulan Ini saja'}
+                        </span>
+                        ${searchQuery ? ` | <strong>Kata Kunci:</strong> "${searchQuery}"` : ''}
+                    </p>
+                </div>
+
+                <!-- Summary Ringkasan Laporan -->
+                <div style="display: grid; grid-template-cols: 1fr 1fr; display: flex; gap: 16px; margin-bottom: 28px;">
+                    <div style="flex: 1; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; background-color: #f8fafc;">
+                        <p style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #64748b; margin: 0; letter-spacing: 0.5px;">Akumulasi Pengeluaran</p>
+                        <h2 style="font-size: 22px; font-weight: bold; color: #0f172a; margin: 4px 0 0 0;">Rp ${totalAmount.toLocaleString('id-ID')}</h2>
+                    </div>
+                    <div style="flex: 1; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; background-color: #f8fafc;">
+                        <p style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #64748b; margin: 0; letter-spacing: 0.5px;">Total Item Tercatat</p>
+                        <h2 style="font-size: 22px; font-weight: bold; color: #0f172a; margin: 4px 0 0 0;">${targetExpenses.length} Transaksi</h2>
+                    </div>
+                </div>
+
+                <!-- Tabel Utama PDF -->
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 11px;">
+                    <thead>
+                        <tr style="background-color: #0f172a; color: #ffffff;">
+                            <th style="padding: 10px 12px; border-top-left-radius: 6px; border-bottom-left-radius: 6px; width: 40px; text-align: center;">No</th>
+                            <th style="padding: 10px 12px; width: 120px;">Tanggal & Jam</th>
+                            <th style="padding: 10px 12px; width: 100px;">Kategori</th>
+                            <th style="padding: 10px 12px;">Nama Item / Keperluan</th>
+                            <th style="padding: 10px 12px; text-align: right; border-top-right-radius: 6px; border-bottom-right-radius: 6px; width: 120px;">Nominal (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${targetExpenses.map((exp, index) => {
+                            const dateObj = new Date(exp.date);
+                            const tglString = dateObj.toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'});
+                            const jamString = exp.time || '00:00';
+                            const rowBg = index % 2 === 1 ? '#f8fafc' : '#ffffff';
+                            return `
+                                <tr style="background-color: ${rowBg}; border-bottom: 1px solid #e2e8f0;">
+                                    <td style="padding: 9px 12px; text-align: center; color: #64748b;">${index + 1}</td>
+                                    <td style="padding: 9px 12px; font-weight: 500; color: #334155;">${tglString} <span style="color:#94a3b8; font-size:9px;">(${jamString})</span></td>
+                                    <td style="padding: 9px 12px;"><span style="padding: 2px 6px; background-color: #f1f5f9; border-radius: 4px; font-size: 10px; color: #475569;">${exp.category}</span></td>
+                                    <td style="padding: 9px 12px; font-weight: 600; color: #0f172a;">${exp.itemName}</td>
+                                    <td style="padding: 9px 12px; text-align: right; font-weight: bold; color: #0f172a;">${(parseInt(exp.price) || 0).toLocaleString('id-ID')}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+
+                <!-- Tanda Tangan / footer tanda terima -->
+                <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end; font-size: 11px;">
+                    <div style="color: #64748b; font-style: italic;">
+                        *Laporan ini dihasilkan secara digital oleh CatatUang App.
+                    </div>
+                    <div style="text-align: center; width: 200px;">
+                        <p style="margin-bottom: 60px; color: #475569;">Penyusun Laporan,</p>
+                        <div style="border-top: 1.5px solid #cbd5e1; padding-top: 6px; font-weight: bold; color: #0f172a;">
+                            Pengguna CatatUang
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Konfigurasi performa & kebersihan hasil ekspor html2pdf
+            const opt = {
+                margin:       12,
+                filename:     `Laporan_CatatUang_${activeFilter}_${todayStr}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, logging: false },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Jalankan proses unduh PDF langsung
+            html2pdf().from(pdfContainer).set(opt).save()
+                .then(() => {
+                    showToast("Laporan PDF berhasil diunduh!");
+                })
+                .catch((err) => {
+                    console.error("PDF generation error: ", err);
+                    showToast("Gagal mencetak file PDF.", true);
+                });
+        });
+
+        // CSV Export Utility
+        document.getElementById('btn-export-csv').addEventListener('click', () => {
+            if (expenses.length === 0) {
+                showToast("Tidak ada data pengeluaran untuk diexport.", true);
+                return;
+            }
+
+            // Create CSV Headers
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Tanggal,Jam,Kategori,Nama Barang,Harga (Rp)\r\n";
+
+            // Map data
+            expenses.forEach(exp => {
+                const row = [
+                    exp.date || '',
+                    exp.time || '',
+                    exp.category || '',
+                    `"${(exp.itemName || '').replace(/"/g, '""')}"`, // escape quotes
+                    exp.price || 0
+                ].join(",");
+                csvContent += row + "\r\n";
+            });
+
+            // Download trigger
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `CatatUang_Pengeluaran_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast("File CSV berhasil diunduh.");
+        });
+
+        // Initialize application when browser page completely finishes loading
+        window.onload = function() {
+            setDateTimeToNow();
+            setupSession();
+        };
+
+    </script>
+</body>
+</html>
