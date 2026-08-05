@@ -385,13 +385,13 @@
                     <span id="googleAuthBtnText">Masuk dengan Google</span>
                 </button>
 
-                <!-- Direct Google Email Login Form (Fallback when popup/Firebase Auth is unconfigured) -->
+                <!-- Direct Google Email Login Form -->
                 <div id="manualGoogleForm" class="hidden text-left pt-2 border-t border-skyai-borderLight dark:border-skyai-borderDark space-y-2">
-                    <p class="text-[11px] text-gray-400 text-center font-medium">Masuk langsung dengan Akun Google Anda:</p>
-                    <input type="email" id="manualGoogleEmail" placeholder="nama@gmail.com" class="w-full px-3 py-1.5 text-xs rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 outline-none focus:border-blue-500 dark:text-white">
-                    <input type="text" id="manualGoogleName" placeholder="Nama Lengkap Anda" class="w-full px-3 py-1.5 text-xs rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 outline-none focus:border-blue-500 dark:text-white">
+                    <p class="text-[11px] text-gray-400 text-center font-medium">Masukkan Akun Google Anda:</p>
+                    <input type="email" id="manualGoogleEmail" placeholder="nama@gmail.com" class="w-full px-3 py-2 text-xs rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 outline-none focus:border-blue-500 dark:text-white">
+                    <input type="text" id="manualGoogleName" placeholder="Nama Lengkap Anda" class="w-full px-3 py-2 text-xs rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 outline-none focus:border-blue-500 dark:text-white">
                     <button id="submitManualGoogleBtn" type="button" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-full transition shadow">
-                        Masuk dengan Akun Google Ini
+                        Masuk Sekarang
                     </button>
                 </div>
 
@@ -820,23 +820,7 @@
                 if (elements.loginModal) elements.loginModal.classList.add('hidden');
                 showToast('Berhasil keluar dari akun Google', 'info');
             } else {
-                // 1. Try Supabase Google OAuth
-                try {
-                    if (supabaseClient && supabaseClient.auth) {
-                        const { data, error } = await supabaseClient.auth.signInWithOAuth({
-                            provider: 'google',
-                            options: { redirectTo: window.location.href }
-                        });
-                        if (!error && data?.url) {
-                            window.location.href = data.url;
-                            return;
-                        }
-                    }
-                } catch (err) {
-                    console.warn("Supabase Google OAuth warning:", err.message);
-                }
-
-                // 2. Fallback for iframe preview: Show clean inline Google Login form
+                // Tampilkan form input Akun Google langsung di modal agar tidak dialihkan ke URL Supabase yang belum dikonfigurasi
                 if (elements.manualGoogleForm) {
                     elements.manualGoogleForm.classList.remove('hidden');
                     showToast('Silakan masukkan email Akun Google Anda di bawah', 'info');
