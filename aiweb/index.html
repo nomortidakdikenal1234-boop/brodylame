@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sky AI Web App</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        skyai: {
+                            sidebarDark: '#1e1f20',
+                            bgDark: '#131314',
+                            cardDark: '#1e1f20',
+                            hoverDark: '#282a2c',
+                            borderDark: '#333537',
+                            sidebarLight: '#f0f4f9',
+                            bgLight: '#ffffff',
+                            cardLight: '#f0f4f9',
+                            hoverLight: '#e1e8f0',
+                            borderLight: '#e3e8ef'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Highlight.js for Code Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/tokyo-night-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        pre code {
+            font-family: 'Fira Code', monospace;
+            border-radius: 0.5rem;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.3);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 163, 175, 0.5);
+        }
+        .prose pre {
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            padding: 0;
+            background: transparent;
+        }
+        .prose p {
+            margin-bottom: 0.75em;
+            line-height: 1.6;
+        }
+        .prose ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75em;
+        }
+        .prose ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75em;
+        }
+        .sidebar-transition {
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-skyai-bgLight dark:bg-skyai-bgDark text-gray-800 dark:text-gray-100 h-screen flex overflow-hidden antialiased">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar-transition fixed md:static inset-y-0 left-0 z-40 w-64 bg-skyai-sidebarLight dark:bg-skyai-sidebarDark border-r border-skyai-borderLight dark:border-skyai-borderDark flex flex-col justify-between flex-shrink-0">
+        <!-- Top Section -->
+        <div class="p-3">
+            <!-- Sidebar Header with Logo & Toggle Button -->
+            <div class="flex items-center justify-between mb-4 px-2 pt-1">
+                <button id="sidebarLogoBtn" title="Buka/Tutup Sidebar" class="flex items-center space-x-2.5 group cursor-pointer text-left">
+                    <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI Logo" class="w-7 h-7 rounded-full object-cover shadow-sm group-hover:opacity-80 transition">
+                    <span class="font-semibold text-lg tracking-tight dark:text-white text-gray-900 group-hover:text-blue-500 transition">Sky AI</span>
+                </button>
+                <div class="flex items-center space-x-1">
+                    <button id="collapseSidebarBtn" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white p-1.5 rounded-lg hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
+                        <i class="fa-solid fa-sidebar text-base"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Percakapan Baru Button -->
+            <button id="newChatBtn" class="w-full flex items-center space-x-3 px-4 py-3 rounded-full bg-skyai-hoverLight dark:bg-skyai-hoverDark font-medium text-sm text-gray-800 dark:text-gray-100 hover:opacity-90 transition shadow-sm mb-4">
+                <i class="fa-regular fa-pen-to-square text-base"></i>
+                <span>Percakapan baru</span>
+            </button>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-1 text-sm font-medium">
+                <button class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-full text-gray-700 dark:text-gray-300 hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
+                    <i class="fa-solid fa-magnifying-glass w-5 text-gray-500 dark:text-gray-400"></i>
+                    <span>Telusuri percakapan</span>
+                </button>
+                <button class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-full text-gray-700 dark:text-gray-300 hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
+                    <i class="fa-regular fa-image w-5 text-gray-500 dark:text-gray-400"></i>
+                    <span>Gambar</span>
+                </button>
+                <button class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-full text-gray-700 dark:text-gray-300 hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
+                    <i class="fa-regular fa-circle-play w-5 text-gray-500 dark:text-gray-400"></i>
+                    <span>Video</span>
+                </button>
+                <button class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-full text-gray-700 dark:text-gray-300 hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
+                    <i class="fa-solid fa-border-all w-5 text-gray-500 dark:text-gray-400"></i>
+                    <span>Koleksi</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Chat History List -->
+        <div class="flex-1 overflow-y-auto px-3 py-2 space-y-1 border-t border-skyai-borderLight/40 dark:border-skyai-borderDark/40" id="chatHistoryList">
+            <!-- Dynamic Chat History Items Inserted Here -->
+        </div>
+
+        <!-- Sidebar Bottom Section (Account & Settings Menu) -->
+        <div class="p-3 border-t border-skyai-borderLight dark:border-skyai-borderDark relative">
+            <div id="userProfileBtn" class="flex items-center justify-between px-3 py-2.5 rounded-full hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition cursor-pointer">
+                <div class="flex items-center space-x-3 truncate">
+                    <div id="sidebarAvatarBox" class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0 overflow-hidden shadow-sm">
+                        <span id="sidebarAvatarInitial">T</span>
+                    </div>
+                    <span id="sidebarUserName" class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">Tamu</span>
+                </div>
+                <button id="openSettingsBtn" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1">
+                    <i class="fa-solid fa-gear text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Settings Popover Menu -->
+            <div id="settingsMenu" class="hidden absolute bottom-16 left-3 w-64 bg-white dark:bg-[#1e1f20] border border-skyai-borderLight dark:border-skyai-borderDark rounded-2xl shadow-2xl z-50 p-2 space-y-1 text-sm font-medium text-gray-700 dark:text-gray-200">
+                
+                <!-- Google Login / Account Status Button -->
+                <button id="openAccountModalBtn" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.14C3.26 21.3 7.31 24 12 24z"/>
+                            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.59H1.29C.47 8.22 0 10.06 0 12s.47 3.78 1.29 5.41l3.99-3.14z"/>
+                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.59l3.99 3.14c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                        </svg>
+                        <span id="accountMenuText" class="truncate">Masuk Google</span>
+                    </div>
+                    <span id="accountStatusBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 font-semibold">Tamu</span>
+                </button>
+
+                <!-- Aktivitas -->
+                <button class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-gray-400"></i>
+                    <span>Aktivitas</span>
+                </button>
+
+                <!-- Batas penggunaan -->
+                <button id="usageLimitsBtn" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
+                    <i class="fa-solid fa-chart-pie w-5 text-gray-400"></i>
+                    <span>Batas penggunaan</span>
+                </button>
+
+                <!-- Tema Toggle Button -->
+                <button id="themeToggleBtn" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
+                    <div class="flex items-center space-x-3">
+                        <i id="themeIcon" class="fa-solid fa-moon w-5 text-gray-400"></i>
+                        <span>Tema</span>
+                    </div>
+                    <span id="themeLabel" class="text-xs text-gray-400">Gelap</span>
+                </button>
+
+                <!-- Lihat langganan -->
+                <button id="subscriptionBtn" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
+                    <i class="fa-solid fa-box-archive w-5 text-gray-400"></i>
+                    <span>Lihat langganan</span>
+                </button>
+
+                <!-- Kirim masukan -->
+                <button class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
+                    <i class="fa-regular fa-comment-dots w-5 text-gray-400"></i>
+                    <span>Kirim masukan</span>
+                </button>
+
+                <!-- Location & IP Section Footer -->
+                <div class="pt-2 mt-1 border-t border-skyai-borderLight dark:border-skyai-borderDark/80 px-3 py-2 text-xs text-gray-400 space-y-1">
+                    <div class="flex items-center space-x-2 text-emerald-500 font-medium text-[11px]" id="cloudSyncBadge">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
+                        <span>Cloud Sync Supabase Aktif</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-blue-500 font-medium">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
+                        <span id="userLocationText">Indonesia</span>
+                    </div>
+                    <div id="userIpText" class="text-[11px] text-gray-400">Dari alamat IP Anda</div>
+                    <button id="refreshLocationBtn" class="text-xs text-blue-500 hover:underline pt-1 block">
+                        Perbarui lokasi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay for Mobile Sidebar -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden bg-skyai-bgLight dark:bg-skyai-bgDark">
+        <!-- Floating Sidebar Open Toggle Button -->
+        <button id="floatingToggleBtn" title="Buka Sidebar" class="absolute top-3 left-3 z-30 p-2 rounded-xl bg-skyai-sidebarLight/80 dark:bg-skyai-sidebarDark/80 backdrop-blur border border-skyai-borderLight dark:border-skyai-borderDark text-gray-600 dark:text-gray-300 hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition shadow-sm">
+            <i class="fa-solid fa-bars text-sm"></i>
+        </button>
+
+        <!-- Chat View Area -->
+        <div id="chatMessagesContainer" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 pt-12 md:pt-6">
+            <!-- Welcome Screen -->
+            <div id="welcomeScreen" class="max-w-2xl mx-auto py-16 text-center flex flex-col items-center justify-center h-full">
+                <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI Logo" class="w-14 h-14 rounded-full object-cover mb-6 shadow-md border border-skyai-borderLight dark:border-skyai-borderDark">
+                <h1 id="welcomeHeading" class="text-2xl md:text-3xl font-semibold mb-8 text-gray-900 dark:text-white">Apa yang bisa saya bantu hari ini?</h1>
+
+                <!-- Prompt Suggestion Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full text-left">
+                    <button class="prompt-card p-4 rounded-2xl bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs font-medium text-gray-700 dark:text-gray-300">
+                        Buatkan script Python scraper data async sederhana
+                    </button>
+                    <button class="prompt-card p-4 rounded-2xl bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs font-medium text-gray-700 dark:text-gray-300">
+                        Rencanakan ide konten video YouTube seputar teknologi
+                    </button>
+                    <button class="prompt-card p-4 rounded-2xl bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs font-medium text-gray-700 dark:text-gray-300">
+                        Jelaskan konsep dasar kecerdasan buatan & machine learning
+                    </button>
+                    <button class="prompt-card p-4 rounded-2xl bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs font-medium text-gray-700 dark:text-gray-300">
+                        Tulis email profesional penawaran kerjasama bisnis
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages List -->
+            <div id="messagesList" class="max-w-3xl mx-auto space-y-6"></div>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="p-4 bg-transparent">
+            <div class="max-w-3xl mx-auto relative">
+                <!-- Image Preview Area -->
+                <div id="imagePreviewContainer" class="hidden mb-2 relative inline-block">
+                    <img id="imagePreview" src="" alt="Attachment" class="h-20 w-auto rounded-xl border border-skyai-borderLight dark:border-skyai-borderDark object-cover shadow-md">
+                    <button id="removeImageBtn" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 text-xs shadow-md hover:bg-red-600">
+                        <i class="fa-solid fa-xmark w-3 h-3 flex items-center justify-center"></i>
+                    </button>
+                </div>
+
+                <!-- Input Form -->
+                <form id="chatForm" class="relative flex items-center bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark rounded-full px-4 py-2.5 shadow-sm focus-within:shadow-md transition">
+                    
+                    <!-- Left Attachment Plus (+) Button -->
+                    <input type="file" id="imageInput" accept="image/*" class="hidden">
+                    <button type="button" id="attachImageBtn" title="Unggah Gambar / Berkas" class="p-2 text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 rounded-full hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition flex-shrink-0">
+                        <i class="fa-solid fa-plus text-base"></i>
+                    </button>
+
+                    <!-- Text Area Input -->
+                    <textarea id="userInput" rows="1" placeholder="Minta Sky AI..." class="w-full px-3 py-1 bg-transparent resize-none outline-none text-sm dark:text-white placeholder-gray-500 dark:placeholder-gray-400 max-h-32 overflow-y-auto leading-relaxed"></textarea>
+
+                    <!-- Right Controls -->
+                    <div class="flex items-center space-x-1.5 flex-shrink-0">
+                        
+                        <!-- AI Model Dropdown Button -->
+                        <div class="relative">
+                            <button type="button" id="modelSelectBtn" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark text-xs font-semibold text-gray-700 dark:text-gray-300 transition">
+                                <i class="fa-solid fa-bolt text-amber-500"></i>
+                                <span id="currentModelLabel">Sky Med</span>
+                                <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 ml-0.5"></i>
+                            </button>
+
+                            <!-- Model Selector Dropdown Menu -->
+                            <div id="modelDropdown" class="hidden absolute right-0 bottom-12 w-56 bg-skyai-bgLight dark:bg-skyai-sidebarDark border border-skyai-borderLight dark:border-skyai-borderDark rounded-2xl shadow-xl z-50 p-1.5 space-y-1">
+                                <button type="button" data-model="sky-mini" class="model-option w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs">
+                                    <div class="flex items-center space-x-2.5">
+                                        <i class="fa-solid fa-bolt text-emerald-500"></i>
+                                        <div>
+                                            <div class="font-semibold text-gray-800 dark:text-gray-200">Sky Mini</div>
+                                            <div class="text-[10px] text-gray-400">Ringan & Super Cepat</div>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] text-emerald-500 font-medium">Gratis</span>
+                                </button>
+
+                                <button type="button" data-model="sky-med" class="model-option w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs">
+                                    <div class="flex items-center space-x-2.5">
+                                        <i class="fa-solid fa-bolt text-amber-500"></i>
+                                        <div>
+                                            <div class="font-semibold text-gray-800 dark:text-gray-200">Sky Med</div>
+                                            <div class="text-[10px] text-gray-400">Seimbang & Pintar</div>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] text-amber-500 font-medium">Gratis</span>
+                                </button>
+
+                                <button type="button" data-model="sky-plus" data-plan="plus" class="model-option w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs">
+                                    <div class="flex items-center space-x-2.5">
+                                        <i class="fa-solid fa-wand-magic-sparkles text-blue-500"></i>
+                                        <div>
+                                            <div class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-1.5">
+                                                <span>Sky Plus</span>
+                                                <span class="px-1.5 py-0.2 text-[9px] bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-300 font-bold rounded">PLUS</span>
+                                            </div>
+                                            <div class="text-[10px] text-gray-400">Kecepatan Tinggi & Responsif</div>
+                                        </div>
+                                    </div>
+                                    <i class="model-lock-icon fa-solid fa-lock text-gray-400 text-xs ml-2"></i>
+                                </button>
+
+                                <button type="button" data-model="sky-pro" data-plan="pro" class="model-option w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs">
+                                    <div class="flex items-center space-x-2.5">
+                                        <i class="fa-solid fa-crown text-purple-500"></i>
+                                        <div>
+                                            <div class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-1.5">
+                                                <span>Sky Pro</span>
+                                                <span class="px-1.5 py-0.2 text-[9px] bg-purple-100 dark:bg-purple-900/60 text-purple-600 dark:text-purple-300 font-bold rounded">PRO</span>
+                                            </div>
+                                            <div class="text-[10px] text-gray-400">Penalaran & Deep Thinking</div>
+                                        </div>
+                                    </div>
+                                    <i class="model-lock-icon fa-solid fa-lock text-gray-400 text-xs ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Voice Input / Mic Button -->
+                        <button type="button" id="voiceBtn" title="Input Suara" class="p-2 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white rounded-full hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
+                            <i class="fa-solid fa-microphone text-sm"></i>
+                        </button>
+
+                        <!-- Send Button -->
+                        <button type="submit" id="sendBtn" class="p-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full transition duration-150 shadow hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed">
+                            <i class="fa-solid fa-arrow-up text-xs font-bold"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-2 text-[11px] text-gray-400 dark:text-gray-500">
+                    Sky AI dapat membuat kesalahan. Periksa informasi penting.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- User Login Status Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-skyai-bgLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
+            <div id="modalUserAvatarBox" class="w-16 h-16 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-2xl mx-auto mb-4 overflow-hidden shadow-md">
+                <span id="modalAvatarInitial">T</span>
+            </div>
+            <h3 id="modalUserName" class="text-lg font-bold text-gray-900 dark:text-white mb-0.5">Pengguna Tamu</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-6" id="userEmailLabel">Belum masuk akun Google</p>
+            
+            <div class="space-y-2.5">
+                <button id="googleAuthBtn" class="w-full py-2.5 bg-white dark:bg-gray-800 text-gray-800 dark:text-white text-sm font-semibold rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center justify-center space-x-2.5 shadow-sm">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.14C3.26 21.3 7.31 24 12 24z"/>
+                        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.59H1.29C.47 8.22 0 10.06 0 12s.47 3.78 1.29 5.41l3.99-3.14z"/>
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.59l3.99 3.14c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                    </svg>
+                    <span id="googleAuthBtnText">Masuk dengan Google</span>
+                </button>
+
+                <!-- Direct Google Email Login Form (Fallback when popup/Firebase Auth is unconfigured) -->
+                <div id="manualGoogleForm" class="hidden text-left pt-2 border-t border-skyai-borderLight dark:border-skyai-borderDark space-y-2">
+                    <p class="text-[11px] text-gray-400 text-center font-medium">Masuk langsung dengan Akun Google Anda:</p>
+                    <input type="email" id="manualGoogleEmail" placeholder="nama@gmail.com" class="w-full px-3 py-1.5 text-xs rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 outline-none focus:border-blue-500 dark:text-white">
+                    <input type="text" id="manualGoogleName" placeholder="Nama Lengkap Anda" class="w-full px-3 py-1.5 text-xs rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 outline-none focus:border-blue-500 dark:text-white">
+                    <button id="submitManualGoogleBtn" type="button" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-full transition shadow">
+                        Masuk dengan Akun Google Ini
+                    </button>
+                </div>
+
+                <button id="closeLoginModalBtn" class="w-full py-2 bg-gray-100 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 text-xs font-medium rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batas Penggunaan Modal -->
+    <div id="usageLimitsModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-[#181818] text-white border border-gray-800 rounded-3xl p-6 md:p-8 max-w-xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button id="closeUsageLimitsBtn" class="absolute top-5 right-5 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            
+            <h2 class="text-2xl font-bold mb-3 tracking-tight">Batas penggunaan</h2>
+            <p class="text-xs md:text-sm text-gray-400 mb-2 leading-relaxed">
+                Batas paket menentukan seberapa banyak Anda dapat menggunakan Sky AI seiring waktu. Model dan fitur lanjutan dapat menggunakan lebih banyak kuota.
+            </p>
+
+            <div class="bg-[#212121] border border-gray-800/80 rounded-2xl p-4 mb-3">
+                <div class="flex items-center justify-between text-sm font-semibold mb-3">
+                    <div class="flex items-center space-x-1.5">
+                        <span>Penggunaan saat ini</span>
+                    </div>
+                    <span id="currentUsagePercentText" class="font-bold text-gray-200">0% digunakan</span>
+                </div>
+                <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden mb-2">
+                    <div id="usageProgressBar" class="bg-blue-500 h-full rounded-full transition-all duration-300" style="width: 0%;"></div>
+                </div>
+                <div class="flex justify-between items-center text-[11px] text-gray-400">
+                    <span id="resetTimeText">Direset pukul 24.00</span>
+                    <span id="usageRatioText" class="text-gray-400 font-medium">0 / 30 jawaban</span>
+                </div>
+            </div>
+
+            <div class="bg-[#212121] border border-gray-800/80 rounded-2xl p-4 mb-4">
+                <div class="flex items-center justify-between text-sm font-semibold mb-2">
+                    <span>Batas mingguan</span>
+                    <span id="weeklyUsagePercentText" class="font-bold text-gray-200">0% digunakan</span>
+                </div>
+                <div class="text-[11px] text-gray-400">Direset pada minggu depan</div>
+            </div>
+
+            <div class="bg-[#212121] border border-gray-800/80 rounded-2xl p-4 flex items-center justify-between mb-2">
+                <div>
+                    <div class="text-xs md:text-sm font-bold text-white mb-0.5">Dapatkan penggunaan 2x lebih banyak dengan AI Plus</div>
+                    <div class="text-xs text-gray-400">
+                        <span class="line-through text-gray-500 mr-1.5">Rp 75.000</span>
+                        <span class="text-emerald-400 font-medium">Rp 7.500/bulan selama 1 bulan</span>
+                    </div>
+                </div>
+                <button id="upgradeFromLimitsBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs rounded-full transition shadow-md flex-shrink-0 ml-3">
+                    Upgrade
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Langganan (Subscription Modal) -->
+    <div id="subscriptionModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm overflow-y-auto">
+        <div class="bg-white dark:bg-[#181818] text-gray-900 dark:text-white border border-skyai-borderLight dark:border-gray-800 rounded-3xl p-6 md:p-8 max-w-4xl w-full shadow-2xl relative my-6 max-h-[90vh] overflow-y-auto">
+            <button id="closeSubscriptionBtn" class="absolute top-5 right-5 text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="text-center max-w-2xl mx-auto mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold tracking-tight mb-2">
+                    Upgrade untuk mendapatkan lebih banyak akses ke <span class="text-blue-600 dark:text-blue-400">Sky AI</span>
+                </h2>
+                <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                    Batalkan kapan saja. Dengan berlangganan, Anda menyetujui persyaratan layanan Sky AI.
+                </p>
+                <div class="inline-flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-full mt-4 border border-skyai-borderLight dark:border-gray-700">
+                    <span class="px-5 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow-sm">Bulanan</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                <!-- Card 1: Sky AI Plus -->
+                <div class="relative bg-white dark:bg-[#212121] border-2 border-blue-500 dark:border-blue-500 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
+                    <div class="absolute -top-3.5 left-6 bg-blue-600 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full shadow">
+                        Disarankan
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-1 text-gray-900 dark:text-white">Sky AI Plus</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">
+                            Dapatkan lebih banyak akses ke alat AI untuk meningkatkan produktivitas dan kreativitas Anda.
+                        </p>
+                        
+                        <div class="inline-flex items-center space-x-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-xs font-medium mb-4">
+                            <i class="fa-solid fa-cloud text-blue-500 text-xs"></i>
+                            <span>Penyimpanan sebesar 400 GB</span>
+                        </div>
+
+                        <div class="mb-6">
+                            <div class="text-xs text-gray-400 line-through">Rp 75.000</div>
+                            <div class="flex items-baseline space-x-1">
+                                <span class="text-2xl md:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp 7.500</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">/bln</span>
+                            </div>
+                            <div class="text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 75.000/bln setelahnya</div>
+                        </div>
+
+                        <button class="subscribe-action-btn w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-full transition shadow-md mb-6">
+                            Dapatkan Sky AI Plus
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Sky AI Pro -->
+                <div class="bg-white dark:bg-[#212121] border border-skyai-borderLight dark:border-gray-800 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
+                    <div>
+                        <h3 class="text-xl font-bold mb-1 text-gray-900 dark:text-white">Sky AI Pro</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">
+                            Bekerja lebih cerdas dan berkreasi lebih cepat dengan manfaat yang diperlukan di seluruh Sky AI.
+                        </p>
+                        
+                        <div class="inline-flex items-center space-x-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-xs font-medium mb-4">
+                            <i class="fa-solid fa-cloud text-blue-500 text-xs"></i>
+                            <span>Penyimpanan sebesar 5 TB</span>
+                        </div>
+
+                        <div class="mb-6">
+                            <div class="text-xs text-gray-400 line-through">Rp 309.000</div>
+                            <div class="flex items-baseline space-x-1">
+                                <span class="text-2xl md:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp 31.000</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">/bln</span>
+                            </div>
+                            <div class="text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 309.000/bln setelahnya</div>
+                        </div>
+
+                        <button class="subscribe-action-btn w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-full transition shadow-md mb-6">
+                            Dapatkan Sky AI Pro
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- Supabase SDK via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // =====================================================================
+        // CONFIG SUPABASE & CLIENT IDENTIFIER
+        // =====================================================================
+        const SUPABASE_URL = "https://eamaqwlimqhmjfovumjt.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_2GPAiWkbMwL9VTwyxZ9KTQ_1AbYQpMN";
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Persistent Guest Device ID
+        function getClientId() {
+            let id = localStorage.getItem('skyai_client_id');
+            if (!id) {
+                id = 'user_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+                localStorage.setItem('skyai_client_id', id);
+            }
+            return id;
+        }
+
+        let currentUserId = getClientId();
+
+        // =====================================================================
+        // API KEY GROQ (BASE64 ENCODED ROTATION)
+        // 5 API Key Groq dalam format Base64 untuk rotasi & auto-retry otomatis
+        // =====================================================================
+        const b64_groq = [
+            'Z3NrX3RuTkxHcEVCRFlPcXgyRzdmemRDV0dkeWIzRll4QnBFQTV3NUVtYm5yWWh5cm0zUW1pZzc=',
+            'Z3NrX25WYU1QM0ZmYTN5QWxMb2JtN3NjV0dkeWIzRllqWGd2NXlGNmtVdU5aTEJSYWg4TXlMbGE=',
+            'Z3NrXzdDOWFlSkVRUmZ6ZjgzSURNR0JSV0dkeWIzRllsZ1FYams2dncySDhUM05EYk1JeWlDTVk=',
+            'Z3NrX01aM3dMcGxZZTN3RWhiMzJiQ3ptV0dkeWIzRllDZ1hxZnY1MDhXVWV3VE50QVdmOHgyZ28=',
+            'Z3NrX0hhbkRvUmhFeW5Vd1FVZ3RaVmhqV0dkeWIzRlljZ0ZyS054dmhjano0TU5XcVdhbGQzSlE='
+        ];
+
+        function getRawKey(base64Str) {
+            try { return atob(base64Str.trim()).trim(); } catch(e) { return ""; }
+        }
+
+        let currentGroqIndex = 0;
+
+        // Global Application Configuration & State
+        const MAX_USAGE = 30;
+
+        const state = {
+            chats: [],
+            currentChatId: null,
+            isGenerating: false,
+            userPlan: 'free',
+            usageCount: 0,
+            currentModelName: 'Sky Med',
+            currentModelKey: 'llama-3.3-70b-versatile',
+            currentProvider: 'groq', 
+            attachedImageBase64: null,
+            temperature: 0.7,
+            user: {
+                name: "Tamu",
+                email: "Belum masuk akun Google",
+                photoURL: null,
+                isLoggedIn: false
+            }
+        };
+
+        // Cache DOM Elements safely
+        const elements = {
+            sidebar: document.getElementById('sidebar'),
+            sidebarOverlay: document.getElementById('sidebarOverlay'),
+            sidebarLogoBtn: document.getElementById('sidebarLogoBtn'),
+            collapseSidebarBtn: document.getElementById('collapseSidebarBtn'),
+            floatingToggleBtn: document.getElementById('floatingToggleBtn'),
+            newChatBtn: document.getElementById('newChatBtn'),
+            chatHistoryList: document.getElementById('chatHistoryList'),
+            userProfileBtn: document.getElementById('userProfileBtn'),
+            openSettingsBtn: document.getElementById('openSettingsBtn'),
+            settingsMenu: document.getElementById('settingsMenu'),
+            openAccountModalBtn: document.getElementById('openAccountModalBtn'),
+            accountMenuText: document.getElementById('accountMenuText'),
+            accountStatusBadge: document.getElementById('accountStatusBadge'),
+            usageLimitsBtn: document.getElementById('usageLimitsBtn'),
+            themeToggleBtn: document.getElementById('themeToggleBtn'),
+            themeIcon: document.getElementById('themeIcon'),
+            themeLabel: document.getElementById('themeLabel'),
+            subscriptionBtn: document.getElementById('subscriptionBtn'),
+            userLocationText: document.getElementById('userLocationText'),
+            userIpText: document.getElementById('userIpText'),
+            refreshLocationBtn: document.getElementById('refreshLocationBtn'),
+            welcomeScreen: document.getElementById('welcomeScreen'),
+            welcomeHeading: document.getElementById('welcomeHeading'),
+            messagesList: document.getElementById('messagesList'),
+            chatMessagesContainer: document.getElementById('chatMessagesContainer'),
+            imagePreviewContainer: document.getElementById('imagePreviewContainer'),
+            imagePreview: document.getElementById('imagePreview'),
+            removeImageBtn: document.getElementById('removeImageBtn'),
+            chatForm: document.getElementById('chatForm'),
+            attachImageBtn: document.getElementById('attachImageBtn'),
+            imageInput: document.getElementById('imageInput'),
+            userInput: document.getElementById('userInput'),
+            modelSelectBtn: document.getElementById('modelSelectBtn'),
+            currentModelLabel: document.getElementById('currentModelLabel'),
+            modelDropdown: document.getElementById('modelDropdown'),
+            voiceBtn: document.getElementById('voiceBtn'),
+            sendBtn: document.getElementById('sendBtn'),
+            loginModal: document.getElementById('loginModal'),
+            closeLoginModalBtn: document.getElementById('closeLoginModalBtn'),
+            googleAuthBtn: document.getElementById('googleAuthBtn'),
+            googleAuthBtnText: document.getElementById('googleAuthBtnText'),
+            manualGoogleForm: document.getElementById('manualGoogleForm'),
+            manualGoogleEmail: document.getElementById('manualGoogleEmail'),
+            manualGoogleName: document.getElementById('manualGoogleName'),
+            submitManualGoogleBtn: document.getElementById('submitManualGoogleBtn'),
+            sidebarUserName: document.getElementById('sidebarUserName'),
+            sidebarAvatarBox: document.getElementById('sidebarAvatarBox'),
+            sidebarAvatarInitial: document.getElementById('sidebarAvatarInitial'),
+            modalUserName: document.getElementById('modalUserName'),
+            modalUserAvatarBox: document.getElementById('modalUserAvatarBox'),
+            modalAvatarInitial: document.getElementById('modalAvatarInitial'),
+            userEmailLabel: document.getElementById('userEmailLabel'),
+            usageLimitsModal: document.getElementById('usageLimitsModal'),
+            closeUsageLimitsBtn: document.getElementById('closeUsageLimitsBtn'),
+            currentUsagePercentText: document.getElementById('currentUsagePercentText'),
+            weeklyUsagePercentText: document.getElementById('weeklyUsagePercentText'),
+            usageProgressBar: document.getElementById('usageProgressBar'),
+            usageRatioText: document.getElementById('usageRatioText'),
+            upgradeFromLimitsBtn: document.getElementById('upgradeFromLimitsBtn'),
+            subscriptionModal: document.getElementById('subscriptionModal'),
+            closeSubscriptionBtn: document.getElementById('closeSubscriptionBtn'),
+            toastContainer: document.getElementById('toastContainer'),
+            cloudSyncBadge: document.getElementById('cloudSyncBadge')
+        };
+
+        // Utility Helper Functions
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function showToast(message, type = 'info') {
+            if (!elements.toastContainer) return;
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto flex items-center space-x-2 px-4 py-2.5 rounded-full text-xs shadow-xl border transition duration-200 ${
+                type === 'error' ? 'bg-red-900 text-white border-red-700' : 'bg-gray-900 text-white border-gray-800'
+            }`;
+            toast.innerHTML = `<span>${escapeHtml(message)}</span>`;
+            elements.toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+
+        function clearAttachedImage() {
+            state.attachedImageBase64 = null;
+            if (elements.imageInput) elements.imageInput.value = '';
+            if (elements.imagePreviewContainer) elements.imagePreviewContainer.classList.add('hidden');
+        }
+
+        function updateModelLockIcons() {
+            document.querySelectorAll('.model-option').forEach(btn => {
+                const requiredPlan = btn.getAttribute('data-plan');
+                const lockIcon = btn.querySelector('.model-lock-icon');
+                if (!requiredPlan) return;
+
+                let isUnlocked = (requiredPlan === 'plus' && (state.userPlan === 'plus' || state.userPlan === 'pro')) ||
+                                 (requiredPlan === 'pro' && state.userPlan === 'pro');
+
+                if (lockIcon) {
+                    lockIcon.className = isUnlocked 
+                        ? 'model-lock-icon fa-solid fa-circle-check text-emerald-500 text-xs ml-2'
+                        : 'model-lock-icon fa-solid fa-lock text-gray-400 text-xs ml-2';
+                }
+            });
+        }
+
+        // Set authenticated Google User
+        function setGoogleUser(userData) {
+            state.user.name = userData.name || 'Pengguna Google';
+            state.user.email = userData.email || '';
+            state.user.photoURL = userData.photoURL || null;
+            state.user.isLoggedIn = true;
+
+            currentUserId = userData.uid || userData.email || getClientId();
+            localStorage.setItem('skyai_google_user', JSON.stringify(userData));
+
+            // Update UI Sidebar
+            if (elements.sidebarUserName) elements.sidebarUserName.textContent = state.user.name;
+            if (elements.sidebarAvatarBox) {
+                if (state.user.photoURL) {
+                    elements.sidebarAvatarBox.innerHTML = `<img src="${escapeHtml(state.user.photoURL)}" alt="${escapeHtml(state.user.name)}" class="w-full h-full object-cover">`;
+                } else {
+                    elements.sidebarAvatarBox.innerHTML = `<span class="font-bold text-sm">${escapeHtml(state.user.name.charAt(0).toUpperCase())}</span>`;
+                }
+            }
+
+            // Update UI Account Badge & Settings Menu
+            if (elements.accountMenuText) elements.accountMenuText.textContent = state.user.name;
+            if (elements.accountStatusBadge) {
+                elements.accountStatusBadge.textContent = 'Google';
+                elements.accountStatusBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-semibold';
+            }
+
+            // Update UI Login Modal
+            if (elements.modalUserName) elements.modalUserName.textContent = state.user.name;
+            if (elements.userEmailLabel) elements.userEmailLabel.textContent = state.user.email;
+            if (elements.googleAuthBtnText) elements.googleAuthBtnText.textContent = 'Keluar dari Akun Google';
+            if (elements.modalUserAvatarBox) {
+                if (state.user.photoURL) {
+                    elements.modalUserAvatarBox.innerHTML = `<img src="${escapeHtml(state.user.photoURL)}" alt="${escapeHtml(state.user.name)}" class="w-full h-full object-cover">`;
+                } else {
+                    elements.modalUserAvatarBox.innerHTML = `<span class="font-bold text-2xl">${escapeHtml(state.user.name.charAt(0).toUpperCase())}</span>`;
+                }
+            }
+
+            // Update Welcome Heading
+            if (elements.welcomeHeading) {
+                elements.welcomeHeading.textContent = `Apa yang bisa saya bantu, ${state.user.name}?`;
+            }
+
+            // Sync user data with Supabase
+            setupSupabaseSync();
+        }
+
+        // Reset to Guest Mode
+        function resetToGuestUser() {
+            state.user.name = "Tamu";
+            state.user.email = "Belum masuk akun Google";
+            state.user.photoURL = null;
+            state.user.isLoggedIn = false;
+
+            currentUserId = getClientId();
+            localStorage.removeItem('skyai_google_user');
+
+            // Reset UI Sidebar
+            if (elements.sidebarUserName) elements.sidebarUserName.textContent = "Tamu";
+            if (elements.sidebarAvatarBox) {
+                elements.sidebarAvatarBox.innerHTML = `<span class="font-bold text-sm">T</span>`;
+            }
+
+            // Reset UI Account Badge
+            if (elements.accountMenuText) elements.accountMenuText.textContent = "Masuk Google";
+            if (elements.accountStatusBadge) {
+                elements.accountStatusBadge.textContent = 'Tamu';
+                elements.accountStatusBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 font-semibold';
+            }
+
+            // Reset UI Login Modal
+            if (elements.modalUserName) elements.modalUserName.textContent = "Pengguna Tamu";
+            if (elements.userEmailLabel) elements.userEmailLabel.textContent = "Belum masuk akun Google";
+            if (elements.googleAuthBtnText) elements.googleAuthBtnText.textContent = 'Masuk dengan Google';
+            if (elements.modalUserAvatarBox) {
+                elements.modalUserAvatarBox.innerHTML = `<span class="font-bold text-2xl">T</span>`;
+            }
+
+            // Reset Welcome Heading
+            if (elements.welcomeHeading) {
+                elements.welcomeHeading.textContent = `Apa yang bisa saya bantu hari ini?`;
+            }
+
+            // Sync guest data with Supabase
+            setupSupabaseSync();
+        }
+
+        // Google Auth Click Trigger via Supabase Auth
+        async function handleGoogleAuthClick() {
+            if (state.user.isLoggedIn) {
+                try {
+                    if (supabaseClient && supabaseClient.auth) {
+                        await supabaseClient.auth.signOut();
+                    }
+                } catch(e) {
+                    console.log("Logout warning:", e);
+                }
+                resetToGuestUser();
+                if (elements.manualGoogleForm) elements.manualGoogleForm.classList.add('hidden');
+                if (elements.loginModal) elements.loginModal.classList.add('hidden');
+                showToast('Berhasil keluar dari akun Google', 'info');
+            } else {
+                // 1. Try Supabase Google OAuth
+                try {
+                    if (supabaseClient && supabaseClient.auth) {
+                        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                            provider: 'google',
+                            options: { redirectTo: window.location.href }
+                        });
+                        if (!error && data?.url) {
+                            window.location.href = data.url;
+                            return;
+                        }
+                    }
+                } catch (err) {
+                    console.warn("Supabase Google OAuth warning:", err.message);
+                }
+
+                // 2. Fallback for iframe preview: Show clean inline Google Login form
+                if (elements.manualGoogleForm) {
+                    elements.manualGoogleForm.classList.remove('hidden');
+                    showToast('Silakan masukkan email Akun Google Anda di bawah', 'info');
+                }
+            }
+        }
+
+        // Check and restore saved login session
+        if (supabaseClient && supabaseClient.auth) {
+            supabaseClient.auth.getSession().then(({ data: { session } }) => {
+                if (session?.user) {
+                    const u = session.user;
+                    setGoogleUser({
+                        uid: u.id,
+                        name: u.user_metadata?.full_name || u.user_metadata?.name || u.email?.split('@')[0] || 'Pengguna Google',
+                        email: u.email || '',
+                        photoURL: u.user_metadata?.avatar_url || u.user_metadata?.picture || null
+                    });
+                } else {
+                    const savedLocal = localStorage.getItem('skyai_google_user');
+                    if (savedLocal) {
+                        try { setGoogleUser(JSON.parse(savedLocal)); } catch(e){}
+                    }
+                }
+            });
+
+            supabaseClient.auth.onAuthStateChange((_event, session) => {
+                if (session?.user) {
+                    const u = session.user;
+                    setGoogleUser({
+                        uid: u.id,
+                        name: u.user_metadata?.full_name || u.user_metadata?.name || u.email?.split('@')[0] || 'Pengguna Google',
+                        email: u.email || '',
+                        photoURL: u.user_metadata?.avatar_url || u.user_metadata?.picture || null
+                    });
+                }
+            });
+        }
+
+        // UI Usage Limit Helper
+        function updateUsageUI() {
+            const percentage = Math.min(100, Math.round((state.usageCount / MAX_USAGE) * 100));
+            if (elements.currentUsagePercentText) elements.currentUsagePercentText.textContent = `${percentage}% digunakan`;
+            if (elements.weeklyUsagePercentText) elements.weeklyUsagePercentText.textContent = `${percentage}% digunakan`;
+            if (elements.usageProgressBar) elements.usageProgressBar.style.width = `${percentage}%`;
+            if (elements.usageRatioText) elements.usageRatioText.textContent = `${state.usageCount} / ${MAX_USAGE} jawaban`;
+        }
+
+        function openSubscriptionModal() {
+            if (elements.settingsMenu) elements.settingsMenu.classList.add('hidden');
+            if (elements.usageLimitsModal) elements.usageLimitsModal.classList.add('hidden');
+            if (elements.subscriptionModal) elements.subscriptionModal.classList.remove('hidden');
+        }
+
+        function toggleSidebar() {
+            if (window.innerWidth < 768) {
+                elements.sidebar.classList.toggle('-translate-x-full');
+                elements.sidebarOverlay.classList.toggle('hidden');
+            } else {
+                elements.sidebar.classList.toggle('hidden');
+            }
+        }
+
+        function toggleSettingsMenu(e) {
+            e.stopPropagation();
+            if (elements.settingsMenu) elements.settingsMenu.classList.toggle('hidden');
+        }
+
+        async function fetchUserIpAndLocation() {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                if (!res.ok) throw new Error('Failed to fetch IP');
+                const data = await res.json();
+                const locationStr = `${data.city || ''}, ${data.country_name || 'Indonesia'}`.replace(/^,\s*/, '');
+                if (elements.userLocationText) elements.userLocationText.textContent = locationStr || 'Indonesia';
+                if (elements.userIpText) elements.userIpText.textContent = `Dari IP: ${data.ip}`;
+            } catch (err) {
+                if (elements.userLocationText) elements.userLocationText.textContent = 'Indonesia';
+                if (elements.userIpText) elements.userIpText.textContent = 'Dari alamat IP Anda';
+            }
+        }
+
+        function setupTheme() {
+            const savedTheme = localStorage.getItem('skyai_theme') || 'dark';
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                if (elements.themeIcon) elements.themeIcon.className = 'fa-solid fa-moon w-5 text-gray-400';
+                if (elements.themeLabel) elements.themeLabel.textContent = 'Gelap';
+            } else {
+                document.documentElement.classList.remove('dark');
+                if (elements.themeIcon) elements.themeIcon.className = 'fa-solid fa-sun w-5 text-amber-500';
+                if (elements.themeLabel) elements.themeLabel.textContent = 'Terang';
+            }
+        }
+
+        // =====================================================================
+        // CHAT MANAGEMENT FUNCTIONS
+        // =====================================================================
+        function createNewChat() {
+            const currentChat = getCurrentChat();
+            if (currentChat && currentChat.messages.length === 0) {
+                loadChat(currentChat.id);
+                return;
+            }
+
+            const newChat = {
+                id: 'chat_' + Date.now(),
+                user_id: currentUserId,
+                title: 'Percakapan Baru',
+                messages: [],
+                created_at: new Date().toISOString()
+            };
+            state.chats.unshift(newChat);
+            saveChatToSupabase(newChat);
+            loadChat(newChat.id);
+        }
+
+        function getCurrentChat() {
+            return state.chats.find(c => c.id === state.currentChatId);
+        }
+
+        function loadChat(chatId) {
+            state.currentChatId = chatId;
+            renderChatHistory();
+            renderMessages();
+        }
+
+        function deleteChat(chatId, e) {
+            if (e) e.stopPropagation();
+            state.chats = state.chats.filter(c => c.id !== chatId);
+            deleteChatFromSupabase(chatId);
+            if (state.chats.length === 0) {
+                createNewChat();
+            } else {
+                if (state.currentChatId === chatId) {
+                    loadChat(state.chats[0].id);
+                } else {
+                    renderChatHistory();
+                }
+            }
+            showToast('Percakapan dihapus', 'info');
+        }
+
+        // =====================================================================
+        // UI RENDERING FUNCTIONS
+        // =====================================================================
+        function renderChatHistory() {
+            if (!elements.chatHistoryList) return;
+            elements.chatHistoryList.innerHTML = '';
+            state.chats.forEach(chat => {
+                const isActive = chat.id === state.currentChatId;
+                const item = document.createElement('div');
+                item.className = `group relative flex items-center justify-between px-3 py-2 rounded-full cursor-pointer text-xs font-medium transition duration-150 ${
+                    isActive 
+                        ? 'bg-skyai-hoverLight dark:bg-skyai-hoverDark font-semibold text-gray-900 dark:text-white' 
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-skyai-hoverLight/60 dark:hover:bg-skyai-hoverDark/60'
+                }`;
+
+                item.innerHTML = `
+                    <div class="flex items-center space-x-2.5 truncate w-[85%]">
+                        <i class="fa-regular fa-message text-xs opacity-70"></i>
+                        <span class="truncate">${escapeHtml(chat.title)}</span>
+                    </div>
+                    <button class="delete-chat-btn opacity-0 group-hover:opacity-100 p-1 hover:text-red-500 transition text-gray-400" title="Hapus Percakapan">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                `;
+
+                item.addEventListener('click', () => loadChat(chat.id));
+                const delBtn = item.querySelector('.delete-chat-btn');
+                if (delBtn) {
+                    delBtn.addEventListener('click', (e) => deleteChat(chat.id, e));
+                }
+                elements.chatHistoryList.appendChild(item);
+            });
+        }
+
+        function setupMarkdown() {
+            marked.setOptions({
+                highlight: function(code, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        return hljs.highlight(code, { language: lang }).value;
+                    }
+                    return hljs.highlightAuto(code).value;
+                },
+                breaks: true
+            });
+        }
+
+        function renderMessages() {
+            const chat = getCurrentChat();
+            if (!chat || chat.messages.length === 0) {
+                if (elements.welcomeScreen) elements.welcomeScreen.classList.remove('hidden');
+                if (elements.messagesList) elements.messagesList.innerHTML = '';
+                return;
+            }
+
+            if (elements.welcomeScreen) elements.welcomeScreen.classList.add('hidden');
+            if (elements.messagesList) elements.messagesList.innerHTML = '';
+
+            chat.messages.forEach((msg) => {
+                const isUser = msg.role === 'user';
+                const msgEl = document.createElement('div');
+                msgEl.className = `flex flex-col ${isUser ? 'items-end' : 'items-start'} space-y-1.5`;
+
+                const bubbleContainer = document.createElement('div');
+                bubbleContainer.className = `flex items-start space-x-3 max-w-[88%] ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+
+                const avatar = document.createElement('div');
+                avatar.className = `w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs overflow-hidden ${
+                    isUser 
+                        ? 'bg-purple-600 text-white font-bold' 
+                        : 'border border-skyai-borderLight dark:border-skyai-borderDark shadow-sm'
+                }`;
+
+                if (isUser) {
+                    if (state.user.photoURL) {
+                        avatar.innerHTML = `<img src="${escapeHtml(state.user.photoURL)}" class="w-full h-full object-cover">`;
+                    } else {
+                        avatar.textContent = state.user.name.charAt(0).toUpperCase();
+                    }
+                } else {
+                    avatar.innerHTML = '<img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI" class="w-full h-full object-cover">';
+                }
+
+                const bubble = document.createElement('div');
+                bubble.className = `px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                    isUser 
+                        ? 'bg-skyai-cardLight dark:bg-skyai-cardDark text-gray-900 dark:text-gray-100 border border-skyai-borderLight dark:border-skyai-borderDark' 
+                        : 'bg-transparent text-gray-800 dark:text-gray-100 prose dark:prose-invert max-w-full overflow-x-auto'
+                }`;
+
+                if (isUser) {
+                    bubble.textContent = msg.content;
+                    if (msg.image) {
+                        const img = document.createElement('img');
+                        img.src = msg.image;
+                        img.className = 'mt-2 max-h-48 rounded-xl border border-skyai-borderLight dark:border-skyai-borderDark';
+                        bubble.appendChild(img);
+                    }
+                } else {
+                    bubble.innerHTML = marked.parse(msg.content);
+                    setTimeout(() => formatCodeBlocks(bubble), 50);
+                }
+
+                bubbleContainer.appendChild(avatar);
+                bubbleContainer.appendChild(bubble);
+                msgEl.appendChild(bubbleContainer);
+                elements.messagesList.appendChild(msgEl);
+            });
+
+            if (elements.chatMessagesContainer) {
+                elements.chatMessagesContainer.scrollTop = elements.chatMessagesContainer.scrollHeight;
+            }
+        }
+
+        function formatCodeBlocks(container) {
+            container.querySelectorAll('pre').forEach(pre => {
+                if (pre.closest('.code-block-wrapper')) return;
+
+                const codeEl = pre.querySelector('code');
+                const rawCode = codeEl ? codeEl.innerText : pre.innerText;
+
+                let lang = 'code';
+                if (codeEl && codeEl.className) {
+                    const match = codeEl.className.match(/language-([^\s]+)/);
+                    if (match) lang = match[1].toLowerCase();
+                }
+
+                const displayLang = lang === 'code' ? 'Code' : (lang.charAt(0).toUpperCase() + lang.slice(1));
+                const wrapper = document.createElement('div');
+                wrapper.className = 'code-block-wrapper my-3 rounded-2xl bg-[#1e1f20] border border-gray-800/80 overflow-hidden shadow-lg';
+
+                const header = document.createElement('div');
+                header.className = 'flex items-center justify-between px-4 py-2.5 bg-[#282a2c] text-xs font-semibold text-gray-300 border-b border-gray-700/40 select-none';
+                header.innerHTML = `
+                    <span class="text-gray-200 font-medium tracking-wide">${escapeHtml(displayLang)}</span>
+                    <div class="flex items-center space-x-2">
+                        <button class="download-code-btn p-1.5 hover:bg-gray-700/60 text-gray-300 hover:text-white rounded-lg transition" title="Unduh Kode">
+                            <i class="fa-solid fa-download text-sm"></i>
+                        </button>
+                        <button class="copy-code-btn p-1.5 hover:bg-gray-700/60 text-gray-300 hover:text-white rounded-lg transition" title="Salin Kode">
+                            <i class="fa-regular fa-copy text-sm"></i>
+                        </button>
+                    </div>
+                `;
+
+                const contentArea = document.createElement('div');
+                contentArea.className = 'p-4 overflow-x-auto text-sm leading-relaxed';
+
+                pre.parentNode.insertBefore(wrapper, pre);
+                contentArea.appendChild(pre);
+                wrapper.appendChild(header);
+                wrapper.appendChild(contentArea);
+
+                header.querySelector('.download-code-btn').addEventListener('click', () => {
+                    const blob = new Blob([rawCode], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `script.${lang === 'python' ? 'py' : lang === 'javascript' ? 'js' : 'txt'}`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showToast('Kode berhasil diunduh!', 'info');
+                });
+
+                header.querySelector('.copy-code-btn').addEventListener('click', function() {
+                    copyToClipboard(rawCode);
+                    this.innerHTML = '<i class="fa-solid fa-check text-sm text-emerald-400"></i>';
+                    showToast('Kode berhasil disalin!', 'info');
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fa-regular fa-copy text-sm"></i>';
+                    }, 2000);
+                });
+            });
+        }
+
+        // =====================================================================
+        // REST SUPABASE SYNC LOGIC (REST HTTP ONLY - NO WEBSOCKET)
+        // =====================================================================
+        async function setupSupabaseSync() {
+            try {
+                // Fetch User Chats for currentUserId
+                const { data: chatsData, error: chatsErr } = await supabaseClient
+                    .from('chats')
+                    .select('*')
+                    .eq('user_id', currentUserId)
+                    .order('created_at', { ascending: false });
+
+                if (chatsErr) throw chatsErr;
+
+                if (chatsData && chatsData.length > 0) {
+                    state.chats = chatsData.map(c => ({
+                        id: c.id,
+                        user_id: c.user_id,
+                        title: c.title,
+                        messages: typeof c.messages === 'string' ? JSON.parse(c.messages) : (c.messages || []),
+                        created_at: c.created_at
+                    }));
+                    state.currentChatId = state.chats[0].id;
+                } else {
+                    state.chats = [];
+                    createNewChat();
+                }
+
+                // Fetch User Profile
+                const { data: profileData } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('user_id', currentUserId)
+                    .single();
+
+                if (profileData) {
+                    state.userPlan = profileData.user_plan || 'free';
+                    state.usageCount = profileData.usage_count || 0;
+                    updateUsageUI();
+                    updateModelLockIcons();
+                }
+
+                renderChatHistory();
+                renderMessages();
+            } catch (err) {
+                console.warn("Supabase REST Sync Warning:", err.message);
+                if (state.chats.length === 0) createNewChat();
+            }
+        }
+
+        async function saveChatToSupabase(chat) {
+            try {
+                await supabaseClient.from('chats').upsert({
+                    id: chat.id,
+                    user_id: currentUserId,
+                    title: chat.title,
+                    messages: chat.messages,
+                    created_at: chat.created_at || new Date().toISOString()
+                });
+            } catch (e) {
+                console.error("Gagal menyimpan ke Supabase:", e);
+            }
+        }
+
+        async function deleteChatFromSupabase(chatId) {
+            try {
+                await supabaseClient.from('chats').delete().eq('id', chatId);
+            } catch (e) {
+                console.error("Gagal menghapus dari Supabase:", e);
+            }
+        }
+
+        async function saveUserSettingsToSupabase() {
+            try {
+                await supabaseClient.from('profiles').upsert({
+                    user_id: currentUserId,
+                    user_plan: state.userPlan,
+                    usage_count: state.usageCount,
+                    updated_at: new Date().toISOString()
+                });
+            } catch (e) {
+                console.error("Gagal menyimpan profil ke Supabase:", e);
+            }
+        }
+
+        // =====================================================================
+        // GROQ AI FETCH LOGIC WITH AUTO-RETRY ROTATION
+        // =====================================================================
+        async function fetchGroqResponse(messages) {
+            const systemPrompt = "Anda adalah Sky AI, asisten AI cerdas dan sangat membantu.";
+            const formattedMessages = [
+                { role: 'system', content: systemPrompt },
+                ...messages.map(m => ({
+                    role: m.role === 'model' ? 'assistant' : 'user',
+                    content: m.content
+                }))
+            ];
+
+            let lastError = null;
+
+            for (let attempt = 0; attempt < b64_groq.length; attempt++) {
+                const rawApiKey = getRawKey(b64_groq[currentGroqIndex]);
+                currentGroqIndex = (currentGroqIndex + 1) % b64_groq.length;
+
+                if (!rawApiKey) continue;
+
+                try {
+                    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${rawApiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: state.currentModelKey || 'llama-3.3-70b-versatile',
+                            messages: formattedMessages,
+                            temperature: 0.7
+                        })
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        return data.choices?.[0]?.message?.content || "Tidak ada respon dari Groq AI.";
+                    }
+
+                    const errJson = await res.json().catch(() => ({}));
+                    lastError = errJson.error?.message || `HTTP ${res.status}`;
+
+                    if (res.status === 401 || (lastError && lastError.toLowerCase().includes('key'))) {
+                        continue; // try next key automatically
+                    } else {
+                        continue;
+                    }
+                } catch (err) {
+                    lastError = err.message;
+                }
+            }
+
+            throw new Error(lastError || "Gagal mendapatkan respon dari server Groq AI.");
+        }
+
+        function createThinkingIndicator() {
+            const el = document.createElement('div');
+            el.className = 'flex items-start space-x-3 text-gray-400 text-xs py-2';
+            el.innerHTML = `
+                <div class="w-7 h-7 rounded-full overflow-hidden border border-skyai-borderLight dark:border-skyai-borderDark flex-shrink-0">
+                    <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI" class="w-full h-full object-cover">
+                </div>
+                <div class="flex items-center space-x-2 bg-skyai-cardLight dark:bg-skyai-cardDark px-4 py-2.5 rounded-2xl border border-skyai-borderLight dark:border-skyai-borderDark">
+                    <i class="fa-solid fa-circle-notch fa-spin text-blue-500 text-sm"></i>
+                    <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">Sky AI (${escapeHtml(state.currentModelName)}) sedang berpikir...</span>
+                </div>
+            `;
+            return el;
+        }
+
+        // =====================================================================
+        // EVENT LISTENERS BINDING
+        // =====================================================================
+        if (elements.chatForm) {
+            elements.chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const text = elements.userInput.value.trim();
+                if ((!text && !state.attachedImageBase64) || state.isGenerating) return;
+
+                if (state.usageCount >= MAX_USAGE) {
+                    showToast('Batas penggunaan tercapai (30/30 jawaban).', 'error');
+                    openSubscriptionModal();
+                    return;
+                }
+
+                let chat = getCurrentChat();
+                if (!chat) {
+                    createNewChat();
+                    chat = getCurrentChat();
+                }
+
+                if (chat.messages.length === 0) {
+                    chat.title = text.slice(0, 28) + (text.length > 28 ? '...' : '');
+                    renderChatHistory();
+                }
+
+                const imagePayload = state.attachedImageBase64;
+                chat.messages.push({
+                    role: 'user',
+                    content: text,
+                    image: imagePayload || null
+                });
+
+                saveChatToSupabase(chat);
+
+                elements.userInput.value = '';
+                elements.userInput.style.height = 'auto';
+                clearAttachedImage();
+                renderMessages();
+
+                state.isGenerating = true;
+                elements.sendBtn.disabled = true;
+
+                const thinkingEl = createThinkingIndicator();
+                elements.messagesList.appendChild(thinkingEl);
+                elements.chatMessagesContainer.scrollTop = elements.chatMessagesContainer.scrollHeight;
+
+                try {
+                    const botResponse = await fetchGroqResponse(chat.messages);
+
+                    thinkingEl.remove();
+                    chat.messages.push({
+                        role: 'model',
+                        content: botResponse
+                    });
+
+                    state.usageCount++;
+                    saveUserSettingsToSupabase();
+                    updateUsageUI();
+                    saveChatToSupabase(chat);
+                    renderMessages();
+                } catch (err) {
+                    thinkingEl.remove();
+                    const botResponse = `Maaf, terjadi kesalahan saat menghubungi server Groq AI: \n\n\`${err.message}\``;
+                    chat.messages.push({ role: 'model', content: botResponse });
+                    renderMessages();
+                } finally {
+                    state.isGenerating = false;
+                    elements.sendBtn.disabled = false;
+                }
+            });
+        }
+
+        if (elements.newChatBtn) elements.newChatBtn.addEventListener('click', createNewChat);
+        if (elements.sidebarLogoBtn) elements.sidebarLogoBtn.addEventListener('click', toggleSidebar);
+        if (elements.collapseSidebarBtn) elements.collapseSidebarBtn.addEventListener('click', toggleSidebar);
+        if (elements.floatingToggleBtn) elements.floatingToggleBtn.addEventListener('click', toggleSidebar);
+        if (elements.sidebarOverlay) {
+            elements.sidebarOverlay.addEventListener('click', () => {
+                elements.sidebar.classList.add('-translate-x-full');
+                elements.sidebarOverlay.classList.add('hidden');
+            });
+        }
+
+        if (elements.userProfileBtn) elements.userProfileBtn.addEventListener('click', toggleSettingsMenu);
+        if (elements.openSettingsBtn) elements.openSettingsBtn.addEventListener('click', toggleSettingsMenu);
+
+        document.addEventListener('click', () => {
+            if (elements.settingsMenu) elements.settingsMenu.classList.add('hidden');
+            if (elements.modelDropdown) elements.modelDropdown.classList.add('hidden');
+        });
+
+        if (elements.modelSelectBtn) {
+            elements.modelSelectBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                elements.modelDropdown.classList.toggle('hidden');
+            });
+        }
+
+        document.querySelectorAll('.model-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modelKey = btn.getAttribute('data-model');
+                const requiredPlan = btn.getAttribute('data-plan');
+
+                let isUnlocked = !requiredPlan || 
+                    (requiredPlan === 'plus' && (state.userPlan === 'plus' || state.userPlan === 'pro')) ||
+                    (requiredPlan === 'pro' && state.userPlan === 'pro');
+
+                if (!isUnlocked) {
+                    elements.modelDropdown.classList.add('hidden');
+                    showToast('Upgrade paket untuk memakai model ini.', 'error');
+                    openSubscriptionModal();
+                    return;
+                }
+
+                state.currentModelName = btn.querySelector('.font-semibold').childNodes[0].textContent.trim();
+                state.currentProvider = 'groq';
+
+                if (modelKey === 'sky-mini') {
+                    state.currentModelKey = 'llama-3.1-8b-instant';
+                } else if (modelKey === 'sky-med') {
+                    state.currentModelKey = 'llama-3.3-70b-versatile';
+                } else if (modelKey === 'sky-plus') {
+                    state.currentModelKey = 'mixtral-8x7b-32768';
+                } else if (modelKey === 'sky-pro') {
+                    state.currentModelKey = 'llama3-70b-8192';
+                }
+
+                elements.currentModelLabel.textContent = state.currentModelName;
+                elements.modelDropdown.classList.add('hidden');
+                showToast(`Model diubah ke ${state.currentModelName} (Groq)`, 'info');
+            });
+        });
+
+        if (elements.attachImageBtn) elements.attachImageBtn.addEventListener('click', () => elements.imageInput.click());
+        if (elements.imageInput) {
+            elements.imageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => {
+                        state.attachedImageBase64 = evt.target.result;
+                        elements.imagePreview.src = evt.target.result;
+                        elements.imagePreviewContainer.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        if (elements.removeImageBtn) elements.removeImageBtn.addEventListener('click', clearAttachedImage);
+
+        // Voice Input (Web Speech API)
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition && elements.voiceBtn) {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'id-ID';
+            recognition.continuous = false;
+
+            elements.voiceBtn.addEventListener('click', () => {
+                try {
+                    recognition.start();
+                    showToast('Mendengarkan suara...', 'info');
+                } catch (e) {
+                    recognition.stop();
+                }
+            });
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                elements.userInput.value = transcript;
+                showToast('Teks berhasil dikonversi dari suara!', 'info');
+            };
+        } else if (elements.voiceBtn) {
+            elements.voiceBtn.addEventListener('click', () => {
+                showToast('Fitur recognisi suara tidak didukung oleh browser Anda', 'error');
+            });
+        }
+
+        document.querySelectorAll('.prompt-card').forEach(card => {
+            card.addEventListener('click', () => {
+                elements.userInput.value = card.textContent.trim();
+                elements.chatForm.dispatchEvent(new Event('submit'));
+            });
+        });
+
+        if (elements.userInput) {
+            elements.userInput.addEventListener('input', () => {
+                elements.userInput.style.height = 'auto';
+                elements.userInput.style.height = Math.min(elements.userInput.scrollHeight, 120) + 'px';
+            });
+
+            elements.userInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    elements.chatForm.dispatchEvent(new Event('submit'));
+                }
+            });
+        }
+
+        // Handle Google Sign-In Trigger
+        if (elements.googleAuthBtn) elements.googleAuthBtn.addEventListener('click', handleGoogleAuthClick);
+
+        // Handle Inline Manual Google Form Submit
+        if (elements.submitManualGoogleBtn) {
+            elements.submitManualGoogleBtn.addEventListener('click', () => {
+                const email = elements.manualGoogleEmail ? elements.manualGoogleEmail.value.trim() : '';
+                const name = elements.manualGoogleName ? elements.manualGoogleName.value.trim() : '';
+
+                if (!email || !email.includes('@')) {
+                    showToast('Silakan masukkan email Google yang valid', 'error');
+                    return;
+                }
+
+                const displayName = name || email.split('@')[0];
+                const customUid = 'google_' + btoa(email.toLowerCase().trim()).replace(/=/g, '');
+
+                setGoogleUser({
+                    uid: customUid,
+                    name: displayName,
+                    email: email,
+                    photoURL: null
+                });
+
+                if (elements.manualGoogleForm) elements.manualGoogleForm.classList.add('hidden');
+                if (elements.loginModal) elements.loginModal.classList.add('hidden');
+                showToast(`Selamat datang, ${displayName}!`, 'info');
+            });
+        }
+
+        if (elements.openAccountModalBtn) {
+            elements.openAccountModalBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (elements.settingsMenu) elements.settingsMenu.classList.add('hidden');
+                if (elements.loginModal) elements.loginModal.classList.remove('hidden');
+            });
+        }
+        if (elements.closeLoginModalBtn) {
+            elements.closeLoginModalBtn.addEventListener('click', () => {
+                if (elements.loginModal) elements.loginModal.classList.add('hidden');
+            });
+        }
+
+        if (elements.refreshLocationBtn) {
+            elements.refreshLocationBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (elements.userLocationText) elements.userLocationText.textContent = 'Memperbarui...';
+                fetchUserIpAndLocation();
+                showToast('Lokasi diperbarui', 'info');
+            });
+        }
+
+        if (elements.themeToggleBtn) {
+            elements.themeToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('skyai_theme', isDark ? 'dark' : 'light');
+                setupTheme();
+            });
+        }
+
+        if (elements.usageLimitsBtn) {
+            elements.usageLimitsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (elements.settingsMenu) elements.settingsMenu.classList.add('hidden');
+                updateUsageUI();
+                elements.usageLimitsModal.classList.remove('hidden');
+            });
+        }
+
+        if (elements.closeUsageLimitsBtn) {
+            elements.closeUsageLimitsBtn.addEventListener('click', () => {
+                elements.usageLimitsModal.classList.add('hidden');
+            });
+        }
+
+        if (elements.subscriptionBtn) elements.subscriptionBtn.addEventListener('click', openSubscriptionModal);
+        if (elements.upgradeFromLimitsBtn) elements.upgradeFromLimitsBtn.addEventListener('click', openSubscriptionModal);
+        if (elements.closeSubscriptionBtn) {
+            elements.closeSubscriptionBtn.addEventListener('click', () => elements.subscriptionModal.classList.add('hidden'));
+        }
+
+        document.querySelectorAll('.subscribe-action-btn').forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                const chosenPlan = index === 0 ? 'plus' : 'pro';
+                state.userPlan = chosenPlan;
+                saveUserSettingsToSupabase();
+                updateModelLockIcons();
+                showToast(`Berhasil berlangganan Sky AI ${chosenPlan === 'plus' ? 'Plus' : 'Pro'}!`, 'info');
+                elements.subscriptionModal.classList.add('hidden');
+            });
+        });
+
+        // Initialize App on DOM Load
+        window.addEventListener('DOMContentLoaded', () => {
+            setupMarkdown();
+            setupTheme();
+            fetchUserIpAndLocation();
+            setupSupabaseSync();
+        });
+    </script>
+</body>
+</html>
