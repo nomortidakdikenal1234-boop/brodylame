@@ -2,7 +2,7 @@
 <html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Sky AI Web App</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -37,19 +37,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/tokyo-night-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     
     <style>
+        html, body {
+            height: 100dvh;
+            min-height: -webkit-fill-available;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         pre code {
             font-family: 'Fira Code', monospace;
             border-radius: 0.5rem;
         }
         ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 5px;
         }
         ::-webkit-scrollbar-track {
             background: transparent;
@@ -73,47 +80,186 @@
         }
         .prose ul {
             list-style-type: disc;
-            padding-left: 1.5rem;
+            padding-left: 1.25rem;
             margin-bottom: 0.75em;
         }
         .prose ol {
             list-style-type: decimal;
-            padding-left: 1.5rem;
+            padding-left: 1.25rem;
             margin-bottom: 0.75em;
         }
         .sidebar-transition {
-            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        /* Custom Dot Pattern Background for Landing Page */
+        .dot-bg-dark {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .dot-bg-light {
+            background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        /* Floating Animation */
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+        @keyframes float-reverse {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(10px) rotate(-1deg); }
+        }
+        .animate-float-1 { animation: float-slow 6s ease-in-out infinite; }
+        .animate-float-2 { animation: float-reverse 7s ease-in-out infinite; }
     </style>
 </head>
-<body class="bg-skyai-bgLight dark:bg-skyai-bgDark text-gray-800 dark:text-gray-100 h-screen flex overflow-hidden antialiased">
+<body class="bg-skyai-bgLight dark:bg-skyai-bgDark text-gray-800 dark:text-gray-100 h-[100dvh] flex overflow-hidden antialiased">
 
-    <!-- Sidebar -->
-    <aside id="sidebar" class="sidebar-transition fixed md:static inset-y-0 left-0 z-40 w-64 bg-skyai-sidebarLight dark:bg-skyai-sidebarDark border-r border-skyai-borderLight dark:border-skyai-borderDark flex flex-col justify-between flex-shrink-0">
-        <!-- Top Section -->
+    <!-- ===================================================================== -->
+    <!-- LANDING PAGE (FULL COVER WHEN NOT LOGGED IN) -->
+    <!-- ===================================================================== -->
+    <div id="landingPage" class="fixed inset-0 z-50 bg-gray-50 dark:bg-[#111213] dot-bg-light dark:dot-bg-dark flex flex-col justify-between overflow-y-auto">
+        <!-- Landing Navbar -->
+        <header class="w-full max-w-7xl mx-auto px-4 sm:px-8 py-5 flex items-center justify-between z-10 flex-shrink-0">
+            <div class="flex items-center space-x-3">
+                <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI Logo" class="w-9 h-9 rounded-full object-cover shadow-md border border-gray-200 dark:border-gray-700">
+                <span class="font-bold text-xl tracking-tight text-gray-900 dark:text-white">Sky AI</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button id="landingThemeToggleBtn" class="p-2.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition shadow-sm">
+                    <i id="landingThemeIcon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+                <button id="landingLoginBtn" class="px-5 py-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm shadow-md transition transform active:scale-95">
+                    Masuk
+                </button>
+            </div>
+        </header>
+
+        <!-- Landing Hero & Floating Widgets -->
+        <main class="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-12 flex-1 flex flex-col items-center justify-center relative my-auto">
+            
+            <div class="hidden lg:block absolute left-4 top-12 w-64 p-4 rounded-2xl bg-amber-100 dark:bg-amber-900/30 border border-amber-300/60 dark:border-amber-700/50 shadow-xl animate-float-1 transform -rotate-3 backdrop-blur-sm">
+                <div class="flex items-center space-x-2 text-amber-800 dark:text-amber-300 text-xs font-bold mb-1.5">
+                    <i class="fa-solid fa-thumbtack"></i>
+                    <span>Catatan Ide AI</span>
+                </div>
+                <p class="text-xs text-amber-900 dark:text-amber-200 font-medium leading-relaxed">
+                    Tulis ide proyek, ringkas dokumen panjang, dan atur strategi bisnis hanya dalam satu instruksi.
+                </p>
+                <div class="mt-2.5 flex justify-end">
+                    <span class="p-1.5 rounded-lg bg-amber-200/80 dark:bg-amber-800/60 text-amber-900 dark:text-amber-200 text-[10px] font-bold">
+                        <i class="fa-solid fa-check text-xs"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="hidden lg:block absolute right-4 top-10 w-60 p-4 rounded-2xl bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-gray-700 shadow-xl animate-float-2 transform rotate-2">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Kecepatan Respons</span>
+                    <i class="fa-solid fa-bolt text-amber-500 text-xs"></i>
+                </div>
+                <div class="text-sm font-bold text-gray-900 dark:text-white mb-1">Super Cepat Groq Engine</div>
+                <div class="flex items-center space-x-2 text-[10px] text-emerald-500 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>99.9% Uptime • Instant Reply</span>
+                </div>
+            </div>
+
+            <div class="hidden lg:block absolute left-8 bottom-8 w-64 p-3.5 rounded-2xl bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-gray-700 shadow-xl animate-float-2 transform rotate-1">
+                <div class="text-[11px] font-bold text-gray-800 dark:text-gray-200 mb-2 flex items-center space-x-2">
+                    <i class="fa-solid fa-code text-blue-500"></i>
+                    <span>Generator Kode Cerdas</span>
+                </div>
+                <div class="bg-gray-900 text-gray-200 p-2.5 rounded-xl font-mono text-[10px] space-y-1">
+                    <div class="text-purple-400">async function <span class="text-blue-300">skyScrape</span>() {</div>
+                    <div class="pl-3 text-emerald-400">// AI Otomasi Data</div>
+                    <div class="pl-3 text-amber-300">await sky.generate()</div>
+                    <div class="text-purple-400">}</div>
+                </div>
+            </div>
+
+            <div class="hidden lg:block absolute right-8 bottom-12 w-64 p-4 rounded-2xl bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-gray-700 shadow-xl animate-float-1 transform -rotate-2">
+                <div class="text-[11px] font-bold text-gray-800 dark:text-gray-200 mb-2">Model AI Terintegrasi</div>
+                <div class="grid grid-cols-2 gap-2 text-[10px] font-semibold">
+                    <div class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-emerald-600 dark:text-emerald-400 flex items-center space-x-1.5">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>Sky Mini</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-amber-600 dark:text-amber-400 flex items-center space-x-1.5">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>Sky Med</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-blue-600 dark:text-blue-400 flex items-center space-x-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Sky Plus</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-purple-600 dark:text-purple-400 flex items-center space-x-1.5">
+                        <i class="fa-solid fa-crown"></i>
+                        <span>Sky Pro</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Hero -->
+            <div class="text-center max-w-2xl mx-auto z-10 space-y-6">
+                <div class="inline-flex items-center justify-center p-3 sm:p-4 rounded-3xl bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-gray-700 shadow-xl mb-2">
+                    <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI Hero" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover shadow-inner">
+                </div>
+
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
+                    Pikirkan, ciptakan, dan wujudkan dalam <span class="text-blue-600 dark:text-blue-500">satu tempat</span>
+                </h1>
+
+                <p class="text-xs sm:text-base text-gray-600 dark:text-gray-300 font-normal leading-relaxed max-w-xl mx-auto">
+                    Kelola ide, buat kode program, dan dapatkan jawaban cerdas secara efisien dengan asisten AI generasi terbaru.
+                </p>
+
+                <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <button id="getStartedBtn" class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold text-sm sm:text-base shadow-lg shadow-blue-500/25 transition flex items-center justify-center space-x-2">
+                        <span>Get Started</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                    <button id="tryAsGuestBtn" class="w-full sm:w-auto px-6 py-3.5 rounded-full bg-white dark:bg-[#1e1f20] hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700 font-semibold text-xs sm:text-sm transition">
+                        Lanjutkan sebagai Tamu
+                    </button>
+                </div>
+
+                <p class="text-[11px] text-gray-400 dark:text-gray-500">
+                    Bebas dicoba gratis • Tanpa perlu kartu kredit
+                </p>
+            </div>
+        </main>
+
+        <footer class="w-full max-w-7xl mx-auto px-4 sm:px-8 py-4 text-center text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">
+            © 2026 Sky AI Web App. Seluruh hak cipta dilindungi.
+        </footer>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- WORKSPACE SIDEBAR (HIDDEN UNTIL ACTIVE WORKSPACE) -->
+    <!-- ===================================================================== -->
+    <aside id="sidebar" class="sidebar-transition fixed md:static inset-y-0 left-0 z-40 w-72 md:w-64 -translate-x-full md:translate-x-0 bg-skyai-sidebarLight dark:bg-skyai-sidebarDark border-r border-skyai-borderLight dark:border-skyai-borderDark flex flex-col justify-between flex-shrink-0 shadow-2xl md:shadow-none hidden">
         <div class="p-3">
-            <!-- Sidebar Header with Logo & Toggle Button -->
             <div class="flex items-center justify-between mb-4 px-2 pt-1">
                 <button id="sidebarLogoBtn" title="Buka/Tutup Sidebar" class="flex items-center space-x-2.5 group cursor-pointer text-left">
                     <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI Logo" class="w-7 h-7 rounded-full object-cover shadow-sm group-hover:opacity-80 transition">
                     <span class="font-semibold text-lg tracking-tight dark:text-white text-gray-900 group-hover:text-blue-500 transition">Sky AI</span>
                 </button>
                 <div class="flex items-center space-x-1">
-                    <button id="collapseSidebarBtn" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white p-1.5 rounded-lg hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
-                        <i class="fa-solid fa-sidebar text-base"></i>
+                    <button id="collapseSidebarBtn" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white p-2 rounded-lg hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
+                        <i class="fa-solid fa-xmark text-base md:hidden"></i>
+                        <i class="fa-solid fa-sidebar text-base hidden md:block"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Percakapan Baru Button -->
-            <button id="newChatBtn" class="w-full flex items-center space-x-3 px-4 py-3 rounded-full bg-skyai-hoverLight dark:bg-skyai-hoverDark font-medium text-sm text-gray-800 dark:text-gray-100 hover:opacity-90 transition shadow-sm mb-4">
+            <button id="newChatBtn" class="w-full flex items-center space-x-3 px-4 py-3 rounded-full bg-skyai-hoverLight dark:bg-skyai-hoverDark font-medium text-sm text-gray-800 dark:text-gray-100 hover:opacity-90 active:scale-95 transition shadow-sm mb-4">
                 <i class="fa-regular fa-pen-to-square text-base"></i>
                 <span>Percakapan baru</span>
             </button>
 
-            <!-- Navigation Links -->
             <nav class="space-y-1 text-sm font-medium">
-                <button class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-full text-gray-700 dark:text-gray-300 hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
+                <button id="searchChatBtn" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-full text-gray-700 dark:text-gray-300 hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
                     <i class="fa-solid fa-magnifying-glass w-5 text-gray-500 dark:text-gray-400"></i>
                     <span>Telusuri percakapan</span>
                 </button>
@@ -132,12 +278,8 @@
             </nav>
         </div>
 
-        <!-- Chat History List -->
-        <div class="flex-1 overflow-y-auto px-3 py-2 space-y-1 border-t border-skyai-borderLight/40 dark:border-skyai-borderDark/40" id="chatHistoryList">
-            <!-- Dynamic Chat History Items Inserted Here -->
-        </div>
+        <div class="flex-1 overflow-y-auto px-3 py-2 space-y-1 border-t border-skyai-borderLight/40 dark:border-skyai-borderDark/40" id="chatHistoryList"></div>
 
-        <!-- Sidebar Bottom Section (Account & Settings Menu) -->
         <div class="p-3 border-t border-skyai-borderLight dark:border-skyai-borderDark relative">
             <div id="userProfileBtn" class="flex items-center justify-between px-3 py-2.5 rounded-full hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition cursor-pointer">
                 <div class="flex items-center space-x-3 truncate">
@@ -146,16 +288,13 @@
                     </div>
                     <span id="sidebarUserName" class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">Tamu</span>
                 </div>
-                <button id="openSettingsBtn" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1">
+                <button id="openSettingsBtn" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1.5">
                     <i class="fa-solid fa-gear text-sm"></i>
                 </button>
             </div>
 
-            <!-- Settings Popover Menu -->
-            <div id="settingsMenu" class="hidden absolute bottom-16 left-3 w-64 bg-white dark:bg-[#1e1f20] border border-skyai-borderLight dark:border-skyai-borderDark rounded-2xl shadow-2xl z-50 p-2 space-y-1 text-sm font-medium text-gray-700 dark:text-gray-200">
-                
-                <!-- Google Login / Account Status Button -->
-                <button id="openAccountModalBtn" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
+            <div id="settingsMenu" class="hidden absolute bottom-16 left-3 right-3 md:right-auto md:w-64 bg-white dark:bg-[#1e1f20] border border-skyai-borderLight dark:border-skyai-borderDark rounded-2xl shadow-2xl z-50 p-2 space-y-1 text-sm font-medium text-gray-700 dark:text-gray-200">
+                <button id="openAccountModalBtn" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
                     <div class="flex items-center space-x-3">
                         <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
@@ -168,20 +307,25 @@
                     <span id="accountStatusBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 font-semibold">Tamu</span>
                 </button>
 
-                <!-- Aktivitas -->
-                <button class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
-                    <i class="fa-solid fa-clock-rotate-left w-5 text-gray-400"></i>
-                    <span>Aktivitas</span>
+                <button id="openRedeemModalBtn" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left text-blue-500 dark:text-blue-400 font-semibold">
+                    <i class="fa-solid fa-key w-5 text-blue-500"></i>
+                    <span>Tukarkan Kode Redeem</span>
                 </button>
 
-                <!-- Batas penggunaan -->
-                <button id="usageLimitsBtn" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
+                <button id="openAdminModalBtn" class="hidden w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold hover:bg-purple-500/20 transition text-left">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-user-shield w-5 text-purple-500"></i>
+                        <span>Panel Admin (Kode)</span>
+                    </div>
+                    <span class="text-[9px] bg-purple-600 text-white px-2 py-0.5 rounded-full">ADMIN</span>
+                </button>
+
+                <button id="usageLimitsBtn" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
                     <i class="fa-solid fa-chart-pie w-5 text-gray-400"></i>
                     <span>Batas penggunaan</span>
                 </button>
 
-                <!-- Tema Toggle Button -->
-                <button id="themeToggleBtn" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
+                <button id="themeToggleBtn" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
                     <div class="flex items-center space-x-3">
                         <i id="themeIcon" class="fa-solid fa-moon w-5 text-gray-400"></i>
                         <span>Tema</span>
@@ -189,21 +333,13 @@
                     <span id="themeLabel" class="text-xs text-gray-400">Gelap</span>
                 </button>
 
-                <!-- Lihat langganan -->
-                <button id="subscriptionBtn" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
+                <button id="subscriptionBtn" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
                     <i class="fa-solid fa-box-archive w-5 text-gray-400"></i>
                     <span>Lihat langganan</span>
                 </button>
 
-                <!-- Kirim masukan -->
-                <button class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-left">
-                    <i class="fa-regular fa-comment-dots w-5 text-gray-400"></i>
-                    <span>Kirim masukan</span>
-                </button>
-
-                <!-- Location & IP Section Footer -->
                 <div class="pt-2 mt-1 border-t border-skyai-borderLight dark:border-skyai-borderDark/80 px-3 py-2 text-xs text-gray-400 space-y-1">
-                    <div class="flex items-center space-x-2 text-emerald-500 font-medium text-[11px]" id="cloudSyncBadge">
+                    <div class="flex items-center space-x-2 text-emerald-500 font-medium text-[11px]">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
                         <span>Cloud Sync Supabase Aktif</span>
                     </div>
@@ -212,89 +348,79 @@
                         <span id="userLocationText">Indonesia</span>
                     </div>
                     <div id="userIpText" class="text-[11px] text-gray-400">Dari alamat IP Anda</div>
-                    <button id="refreshLocationBtn" class="text-xs text-blue-500 hover:underline pt-1 block">
-                        Perbarui lokasi
-                    </button>
                 </div>
             </div>
         </div>
     </aside>
 
-    <!-- Overlay for Mobile Sidebar -->
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden md:hidden"></div>
 
-    <!-- Main Content Area -->
+    <!-- Main Workspace Area -->
     <main class="flex-1 flex flex-col h-full relative overflow-hidden bg-skyai-bgLight dark:bg-skyai-bgDark">
-        <!-- Floating Sidebar Open Toggle Button -->
-        <button id="floatingToggleBtn" title="Buka Sidebar" class="absolute top-3 left-3 z-30 p-2 rounded-xl bg-skyai-sidebarLight/80 dark:bg-skyai-sidebarDark/80 backdrop-blur border border-skyai-borderLight dark:border-skyai-borderDark text-gray-600 dark:text-gray-300 hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition shadow-sm">
-            <i class="fa-solid fa-bars text-sm"></i>
-        </button>
+        <div class="md:hidden flex items-center justify-between px-3 py-2 border-b border-skyai-borderLight dark:border-skyai-borderDark bg-skyai-sidebarLight/80 dark:bg-skyai-sidebarDark/80 backdrop-blur z-20 flex-shrink-0">
+            <button id="floatingToggleBtn" title="Buka Sidebar" class="p-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
+                <i class="fa-solid fa-bars text-base"></i>
+            </button>
+            <div class="flex items-center space-x-2">
+                <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI" class="w-6 h-6 rounded-full object-cover">
+                <span class="font-semibold text-sm text-gray-900 dark:text-white">Sky AI</span>
+            </div>
+            <button id="mobileNewChatBtn" class="p-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
+                <i class="fa-regular fa-pen-to-square text-base"></i>
+            </button>
+        </div>
 
-        <!-- Chat View Area -->
-        <div id="chatMessagesContainer" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 pt-12 md:pt-6">
-            <!-- Welcome Screen -->
-            <div id="welcomeScreen" class="max-w-2xl mx-auto py-16 text-center flex flex-col items-center justify-center h-full">
-                <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI Logo" class="w-14 h-14 rounded-full object-cover mb-6 shadow-md border border-skyai-borderLight dark:border-skyai-borderDark">
-                <h1 id="welcomeHeading" class="text-2xl md:text-3xl font-semibold mb-8 text-gray-900 dark:text-white">Apa yang bisa saya bantu hari ini?</h1>
+        <div id="chatMessagesContainer" class="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 space-y-4 md:space-y-6">
+            <div id="welcomeScreen" class="max-w-2xl mx-auto py-8 sm:py-16 text-center flex flex-col items-center justify-center min-h-[70dvh]">
+                <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI Logo" class="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover mb-4 md:mb-6 shadow-md border border-skyai-borderLight dark:border-skyai-borderDark">
+                <h1 id="welcomeHeading" class="text-xl sm:text-2xl md:text-3xl font-semibold mb-6 md:mb-8 text-gray-900 dark:text-white px-2">Apa yang bisa saya bantu hari ini?</h1>
 
-                <!-- Prompt Suggestion Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full text-left">
-                    <button class="prompt-card p-4 rounded-2xl bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs font-medium text-gray-700 dark:text-gray-300">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full text-left px-2 sm:px-0">
+                    <button class="prompt-card p-3.5 sm:p-4 rounded-2xl bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs font-medium text-gray-700 dark:text-gray-300">
                         Buatkan script Python scraper data async sederhana
                     </button>
-                    <button class="prompt-card p-4 rounded-2xl bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs font-medium text-gray-700 dark:text-gray-300">
+                    <button class="prompt-card p-3.5 sm:p-4 rounded-2xl bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs font-medium text-gray-700 dark:text-gray-300">
                         Rencanakan ide konten video YouTube seputar teknologi
                     </button>
-                    <button class="prompt-card p-4 rounded-2xl bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs font-medium text-gray-700 dark:text-gray-300">
+                    <button class="prompt-card p-3.5 sm:p-4 rounded-2xl bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs font-medium text-gray-700 dark:text-gray-300">
                         Jelaskan konsep dasar kecerdasan buatan & machine learning
                     </button>
-                    <button class="prompt-card p-4 rounded-2xl bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs font-medium text-gray-700 dark:text-gray-300">
+                    <button class="prompt-card p-3.5 sm:p-4 rounded-2xl bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs font-medium text-gray-700 dark:text-gray-300">
                         Tulis email profesional penawaran kerjasama bisnis
                     </button>
                 </div>
             </div>
 
-            <!-- Messages List -->
-            <div id="messagesList" class="max-w-3xl mx-auto space-y-6"></div>
+            <div id="messagesList" class="max-w-3xl mx-auto space-y-4 md:space-y-6 pb-2"></div>
         </div>
 
-        <!-- Chat Input Bar -->
-        <div class="p-4 bg-transparent">
+        <div class="p-2.5 sm:p-4 bg-transparent flex-shrink-0">
             <div class="max-w-3xl mx-auto relative">
-                <!-- Image Preview Area -->
                 <div id="imagePreviewContainer" class="hidden mb-2 relative inline-block">
-                    <img id="imagePreview" src="" alt="Attachment" class="h-20 w-auto rounded-xl border border-skyai-borderLight dark:border-skyai-borderDark object-cover shadow-md">
+                    <img id="imagePreview" src="" alt="Attachment" class="h-16 sm:h-20 w-auto rounded-xl border border-skyai-borderLight dark:border-skyai-borderDark object-cover shadow-md">
                     <button id="removeImageBtn" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 text-xs shadow-md hover:bg-red-600">
                         <i class="fa-solid fa-xmark w-3 h-3 flex items-center justify-center"></i>
                     </button>
                 </div>
 
-                <!-- Input Form -->
-                <form id="chatForm" class="relative flex items-center bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark rounded-full px-4 py-2.5 shadow-sm focus-within:shadow-md transition">
-                    
-                    <!-- Left Attachment Plus (+) Button -->
+                <form id="chatForm" class="relative flex items-center bg-skyai-cardLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark rounded-3xl md:rounded-full px-3 sm:px-4 py-2 shadow-sm focus-within:shadow-md transition">
                     <input type="file" id="imageInput" accept="image/*" class="hidden">
                     <button type="button" id="attachImageBtn" title="Unggah Gambar / Berkas" class="p-2 text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 rounded-full hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition flex-shrink-0">
                         <i class="fa-solid fa-plus text-base"></i>
                     </button>
 
-                    <!-- Text Area Input -->
-                    <textarea id="userInput" rows="1" placeholder="Minta Sky AI..." class="w-full px-3 py-1 bg-transparent resize-none outline-none text-sm dark:text-white placeholder-gray-500 dark:placeholder-gray-400 max-h-32 overflow-y-auto leading-relaxed"></textarea>
+                    <textarea id="userInput" rows="1" placeholder="Minta Sky AI..." class="w-full px-2 sm:px-3 py-1.5 bg-transparent resize-none outline-none text-base md:text-sm dark:text-white placeholder-gray-500 dark:placeholder-gray-400 max-h-28 overflow-y-auto leading-relaxed"></textarea>
 
-                    <!-- Right Controls -->
-                    <div class="flex items-center space-x-1.5 flex-shrink-0">
-                        
-                        <!-- AI Model Dropdown Button -->
+                    <div class="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
                         <div class="relative">
-                            <button type="button" id="modelSelectBtn" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark text-xs font-semibold text-gray-700 dark:text-gray-300 transition">
+                            <button type="button" id="modelSelectBtn" class="flex items-center space-x-1 sm:space-x-1.5 px-2.5 py-1.5 rounded-full hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark text-xs font-semibold text-gray-700 dark:text-gray-300 transition">
                                 <i class="fa-solid fa-bolt text-amber-500"></i>
-                                <span id="currentModelLabel">Sky Med</span>
+                                <span id="currentModelLabel" class="hidden sm:inline">Sky Med</span>
                                 <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 ml-0.5"></i>
                             </button>
 
-                            <!-- Model Selector Dropdown Menu -->
                             <div id="modelDropdown" class="hidden absolute right-0 bottom-12 w-56 bg-skyai-bgLight dark:bg-skyai-sidebarDark border border-skyai-borderLight dark:border-skyai-borderDark rounded-2xl shadow-xl z-50 p-1.5 space-y-1">
-                                <button type="button" data-model="sky-mini" class="model-option w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs">
+                                <button type="button" data-model="sky-mini" data-name="Sky Mini" class="model-option w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs">
                                     <div class="flex items-center space-x-2.5">
                                         <i class="fa-solid fa-bolt text-emerald-500"></i>
                                         <div>
@@ -305,7 +431,7 @@
                                     <span class="text-[10px] text-emerald-500 font-medium">Gratis</span>
                                 </button>
 
-                                <button type="button" data-model="sky-med" class="model-option w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs">
+                                <button type="button" data-model="sky-med" data-name="Sky Med" class="model-option w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs">
                                     <div class="flex items-center space-x-2.5">
                                         <i class="fa-solid fa-bolt text-amber-500"></i>
                                         <div>
@@ -316,7 +442,7 @@
                                     <span class="text-[10px] text-amber-500 font-medium">Gratis</span>
                                 </button>
 
-                                <button type="button" data-model="sky-plus" data-plan="plus" class="model-option w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs">
+                                <button type="button" data-model="sky-plus" data-plan="plus" data-name="Sky Plus" class="model-option w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs">
                                     <div class="flex items-center space-x-2.5">
                                         <i class="fa-solid fa-wand-magic-sparkles text-blue-500"></i>
                                         <div>
@@ -330,7 +456,7 @@
                                     <i class="model-lock-icon fa-solid fa-lock text-gray-400 text-xs ml-2"></i>
                                 </button>
 
-                                <button type="button" data-model="sky-pro" data-plan="pro" class="model-option w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs">
+                                <button type="button" data-model="sky-pro" data-plan="pro" data-name="Sky Pro" class="model-option w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition text-xs">
                                     <div class="flex items-center space-x-2.5">
                                         <i class="fa-solid fa-crown text-purple-500"></i>
                                         <div>
@@ -346,52 +472,48 @@
                             </div>
                         </div>
 
-                        <!-- Voice Input / Mic Button -->
                         <button type="button" id="voiceBtn" title="Input Suara" class="p-2 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white rounded-full hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
                             <i class="fa-solid fa-microphone text-sm"></i>
                         </button>
 
-                        <!-- Send Button -->
-                        <button type="submit" id="sendBtn" class="p-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full transition duration-150 shadow hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed">
+                        <button type="submit" id="sendBtn" class="p-2 sm:p-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full transition duration-150 shadow hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed">
                             <i class="fa-solid fa-arrow-up text-xs font-bold"></i>
                         </button>
                     </div>
                 </form>
 
-                <div class="text-center mt-2 text-[11px] text-gray-400 dark:text-gray-500">
+                <div class="text-center mt-1.5 text-[10px] sm:text-[11px] text-gray-400 dark:text-gray-500">
                     Sky AI dapat membuat kesalahan. Periksa informasi penting.
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- User Login Status Modal -->
-    <div id="loginModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
-        <div class="bg-skyai-bgLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
-            <div id="modalUserAvatarBox" class="w-16 h-16 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-2xl mx-auto mb-4 overflow-hidden shadow-md">
+    <!-- Modals -->
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm">
+        <div class="bg-skyai-bgLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark rounded-3xl p-5 sm:p-6 w-[92%] max-w-sm text-center shadow-2xl">
+            <div id="modalUserAvatarBox" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-2xl mx-auto mb-3 sm:mb-4 overflow-hidden shadow-md">
                 <span id="modalAvatarInitial">T</span>
             </div>
-            <h3 id="modalUserName" class="text-lg font-bold text-gray-900 dark:text-white mb-0.5">Pengguna Tamu</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mb-6" id="userEmailLabel">Belum masuk akun Google</p>
+            <h3 id="modalUserName" class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-0.5">Pengguna Tamu</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4" id="userEmailLabel">Belum masuk akun Google</p>
             
             <div class="space-y-2.5">
-                <button id="googleAuthBtn" class="w-full py-2.5 bg-white dark:bg-gray-800 text-gray-800 dark:text-white text-sm font-semibold rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center justify-center space-x-2.5 shadow-sm">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.14C3.26 21.3 7.31 24 12 24z"/>
-                        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.59H1.29C.47 8.22 0 10.06 0 12s.47 3.78 1.29 5.41l3.99-3.14z"/>
-                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.59l3.99 3.14c.95-2.83 3.6-4.98 6.72-4.98z"/>
-                    </svg>
-                    <span id="googleAuthBtnText">Masuk dengan Google</span>
-                </button>
-
-                <!-- Direct Google Email Login Form -->
-                <div id="manualGoogleForm" class="hidden text-left pt-2 border-t border-skyai-borderLight dark:border-skyai-borderDark space-y-2">
-                    <p class="text-[11px] text-gray-400 text-center font-medium">Masukkan Akun Google Anda:</p>
+                <div id="loginFormContainer" class="text-left pt-1 space-y-2">
+                    <p class="text-[11px] text-gray-400 text-center font-medium">Masukkan Email Google Anda:</p>
                     <input type="email" id="manualGoogleEmail" placeholder="nama@gmail.com" class="w-full px-3 py-2 text-xs rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 outline-none focus:border-blue-500 dark:text-white">
                     <input type="text" id="manualGoogleName" placeholder="Nama Lengkap Anda" class="w-full px-3 py-2 text-xs rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 outline-none focus:border-blue-500 dark:text-white">
-                    <button id="submitManualGoogleBtn" type="button" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-full transition shadow">
+
+                    <button id="submitManualGoogleBtn" type="button" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-full transition shadow">
                         Masuk Sekarang
+                    </button>
+                </div>
+
+                <div id="loggedInActionsContainer" class="hidden space-y-2">
+                    <button id="logoutBtn" type="button" class="w-full py-2.5 bg-red-600 hover:bg-red-500 text-white text-xs font-semibold rounded-full transition shadow flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Keluar Akun (Logout)</span>
                     </button>
                 </div>
 
@@ -402,84 +524,180 @@
         </div>
     </div>
 
-    <!-- Batas Penggunaan Modal -->
-    <div id="usageLimitsModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
-        <div class="bg-[#181818] text-white border border-gray-800 rounded-3xl p-6 md:p-8 max-w-xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button id="closeUsageLimitsBtn" class="absolute top-5 right-5 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition">
+    <!-- Redeem Modal -->
+    <div id="redeemModal" class="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm">
+        <div class="bg-white dark:bg-[#181818] text-gray-900 dark:text-white border border-skyai-borderLight dark:border-gray-800 rounded-3xl p-5 sm:p-6 w-[92%] max-w-sm shadow-2xl relative text-center">
+            <button id="closeRedeemModalBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="w-12 h-12 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center text-xl mx-auto mb-3">
+                <i class="fa-solid fa-key"></i>
+            </div>
+            <h3 class="text-lg font-bold mb-1">Tukarkan Kode Redeem</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">Masukkan kode yang Anda dapatkan dari Admin via WhatsApp setelah pembayaran.</p>
+            
+            <input type="text" id="redeemCodeInput" placeholder="Contoh: SKY-PLUS-A8B9C2" class="w-full px-3.5 py-2.5 text-center text-sm font-mono tracking-widest uppercase rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 outline-none focus:border-blue-500 dark:text-white mb-3">
+            <button id="submitRedeemCodeBtn" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-full transition shadow">
+                Aktivasi Paket Sekarang
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin PIN Modal -->
+    <div id="adminPinModal" class="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-md">
+        <div class="bg-white dark:bg-[#181818] text-gray-900 dark:text-white border border-purple-500/30 rounded-3xl p-5 sm:p-6 w-[92%] max-w-sm shadow-2xl relative text-center">
+            <button id="closeAdminPinBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="w-12 h-12 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center text-xl mx-auto mb-3">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h3 class="text-lg font-bold mb-1">Verifikasi PIN Admin</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Masukkan PIN Rahasia Keamanan Admin untuk melanjutkan:</p>
+            
+            <input type="password" id="adminPinInput" placeholder="Masukkan PIN Rahasia" class="w-full px-3.5 py-2.5 text-center text-sm font-mono rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 outline-none focus:border-purple-500 dark:text-white mb-3">
+            <button id="submitAdminPinBtn" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-full transition shadow">
+                Verifikasi PIN
+            </button>
+        </div>
+    </div>
+
+    <!-- Search Modal -->
+    <div id="searchModal" class="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm">
+        <div class="bg-white dark:bg-[#181818] text-gray-900 dark:text-white border border-skyai-borderLight dark:border-gray-800 rounded-3xl p-5 sm:p-6 w-[95%] max-w-lg shadow-2xl relative flex flex-col max-h-[85dvh]">
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-skyai-borderLight dark:border-gray-800">
+                <div class="flex items-center space-x-2 text-sm font-bold text-gray-900 dark:text-white">
+                    <i class="fa-solid fa-magnifying-glass text-blue-500"></i>
+                    <span>Telusuri Percakapan</span>
+                </div>
+                <button id="closeSearchModalBtn" class="text-gray-400 hover:text-gray-700 dark:hover:text-white p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="relative mb-4">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                <input type="text" id="chatSearchInput" placeholder="Cari judul atau isi pesan percakapan..." class="w-full pl-9 pr-4 py-2.5 text-xs sm:text-sm rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:border-blue-500 text-gray-900 dark:text-white">
+            </div>
+
+            <div id="searchResultsList" class="flex-1 overflow-y-auto space-y-2 pr-1">
+                <div class="text-center text-xs text-gray-400 py-6">Ketik kata kunci untuk mencari percakapan...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="adminModal" class="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-md overflow-y-auto">
+        <div class="bg-white dark:bg-[#181818] text-gray-900 dark:text-white border border-purple-500/30 rounded-3xl p-5 md:p-6 w-[95%] max-w-md shadow-2xl relative my-auto">
+            <button id="closeAdminModalBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="flex items-center space-x-2 text-purple-500 text-xs font-bold mb-2">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>PANEL KONTROL ADMIN</span>
+            </div>
+            <h3 class="text-xl font-bold mb-1">Generator Kode Redeem</h3>
+            <p class="text-xs text-gray-400 mb-4">Buat kode redeem baru untuk dikirimkan ke pembeli via WhatsApp.</p>
+
+            <div class="space-y-3 bg-purple-950/20 border border-purple-800/40 rounded-2xl p-4 mb-4">
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-gray-300">Pilih Tipe Paket Langganan:</label>
+                    <select id="adminPlanSelect" class="w-full px-3 py-2 text-xs rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 dark:text-white outline-none">
+                        <option value="plus">Sky AI Plus (Rp 7.500)</option>
+                        <option value="pro">Sky AI Pro (Rp 31.000)</option>
+                    </select>
+                </div>
+                <button id="generateCodeBtn" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-full transition shadow">
+                    + Buat Kode Redeem Baru
+                </button>
+            </div>
+
+            <div class="text-xs font-bold mb-2 text-gray-300 flex justify-between items-center">
+                <span>Daftar Kode Aktif / Baru:</span>
+                <span id="codeCountBadge" class="text-[10px] bg-purple-900 text-purple-300 px-2 py-0.5 rounded-full">0 Kode</span>
+            </div>
+            <div id="adminCodeList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                <div class="text-center text-xs text-gray-500 py-4">Belum ada kode yang dibuat.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usage Limits Modal -->
+    <div id="usageLimitsModal" class="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm">
+        <div class="bg-[#181818] text-white border border-gray-800 rounded-3xl p-5 md:p-8 w-[92%] max-w-xl shadow-2xl relative max-h-[85dvh] overflow-y-auto">
+            <button id="closeUsageLimitsBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
             
-            <h2 class="text-2xl font-bold mb-3 tracking-tight">Batas penggunaan</h2>
-            <p class="text-xs md:text-sm text-gray-400 mb-2 leading-relaxed">
-                Batas paket menentukan seberapa banyak Anda dapat menggunakan Sky AI seiring waktu. Model dan fitur lanjutan dapat menggunakan lebih banyak kuota.
+            <h2 class="text-xl md:text-2xl font-bold mb-2 tracking-tight">Batas penggunaan</h2>
+            <p class="text-xs md:text-sm text-gray-400 mb-4 leading-relaxed">
+                Batas paket menentukan seberapa banyak Anda dapat menggunakan Sky AI seiring waktu.
             </p>
 
             <div class="bg-[#212121] border border-gray-800/80 rounded-2xl p-4 mb-3">
-                <div class="flex items-center justify-between text-sm font-semibold mb-3">
-                    <div class="flex items-center space-x-1.5">
-                        <span>Penggunaan saat ini</span>
-                    </div>
+                <div class="flex items-center justify-between text-xs sm:text-sm font-semibold mb-3">
+                    <span>Penggunaan saat ini</span>
                     <span id="currentUsagePercentText" class="font-bold text-gray-200">0% digunakan</span>
                 </div>
                 <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden mb-2">
                     <div id="usageProgressBar" class="bg-blue-500 h-full rounded-full transition-all duration-300" style="width: 0%;"></div>
                 </div>
-                <div class="flex justify-between items-center text-[11px] text-gray-400">
+                <div class="flex justify-between items-center text-[10px] sm:text-[11px] text-gray-400">
                     <span id="resetTimeText">Direset pukul 24.00</span>
                     <span id="usageRatioText" class="text-gray-400 font-medium">0 / 30 jawaban</span>
                 </div>
             </div>
 
             <div class="bg-[#212121] border border-gray-800/80 rounded-2xl p-4 mb-4">
-                <div class="flex items-center justify-between text-sm font-semibold mb-2">
+                <div class="flex items-center justify-between text-xs sm:text-sm font-semibold mb-2">
                     <span>Batas mingguan</span>
                     <span id="weeklyUsagePercentText" class="font-bold text-gray-200">0% digunakan</span>
                 </div>
-                <div class="text-[11px] text-gray-400">Direset pada minggu depan</div>
+                <div class="text-[10px] sm:text-[11px] text-gray-400">Direset pada minggu depan</div>
             </div>
 
-            <div class="bg-[#212121] border border-gray-800/80 rounded-2xl p-4 flex items-center justify-between mb-2">
+            <div class="bg-[#212121] border border-gray-800/80 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
                 <div>
-                    <div class="text-xs md:text-sm font-bold text-white mb-0.5">Dapatkan penggunaan 2x lebih banyak dengan AI Plus</div>
+                    <div class="text-xs sm:text-sm font-bold text-white mb-0.5">Dapatkan penggunaan 2x lebih banyak dengan AI Plus</div>
                     <div class="text-xs text-gray-400">
                         <span class="line-through text-gray-500 mr-1.5">Rp 75.000</span>
-                        <span class="text-emerald-400 font-medium">Rp 7.500/bulan selama 1 bulan</span>
+                        <span class="text-emerald-400 font-medium">Rp 7.500/bulan</span>
                     </div>
                 </div>
-                <button id="upgradeFromLimitsBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs rounded-full transition shadow-md flex-shrink-0 ml-3">
+                <button id="upgradeFromLimitsBtn" class="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs rounded-full transition shadow-md flex-shrink-0">
                     Upgrade
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Langganan (Subscription Modal) -->
-    <div id="subscriptionModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm overflow-y-auto">
-        <div class="bg-white dark:bg-[#181818] text-gray-900 dark:text-white border border-skyai-borderLight dark:border-gray-800 rounded-3xl p-6 md:p-8 max-w-4xl w-full shadow-2xl relative my-6 max-h-[90vh] overflow-y-auto">
-            <button id="closeSubscriptionBtn" class="absolute top-5 right-5 text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+    <!-- Subscription Modal -->
+    <div id="subscriptionModal" class="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm overflow-y-auto">
+        <div class="bg-white dark:bg-[#181818] text-gray-900 dark:text-white border border-skyai-borderLight dark:border-gray-800 rounded-3xl p-5 md:p-8 w-[95%] max-w-4xl shadow-2xl relative my-auto max-h-[88dvh] overflow-y-auto">
+            <button id="closeSubscriptionBtn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
 
-            <div class="text-center max-w-2xl mx-auto mb-8">
-                <h2 class="text-2xl md:text-3xl font-bold tracking-tight mb-2">
+            <div class="text-center max-w-2xl mx-auto mb-6 sm:mb-8 pt-2">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight mb-2">
                     Upgrade untuk mendapatkan lebih banyak akses ke <span class="text-blue-600 dark:text-blue-400">Sky AI</span>
                 </h2>
-                <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                     Batalkan kapan saja. Dengan berlangganan, Anda menyetujui persyaratan layanan Sky AI.
                 </p>
-                <div class="inline-flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-full mt-4 border border-skyai-borderLight dark:border-gray-700">
-                    <span class="px-5 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-full shadow-sm">Bulanan</span>
-                </div>
+                <button id="openRedeemFromSubBtn" class="inline-flex items-center space-x-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 px-4 py-1.5 rounded-full mt-3 text-xs font-bold border border-blue-500/30 transition">
+                    <i class="fa-solid fa-key"></i>
+                    <span>Punya Kode Redeem? Klik di sini</span>
+                </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                <!-- Card 1: Sky AI Plus -->
-                <div class="relative bg-white dark:bg-[#212121] border-2 border-blue-500 dark:border-blue-500 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-3xl mx-auto">
+                <div class="relative bg-white dark:bg-[#212121] border-2 border-blue-500 dark:border-blue-500 rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-xl">
                     <div class="absolute -top-3.5 left-6 bg-blue-600 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full shadow">
                         Disarankan
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold mb-1 text-gray-900 dark:text-white">Sky AI Plus</h3>
+                        <h3 class="text-lg sm:text-xl font-bold mb-1 text-gray-900 dark:text-white">Sky AI Plus</h3>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">
                             Dapatkan lebih banyak akses ke alat AI untuk meningkatkan produktivitas dan kreativitas Anda.
                         </p>
@@ -489,25 +707,24 @@
                             <span>Penyimpanan sebesar 400 GB</span>
                         </div>
 
-                        <div class="mb-6">
+                        <div class="mb-5">
                             <div class="text-xs text-gray-400 line-through">Rp 75.000</div>
                             <div class="flex items-baseline space-x-1">
-                                <span class="text-2xl md:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp 7.500</span>
+                                <span class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp 7.500</span>
                                 <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">/bln</span>
                             </div>
-                            <div class="text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 75.000/bln setelahnya</div>
+                            <div class="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 75.000/bln setelahnya</div>
                         </div>
 
-                        <button class="subscribe-action-btn w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-full transition shadow-md mb-6">
+                        <button class="subscribe-action-btn w-full py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-full transition shadow-md" data-plan-type="plus">
                             Dapatkan Sky AI Plus
                         </button>
                     </div>
                 </div>
 
-                <!-- Card 2: Sky AI Pro -->
-                <div class="bg-white dark:bg-[#212121] border border-skyai-borderLight dark:border-gray-800 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
+                <div class="bg-white dark:bg-[#212121] border border-skyai-borderLight dark:border-gray-800 rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-xl">
                     <div>
-                        <h3 class="text-xl font-bold mb-1 text-gray-900 dark:text-white">Sky AI Pro</h3>
+                        <h3 class="text-lg sm:text-xl font-bold mb-1 text-gray-900 dark:text-white">Sky AI Pro</h3>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">
                             Bekerja lebih cerdas dan berkreasi lebih cepat dengan manfaat yang diperlukan di seluruh Sky AI.
                         </p>
@@ -517,16 +734,16 @@
                             <span>Penyimpanan sebesar 5 TB</span>
                         </div>
 
-                        <div class="mb-6">
+                        <div class="mb-5">
                             <div class="text-xs text-gray-400 line-through">Rp 309.000</div>
                             <div class="flex items-baseline space-x-1">
-                                <span class="text-2xl md:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp 31.000</span>
+                                <span class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp 31.000</span>
                                 <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">/bln</span>
                             </div>
-                            <div class="text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 309.000/bln setelahnya</div>
+                            <div class="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 309.000/bln setelahnya</div>
                         </div>
 
-                        <button class="subscribe-action-btn w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-full transition shadow-md mb-6">
+                        <button class="subscribe-action-btn w-full py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-full transition shadow-md" data-plan-type="pro">
                             Dapatkan Sky AI Pro
                         </button>
                     </div>
@@ -535,21 +752,59 @@
         </div>
     </div>
 
-    <!-- Toast Notification Container -->
-    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+    <!-- QRIS Payment Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-md overflow-y-auto">
+        <div class="bg-white dark:bg-[#181818] text-gray-900 dark:text-white border border-skyai-borderLight dark:border-gray-800 rounded-3xl p-5 md:p-6 w-[92%] max-w-md shadow-2xl relative my-auto text-center">
+            <button id="closePaymentModalBtn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
 
-    <!-- Supabase SDK via CDN -->
+            <div class="mb-3">
+                <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 text-xs font-bold mb-2">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>Pembayaran QRIS</span>
+                </div>
+                <h3 id="paymentPlanTitle" class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Langganan Sky AI Plus</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Scan QR code di bawah ini untuk membayar</p>
+            </div>
+
+            <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/60 rounded-2xl p-3 mb-4">
+                <div class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">Total Nominal Pembayaran</div>
+                <div id="paymentNominalText" class="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400 mt-0.5">Rp 7.500</div>
+            </div>
+
+            <div class="bg-white p-3 rounded-2xl border border-gray-200 dark:border-gray-700 inline-block shadow-sm mb-4 max-w-[230px] mx-auto">
+                <img id="paymentQrImage" src="https://i.ibb.co/7JWbr4Db" alt="QR Code Pembayaran Sky AI" class="w-full h-auto rounded-lg object-contain mx-auto" onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=SkyAI_Payment';">
+            </div>
+
+            <p class="text-[11px] text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">
+                Selesaikan transfer, lalu minta <span class="font-bold text-blue-400">Kode Redeem</span> ke Admin via WhatsApp untuk mengaktifkan paket Anda.
+            </p>
+
+            <a id="paymentWaBtn" href="https://wa.me/6285143217120?text=Hallo%2C%20saya%20sudah%20melakukan%20pembayaran%20untuk%20Langganan%20Sky%20AI" target="_blank" rel="noopener noreferrer" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-full transition shadow-lg flex items-center justify-center space-x-2">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+                <span>Konfirmasi & Minta Kode ke WhatsApp</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 z-[70] flex flex-col space-y-2 pointer-events-none items-center sm:items-end"></div>
+
+    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
         // =====================================================================
-        // CONFIG SUPABASE & CLIENT IDENTIFIER
+        // SUPABASE CONFIGURATION
         // =====================================================================
         const SUPABASE_URL = "https://eamaqwlimqhmjfovumjt.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_2GPAiWkbMwL9VTwyxZ9KTQ_1AbYQpMN";
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Persistent Guest Device ID
+        const ADMIN_EMAIL = "skyaideveloper123@gmail.com";
+        const ADMIN_PIN = "skyadmin123";
+
         function getClientId() {
             let id = localStorage.getItem('skyai_client_id');
             if (!id) {
@@ -561,14 +816,11 @@
 
         let currentUserId = getClientId();
 
-        // =====================================================================
-        // API KEY GROQ (BASE64 ENCODED ROTATION)
-        // 5 API Key Groq dalam format Base64 untuk rotasi & auto-retry otomatis
-        // =====================================================================
+        // Groq API Key Rotation
         const b64_groq = [
             'Z3NrX3RuTkxHcEVCRFlPcXgyRzdmemRDV0dkeWIzRll4QnBFQTV3NUVtYm5yWWh5cm0zUW1pZzc=',
             'Z3NrX25WYU1QM0ZmYTN5QWxMb2JtN3NjV0dkeWIzRllqWGd2NXlGNmtVdU5aTEJSYWg4TXlMbGE=',
-            'Z3NrXzdDOWFlSkVRUmZ6ZjgzSURNR0JSV0dkeWIzRllsZ1FYams2dncySDhUM05EYk1JeWlDTVk=',
+            'Z3NrX3dCNE1DTDF5OHRzQ1gzeUZWZXpjV0dkeWIzRllSZTdrd2V5MmgyMDFqQUl3S0syc0k2c0c=',
             'Z3NrX01aM3dMcGxZZTN3RWhiMzJiQ3ptV0dkeWIzRllDZ1hxZnY1MDhXVWV3VE50QVdmOHgyZ28=',
             'Z3NrX0hhbkRvUmhFeW5Vd1FVZ3RaVmhqV0dkeWIzRlljZ0ZyS054dmhjano0TU5XcVdhbGQzSlE='
         ];
@@ -578,12 +830,11 @@
         }
 
         let currentGroqIndex = 0;
-
-        // Global Application Configuration & State
         const MAX_USAGE = 30;
 
         const state = {
             chats: [],
+            redeemCodes: [],
             currentChatId: null,
             isGenerating: false,
             userPlan: 'free',
@@ -592,7 +843,7 @@
             currentModelKey: 'llama-3.3-70b-versatile',
             currentProvider: 'groq', 
             attachedImageBase64: null,
-            temperature: 0.7,
+            isGuestWorkspace: false,
             user: {
                 name: "Tamu",
                 email: "Belum masuk akun Google",
@@ -601,19 +852,34 @@
             }
         };
 
-        // Cache DOM Elements safely
+        function mergePlans(planA, planB) {
+            const plans = new Set();
+            if (planA && planA !== 'free') planA.split(',').forEach(p => p.trim() && plans.add(p.trim()));
+            if (planB && planB !== 'free') planB.split(',').forEach(p => p.trim() && plans.add(p.trim()));
+            return plans.size > 0 ? Array.from(plans).join(',') : 'free';
+        }
+
         const elements = {
+            landingPage: document.getElementById('landingPage'),
+            landingLoginBtn: document.getElementById('landingLoginBtn'),
+            getStartedBtn: document.getElementById('getStartedBtn'),
+            tryAsGuestBtn: document.getElementById('tryAsGuestBtn'),
+            landingThemeToggleBtn: document.getElementById('landingThemeToggleBtn'),
+            landingThemeIcon: document.getElementById('landingThemeIcon'),
             sidebar: document.getElementById('sidebar'),
             sidebarOverlay: document.getElementById('sidebarOverlay'),
             sidebarLogoBtn: document.getElementById('sidebarLogoBtn'),
             collapseSidebarBtn: document.getElementById('collapseSidebarBtn'),
             floatingToggleBtn: document.getElementById('floatingToggleBtn'),
+            mobileNewChatBtn: document.getElementById('mobileNewChatBtn'),
             newChatBtn: document.getElementById('newChatBtn'),
             chatHistoryList: document.getElementById('chatHistoryList'),
             userProfileBtn: document.getElementById('userProfileBtn'),
             openSettingsBtn: document.getElementById('openSettingsBtn'),
             settingsMenu: document.getElementById('settingsMenu'),
             openAccountModalBtn: document.getElementById('openAccountModalBtn'),
+            openRedeemModalBtn: document.getElementById('openRedeemModalBtn'),
+            openAdminModalBtn: document.getElementById('openAdminModalBtn'),
             accountMenuText: document.getElementById('accountMenuText'),
             accountStatusBadge: document.getElementById('accountStatusBadge'),
             usageLimitsBtn: document.getElementById('usageLimitsBtn'),
@@ -623,7 +889,6 @@
             subscriptionBtn: document.getElementById('subscriptionBtn'),
             userLocationText: document.getElementById('userLocationText'),
             userIpText: document.getElementById('userIpText'),
-            refreshLocationBtn: document.getElementById('refreshLocationBtn'),
             welcomeScreen: document.getElementById('welcomeScreen'),
             welcomeHeading: document.getElementById('welcomeHeading'),
             messagesList: document.getElementById('messagesList'),
@@ -642,9 +907,6 @@
             sendBtn: document.getElementById('sendBtn'),
             loginModal: document.getElementById('loginModal'),
             closeLoginModalBtn: document.getElementById('closeLoginModalBtn'),
-            googleAuthBtn: document.getElementById('googleAuthBtn'),
-            googleAuthBtnText: document.getElementById('googleAuthBtnText'),
-            manualGoogleForm: document.getElementById('manualGoogleForm'),
             manualGoogleEmail: document.getElementById('manualGoogleEmail'),
             manualGoogleName: document.getElementById('manualGoogleName'),
             submitManualGoogleBtn: document.getElementById('submitManualGoogleBtn'),
@@ -655,6 +917,10 @@
             modalUserAvatarBox: document.getElementById('modalUserAvatarBox'),
             modalAvatarInitial: document.getElementById('modalAvatarInitial'),
             userEmailLabel: document.getElementById('userEmailLabel'),
+            adminPinModal: document.getElementById('adminPinModal'),
+            adminPinInput: document.getElementById('adminPinInput'),
+            submitAdminPinBtn: document.getElementById('submitAdminPinBtn'),
+            closeAdminPinBtn: document.getElementById('closeAdminPinBtn'),
             usageLimitsModal: document.getElementById('usageLimitsModal'),
             closeUsageLimitsBtn: document.getElementById('closeUsageLimitsBtn'),
             currentUsagePercentText: document.getElementById('currentUsagePercentText'),
@@ -664,14 +930,52 @@
             upgradeFromLimitsBtn: document.getElementById('upgradeFromLimitsBtn'),
             subscriptionModal: document.getElementById('subscriptionModal'),
             closeSubscriptionBtn: document.getElementById('closeSubscriptionBtn'),
+            openRedeemFromSubBtn: document.getElementById('openRedeemFromSubBtn'),
+            paymentModal: document.getElementById('paymentModal'),
+            closePaymentModalBtn: document.getElementById('closePaymentModalBtn'),
+            paymentPlanTitle: document.getElementById('paymentPlanTitle'),
+            paymentNominalText: document.getElementById('paymentNominalText'),
+            paymentWaBtn: document.getElementById('paymentWaBtn'),
+            redeemModal: document.getElementById('redeemModal'),
+            closeRedeemModalBtn: document.getElementById('closeRedeemModalBtn'),
+            redeemCodeInput: document.getElementById('redeemCodeInput'),
+            submitRedeemCodeBtn: document.getElementById('submitRedeemCodeBtn'),
+            adminModal: document.getElementById('adminModal'),
+            closeAdminModalBtn: document.getElementById('closeAdminModalBtn'),
+            adminPlanSelect: document.getElementById('adminPlanSelect'),
+            generateCodeBtn: document.getElementById('generateCodeBtn'),
+            adminCodeList: document.getElementById('adminCodeList'),
+            codeCountBadge: document.getElementById('codeCountBadge'),
             toastContainer: document.getElementById('toastContainer'),
-            cloudSyncBadge: document.getElementById('cloudSyncBadge')
+            searchChatBtn: document.getElementById('searchChatBtn'),
+            searchModal: document.getElementById('searchModal'),
+            closeSearchModalBtn: document.getElementById('closeSearchModalBtn'),
+            chatSearchInput: document.getElementById('chatSearchInput'),
+            searchResultsList: document.getElementById('searchResultsList')
         };
 
-        // Utility Helper Functions
         function escapeHtml(str) {
             if (!str) return '';
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function updateLandingPageState() {
+            if (!elements.landingPage) return;
+            const isWorkspaceVisible = state.user.isLoggedIn || state.isGuestWorkspace;
+
+            if (isWorkspaceVisible) {
+                elements.landingPage.classList.add('hidden');
+                if (elements.sidebar) elements.sidebar.classList.remove('hidden');
+            } else {
+                elements.landingPage.classList.remove('hidden');
+                if (elements.sidebar) elements.sidebar.classList.add('hidden');
+            }
+        }
+
+        function enterWorkspaceAsGuest() {
+            state.isGuestWorkspace = true;
+            updateLandingPageState();
+            showToast('Masuk sebagai Pengguna Tamu', 'info');
         }
 
         function showToast(message, type = 'info') {
@@ -682,7 +986,7 @@
             }`;
             toast.innerHTML = `<span>${escapeHtml(message)}</span>`;
             elements.toastContainer.appendChild(toast);
-            setTimeout(() => toast.remove(), 2500);
+            setTimeout(() => toast.remove(), 3000);
         }
 
         function copyToClipboard(text) {
@@ -700,14 +1004,31 @@
             if (elements.imagePreviewContainer) elements.imagePreviewContainer.classList.add('hidden');
         }
 
+        function checkAdminPermissions() {
+            const isAdmin = state.user.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim();
+            if (elements.openAdminModalBtn) {
+                if (isAdmin) {
+                    elements.openAdminModalBtn.classList.remove('hidden');
+                } else {
+                    elements.openAdminModalBtn.classList.add('hidden');
+                }
+            }
+        }
+
+        function checkPlanUnlocked(requiredPlan) {
+            if (!requiredPlan) return true;
+            if (!state.userPlan || state.userPlan === 'free') return false;
+            const activePlans = state.userPlan.split(',').map(p => p.trim());
+            return activePlans.includes(requiredPlan);
+        }
+
         function updateModelLockIcons() {
             document.querySelectorAll('.model-option').forEach(btn => {
                 const requiredPlan = btn.getAttribute('data-plan');
                 const lockIcon = btn.querySelector('.model-lock-icon');
                 if (!requiredPlan) return;
 
-                let isUnlocked = (requiredPlan === 'plus' && (state.userPlan === 'plus' || state.userPlan === 'pro')) ||
-                                 (requiredPlan === 'pro' && state.userPlan === 'pro');
+                let isUnlocked = checkPlanUnlocked(requiredPlan);
 
                 if (lockIcon) {
                     lockIcon.className = isUnlocked 
@@ -717,150 +1038,114 @@
             });
         }
 
-        // Set authenticated Google User
         function setGoogleUser(userData) {
+            const previousPlan = state.userPlan;
+            const cleanEmail = (userData.email || '').toLowerCase().trim();
+
             state.user.name = userData.name || 'Pengguna Google';
-            state.user.email = userData.email || '';
+            state.user.email = cleanEmail;
             state.user.photoURL = userData.photoURL || null;
             state.user.isLoggedIn = true;
+            state.isGuestWorkspace = false;
 
-            currentUserId = userData.uid || userData.email || getClientId();
-            localStorage.setItem('skyai_google_user', JSON.stringify(userData));
+            currentUserId = userData.uid || (cleanEmail ? 'google_' + btoa(cleanEmail).replace(/=/g, '') : getClientId());
+            
+            const userPayload = {
+                ...userData,
+                email: cleanEmail,
+                uid: currentUserId
+            };
+            localStorage.setItem('skyai_google_user', JSON.stringify(userPayload));
 
-            // Update UI Sidebar
+            // Retrieve backups by ID, Email, and Device
+            const planFromUserId = localStorage.getItem('skyai_user_plan_' + currentUserId);
+            const planFromEmail = cleanEmail ? localStorage.getItem('skyai_user_plan_' + cleanEmail) : null;
+            const planFromDevice = localStorage.getItem('skyai_device_plan');
+            
+            const combinedPlan = mergePlans(previousPlan, mergePlans(planFromUserId, mergePlans(planFromEmail, planFromDevice)));
+            state.userPlan = combinedPlan;
+
+            if (combinedPlan !== 'free') {
+                localStorage.setItem('skyai_user_plan_' + currentUserId, combinedPlan);
+                if (cleanEmail) localStorage.setItem('skyai_user_plan_' + cleanEmail, combinedPlan);
+                localStorage.setItem('skyai_device_plan', combinedPlan);
+            }
+
+            updateModelLockIcons();
+            updateLandingPageState();
+
             if (elements.sidebarUserName) elements.sidebarUserName.textContent = state.user.name;
             if (elements.sidebarAvatarBox) {
-                if (state.user.photoURL) {
-                    elements.sidebarAvatarBox.innerHTML = `<img src="${escapeHtml(state.user.photoURL)}" alt="${escapeHtml(state.user.name)}" class="w-full h-full object-cover">`;
-                } else {
-                    elements.sidebarAvatarBox.innerHTML = `<span class="font-bold text-sm">${escapeHtml(state.user.name.charAt(0).toUpperCase())}</span>`;
-                }
+                elements.sidebarAvatarBox.innerHTML = `<span class="font-bold text-sm">${escapeHtml(state.user.name.charAt(0).toUpperCase())}</span>`;
             }
 
-            // Update UI Account Badge & Settings Menu
             if (elements.accountMenuText) elements.accountMenuText.textContent = state.user.name;
             if (elements.accountStatusBadge) {
-                elements.accountStatusBadge.textContent = 'Google';
-                elements.accountStatusBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-semibold';
+                elements.accountStatusBadge.textContent = cleanEmail === ADMIN_EMAIL ? 'ADMIN' : 'Google';
+                elements.accountStatusBadge.className = cleanEmail === ADMIN_EMAIL 
+                    ? 'text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-bold'
+                    : 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-semibold';
             }
 
-            // Update UI Login Modal
             if (elements.modalUserName) elements.modalUserName.textContent = state.user.name;
-            if (elements.userEmailLabel) elements.userEmailLabel.textContent = state.user.email;
-            if (elements.googleAuthBtnText) elements.googleAuthBtnText.textContent = 'Keluar dari Akun Google';
+            if (elements.userEmailLabel) elements.userEmailLabel.textContent = cleanEmail;
             if (elements.modalUserAvatarBox) {
-                if (state.user.photoURL) {
-                    elements.modalUserAvatarBox.innerHTML = `<img src="${escapeHtml(state.user.photoURL)}" alt="${escapeHtml(state.user.name)}" class="w-full h-full object-cover">`;
-                } else {
-                    elements.modalUserAvatarBox.innerHTML = `<span class="font-bold text-2xl">${escapeHtml(state.user.name.charAt(0).toUpperCase())}</span>`;
-                }
+                elements.modalUserAvatarBox.innerHTML = `<span class="font-bold text-2xl">${escapeHtml(state.user.name.charAt(0).toUpperCase())}</span>`;
             }
 
-            // Update Welcome Heading
             if (elements.welcomeHeading) {
                 elements.welcomeHeading.textContent = `Apa yang bisa saya bantu, ${state.user.name}?`;
             }
 
-            // Sync user data with Supabase
+            const loginForm = document.getElementById('loginFormContainer');
+            const loggedInActions = document.getElementById('loggedInActionsContainer');
+            if (loginForm) loginForm.classList.add('hidden');
+            if (loggedInActions) loggedInActions.classList.remove('hidden');
+
+            checkAdminPermissions();
             setupSupabaseSync();
+            saveUserSettingsToSupabase();
         }
 
-        // Reset to Guest Mode
-        function resetToGuestUser() {
-            state.user.name = "Tamu";
-            state.user.email = "Belum masuk akun Google";
-            state.user.photoURL = null;
-            state.user.isLoggedIn = false;
-
-            currentUserId = getClientId();
+        function logoutUser() {
             localStorage.removeItem('skyai_google_user');
+            state.user = {
+                name: "Tamu",
+                email: "Belum masuk akun Google",
+                photoURL: null,
+                isLoggedIn: false
+            };
+            state.isGuestWorkspace = false;
+            currentUserId = getClientId();
 
-            // Reset UI Sidebar
+            const guestPlan = localStorage.getItem('skyai_user_plan_' + currentUserId) || localStorage.getItem('skyai_device_plan') || 'free';
+            state.userPlan = guestPlan;
+
             if (elements.sidebarUserName) elements.sidebarUserName.textContent = "Tamu";
-            if (elements.sidebarAvatarBox) {
-                elements.sidebarAvatarBox.innerHTML = `<span class="font-bold text-sm">T</span>`;
-            }
-
-            // Reset UI Account Badge
+            if (elements.sidebarAvatarBox) elements.sidebarAvatarBox.innerHTML = '<span id="sidebarAvatarInitial">T</span>';
             if (elements.accountMenuText) elements.accountMenuText.textContent = "Masuk Google";
             if (elements.accountStatusBadge) {
-                elements.accountStatusBadge.textContent = 'Tamu';
-                elements.accountStatusBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 font-semibold';
+                elements.accountStatusBadge.textContent = "Tamu";
+                elements.accountStatusBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 font-semibold";
             }
-
-            // Reset UI Login Modal
             if (elements.modalUserName) elements.modalUserName.textContent = "Pengguna Tamu";
             if (elements.userEmailLabel) elements.userEmailLabel.textContent = "Belum masuk akun Google";
-            if (elements.googleAuthBtnText) elements.googleAuthBtnText.textContent = 'Masuk dengan Google';
-            if (elements.modalUserAvatarBox) {
-                elements.modalUserAvatarBox.innerHTML = `<span class="font-bold text-2xl">T</span>`;
-            }
+            if (elements.modalUserAvatarBox) elements.modalUserAvatarBox.innerHTML = '<span id="modalAvatarInitial">T</span>';
+            if (elements.welcomeHeading) elements.welcomeHeading.textContent = "Apa yang bisa saya bantu hari ini?";
 
-            // Reset Welcome Heading
-            if (elements.welcomeHeading) {
-                elements.welcomeHeading.textContent = `Apa yang bisa saya bantu hari ini?`;
-            }
+            const loginForm = document.getElementById('loginFormContainer');
+            const loggedInActions = document.getElementById('loggedInActionsContainer');
+            if (loginForm) loginForm.classList.remove('hidden');
+            if (loggedInActions) loggedInActions.classList.add('hidden');
 
-            // Sync guest data with Supabase
+            checkAdminPermissions();
+            updateModelLockIcons();
+            updateLandingPageState();
             setupSupabaseSync();
+            if (elements.loginModal) elements.loginModal.classList.add('hidden');
+            showToast("Berhasil keluar dari akun", "info");
         }
 
-        // Google Auth Click Trigger via Supabase Auth
-        async function handleGoogleAuthClick() {
-            if (state.user.isLoggedIn) {
-                try {
-                    if (supabaseClient && supabaseClient.auth) {
-                        await supabaseClient.auth.signOut();
-                    }
-                } catch(e) {
-                    console.log("Logout warning:", e);
-                }
-                resetToGuestUser();
-                if (elements.manualGoogleForm) elements.manualGoogleForm.classList.add('hidden');
-                if (elements.loginModal) elements.loginModal.classList.add('hidden');
-                showToast('Berhasil keluar dari akun Google', 'info');
-            } else {
-                // Tampilkan form input Akun Google langsung di modal agar tidak dialihkan ke URL Supabase yang belum dikonfigurasi
-                if (elements.manualGoogleForm) {
-                    elements.manualGoogleForm.classList.remove('hidden');
-                    showToast('Silakan masukkan email Akun Google Anda di bawah', 'info');
-                }
-            }
-        }
-
-        // Check and restore saved login session
-        if (supabaseClient && supabaseClient.auth) {
-            supabaseClient.auth.getSession().then(({ data: { session } }) => {
-                if (session?.user) {
-                    const u = session.user;
-                    setGoogleUser({
-                        uid: u.id,
-                        name: u.user_metadata?.full_name || u.user_metadata?.name || u.email?.split('@')[0] || 'Pengguna Google',
-                        email: u.email || '',
-                        photoURL: u.user_metadata?.avatar_url || u.user_metadata?.picture || null
-                    });
-                } else {
-                    const savedLocal = localStorage.getItem('skyai_google_user');
-                    if (savedLocal) {
-                        try { setGoogleUser(JSON.parse(savedLocal)); } catch(e){}
-                    }
-                }
-            });
-
-            supabaseClient.auth.onAuthStateChange((_event, session) => {
-                if (session?.user) {
-                    const u = session.user;
-                    setGoogleUser({
-                        uid: u.id,
-                        name: u.user_metadata?.full_name || u.user_metadata?.name || u.email?.split('@')[0] || 'Pengguna Google',
-                        email: u.email || '',
-                        photoURL: u.user_metadata?.avatar_url || u.user_metadata?.picture || null
-                    });
-                }
-            });
-        }
-
-        // UI Usage Limit Helper
         function updateUsageUI() {
             const percentage = Math.min(100, Math.round((state.usageCount / MAX_USAGE) * 100));
             if (elements.currentUsagePercentText) elements.currentUsagePercentText.textContent = `${percentage}% digunakan`;
@@ -876,11 +1161,12 @@
         }
 
         function toggleSidebar() {
-            if (window.innerWidth < 768) {
-                elements.sidebar.classList.toggle('-translate-x-full');
-                elements.sidebarOverlay.classList.toggle('hidden');
+            if (elements.sidebar.classList.contains('-translate-x-full')) {
+                elements.sidebar.classList.remove('-translate-x-full');
+                elements.sidebarOverlay.classList.remove('hidden');
             } else {
-                elements.sidebar.classList.toggle('hidden');
+                elements.sidebar.classList.add('-translate-x-full');
+                elements.sidebarOverlay.classList.add('hidden');
             }
         }
 
@@ -909,20 +1195,23 @@
                 document.documentElement.classList.add('dark');
                 if (elements.themeIcon) elements.themeIcon.className = 'fa-solid fa-moon w-5 text-gray-400';
                 if (elements.themeLabel) elements.themeLabel.textContent = 'Gelap';
+                if (elements.landingThemeIcon) elements.landingThemeIcon.className = 'fa-solid fa-moon text-sm';
             } else {
                 document.documentElement.classList.remove('dark');
                 if (elements.themeIcon) elements.themeIcon.className = 'fa-solid fa-sun w-5 text-amber-500';
                 if (elements.themeLabel) elements.themeLabel.textContent = 'Terang';
+                if (elements.landingThemeIcon) elements.landingThemeIcon.className = 'fa-solid fa-sun text-amber-500 text-sm';
             }
         }
 
-        // =====================================================================
-        // CHAT MANAGEMENT FUNCTIONS
-        // =====================================================================
         function createNewChat() {
             const currentChat = getCurrentChat();
             if (currentChat && currentChat.messages.length === 0) {
                 loadChat(currentChat.id);
+                if (window.innerWidth < 768) {
+                    elements.sidebar.classList.add('-translate-x-full');
+                    elements.sidebarOverlay.classList.add('hidden');
+                }
                 return;
             }
 
@@ -936,6 +1225,11 @@
             state.chats.unshift(newChat);
             saveChatToSupabase(newChat);
             loadChat(newChat.id);
+
+            if (window.innerWidth < 768) {
+                elements.sidebar.classList.add('-translate-x-full');
+                elements.sidebarOverlay.classList.add('hidden');
+            }
         }
 
         function getCurrentChat() {
@@ -964,16 +1258,74 @@
             showToast('Percakapan dihapus', 'info');
         }
 
-        // =====================================================================
-        // UI RENDERING FUNCTIONS
-        // =====================================================================
+        function renderSearchConversationResults(query = '') {
+            if (!elements.searchResultsList) return;
+            elements.searchResultsList.innerHTML = '';
+
+            const q = query.trim().toLowerCase();
+
+            if (state.chats.length === 0) {
+                elements.searchResultsList.innerHTML = '<div class="text-center text-xs text-gray-400 py-6">Belum ada riwayat percakapan.</div>';
+                return;
+            }
+
+            const filtered = state.chats.filter(chat => {
+                if (!q) return true;
+                const titleMatch = chat.title.toLowerCase().includes(q);
+                const contentMatch = chat.messages && chat.messages.some(m => m.content && m.content.toLowerCase().includes(q));
+                return titleMatch || contentMatch;
+            });
+
+            if (filtered.length === 0) {
+                elements.searchResultsList.innerHTML = '<div class="text-center text-xs text-gray-400 py-6">Tidak ada percakapan yang cocok dengan pencarian.</div>';
+                return;
+            }
+
+            filtered.forEach(chat => {
+                let previewSnippet = '';
+                if (q && chat.messages) {
+                    const matchedMsg = chat.messages.find(m => m.content && m.content.toLowerCase().includes(q));
+                    if (matchedMsg) {
+                        previewSnippet = matchedMsg.content;
+                    }
+                }
+                if (!previewSnippet && chat.messages && chat.messages.length > 0) {
+                    previewSnippet = chat.messages[chat.messages.length - 1].content;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'p-3 rounded-2xl bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/60 hover:border-blue-500 dark:hover:border-blue-500 cursor-pointer transition text-left space-y-1';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="text-xs font-bold text-gray-900 dark:text-white truncate flex items-center space-x-2">
+                            <i class="fa-regular fa-message text-blue-500 text-xs"></i>
+                            <span>${escapeHtml(chat.title)}</span>
+                        </div>
+                        <span class="text-[10px] text-gray-400 font-medium">${chat.messages ? chat.messages.length : 0} pesan</span>
+                    </div>
+                    ${previewSnippet ? `<p class="text-[11px] text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">${escapeHtml(previewSnippet)}</p>` : ''}
+                `;
+
+                card.addEventListener('click', () => {
+                    loadChat(chat.id);
+                    if (elements.searchModal) elements.searchModal.classList.add('hidden');
+                    if (window.innerWidth < 768 && elements.sidebar) {
+                        elements.sidebar.classList.add('-translate-x-full');
+                        if (elements.sidebarOverlay) elements.sidebarOverlay.classList.add('hidden');
+                    }
+                });
+
+                elements.searchResultsList.appendChild(card);
+            });
+        }
+
         function renderChatHistory() {
             if (!elements.chatHistoryList) return;
             elements.chatHistoryList.innerHTML = '';
             state.chats.forEach(chat => {
                 const isActive = chat.id === state.currentChatId;
                 const item = document.createElement('div');
-                item.className = `group relative flex items-center justify-between px-3 py-2 rounded-full cursor-pointer text-xs font-medium transition duration-150 ${
+                item.className = `group relative flex items-center justify-between px-3 py-2.5 rounded-full cursor-pointer text-xs font-medium transition duration-150 ${
                     isActive 
                         ? 'bg-skyai-hoverLight dark:bg-skyai-hoverDark font-semibold text-gray-900 dark:text-white' 
                         : 'text-gray-600 dark:text-gray-400 hover:bg-skyai-hoverLight/60 dark:hover:bg-skyai-hoverDark/60'
@@ -984,12 +1336,18 @@
                         <i class="fa-regular fa-message text-xs opacity-70"></i>
                         <span class="truncate">${escapeHtml(chat.title)}</span>
                     </div>
-                    <button class="delete-chat-btn opacity-0 group-hover:opacity-100 p-1 hover:text-red-500 transition text-gray-400" title="Hapus Percakapan">
+                    <button class="delete-chat-btn opacity-100 md:opacity-0 group-hover:opacity-100 p-1 hover:text-red-500 transition text-gray-400" title="Hapus Percakapan">
                         <i class="fa-solid fa-trash-can text-xs"></i>
                     </button>
                 `;
 
-                item.addEventListener('click', () => loadChat(chat.id));
+                item.addEventListener('click', () => {
+                    loadChat(chat.id);
+                    if (window.innerWidth < 768) {
+                        elements.sidebar.classList.add('-translate-x-full');
+                        elements.sidebarOverlay.classList.add('hidden');
+                    }
+                });
                 const delBtn = item.querySelector('.delete-chat-btn');
                 if (delBtn) {
                     delBtn.addEventListener('click', (e) => deleteChat(chat.id, e));
@@ -1010,6 +1368,94 @@
             });
         }
 
+        // ENHANCE CODE BLOCKS WITH COPY AND DOWNLOAD BUTTONS
+        function enhanceCodeBlocks(container) {
+            if (!container) return;
+            container.querySelectorAll('pre').forEach(pre => {
+                if (pre.dataset.enhanced) return;
+                pre.dataset.enhanced = "true";
+
+                const codeEl = pre.querySelector('code');
+                if (!codeEl) return;
+
+                // Detect Language
+                let lang = 'code';
+                codeEl.classList.forEach(cls => {
+                    if (cls.startsWith('language-')) {
+                        lang = cls.replace('language-', '');
+                    }
+                });
+
+                // File Extension Mapping
+                const extMap = {
+                    python: 'py', py: 'py',
+                    javascript: 'js', js: 'js', jsx: 'jsx', ts: 'ts', typescript: 'ts', tsx: 'tsx',
+                    html: 'html', css: 'css',
+                    cpp: 'cpp', c: 'c', cs: 'cs', csharp: 'cs',
+                    java: 'java', php: 'php', ruby: 'rb',
+                    json: 'json', xml: 'xml', yaml: 'yml', yml: 'yml',
+                    sql: 'sql', bash: 'sh', sh: 'sh', shell: 'sh',
+                    markdown: 'md', md: 'md'
+                };
+                const ext = extMap[lang.toLowerCase()] || 'txt';
+
+                // Create Header Element
+                const header = document.createElement('div');
+                header.className = 'flex items-center justify-between bg-gray-800 dark:bg-[#18191a] text-gray-300 text-[11px] font-sans px-3.5 py-1.5 rounded-t-xl border-b border-gray-700/60 select-none';
+                
+                header.innerHTML = `
+                    <span class="font-mono text-gray-400 font-semibold uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-code text-blue-400 text-xs"></i>
+                        <span>${escapeHtml(lang)}</span>
+                    </span>
+                    <div class="flex items-center space-x-2">
+                        <button type="button" class="copy-code-btn hover:text-white px-2 py-1 rounded transition flex items-center space-x-1" title="Salin Kode">
+                            <i class="fa-regular fa-copy"></i>
+                            <span>Salin</span>
+                        </button>
+                        <button type="button" class="download-code-btn hover:text-white px-2 py-1 rounded transition flex items-center space-x-1" title="Unduh Kode">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Unduh</span>
+                        </button>
+                    </div>
+                `;
+
+                pre.classList.add('rounded-xl', 'overflow-hidden', 'my-3', 'border', 'border-gray-700/60', 'bg-gray-900');
+                codeEl.classList.add('p-3.5', 'block', 'overflow-x-auto');
+
+                pre.insertBefore(header, codeEl);
+
+                // Copy Event Handler
+                header.querySelector('.copy-code-btn').addEventListener('click', function() {
+                    const codeText = codeEl.innerText;
+                    copyToClipboard(codeText);
+                    const btnSpan = this.querySelector('span');
+                    const originalText = btnSpan.textContent;
+                    btnSpan.textContent = 'Tersalin!';
+                    this.classList.add('text-emerald-400');
+                    setTimeout(() => {
+                        btnSpan.textContent = originalText;
+                        this.classList.remove('text-emerald-400');
+                    }, 2000);
+                });
+
+                // Download Event Handler
+                header.querySelector('.download-code-btn').addEventListener('click', function() {
+                    const codeText = codeEl.innerText;
+                    const blob = new Blob([codeText], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `sky_script_${Date.now()}.${ext}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showToast(`File ${a.download} berhasil diunduh!`, 'info');
+                });
+            });
+        }
+
         function renderMessages() {
             const chat = getCurrentChat();
             if (!chat || chat.messages.length === 0) {
@@ -1027,7 +1473,7 @@
                 msgEl.className = `flex flex-col ${isUser ? 'items-end' : 'items-start'} space-y-1.5`;
 
                 const bubbleContainer = document.createElement('div');
-                bubbleContainer.className = `flex items-start space-x-3 max-w-[88%] ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+                bubbleContainer.className = `flex items-start space-x-2.5 sm:space-x-3 max-w-[92%] sm:max-w-[88%] ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
 
                 const avatar = document.createElement('div');
                 avatar.className = `w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs overflow-hidden ${
@@ -1037,17 +1483,13 @@
                 }`;
 
                 if (isUser) {
-                    if (state.user.photoURL) {
-                        avatar.innerHTML = `<img src="${escapeHtml(state.user.photoURL)}" class="w-full h-full object-cover">`;
-                    } else {
-                        avatar.textContent = state.user.name.charAt(0).toUpperCase();
-                    }
+                    avatar.textContent = state.user.name.charAt(0).toUpperCase();
                 } else {
                     avatar.innerHTML = '<img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI" class="w-full h-full object-cover">';
                 }
 
                 const bubble = document.createElement('div');
-                bubble.className = `px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                bubble.className = `px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                     isUser 
                         ? 'bg-skyai-cardLight dark:bg-skyai-cardDark text-gray-900 dark:text-gray-100 border border-skyai-borderLight dark:border-skyai-borderDark' 
                         : 'bg-transparent text-gray-800 dark:text-gray-100 prose dark:prose-invert max-w-full overflow-x-auto'
@@ -1055,15 +1497,9 @@
 
                 if (isUser) {
                     bubble.textContent = msg.content;
-                    if (msg.image) {
-                        const img = document.createElement('img');
-                        img.src = msg.image;
-                        img.className = 'mt-2 max-h-48 rounded-xl border border-skyai-borderLight dark:border-skyai-borderDark';
-                        bubble.appendChild(img);
-                    }
                 } else {
                     bubble.innerHTML = marked.parse(msg.content);
-                    setTimeout(() => formatCodeBlocks(bubble), 50);
+                    enhanceCodeBlocks(bubble);
                 }
 
                 bubbleContainer.appendChild(avatar);
@@ -1077,80 +1513,24 @@
             }
         }
 
-        function formatCodeBlocks(container) {
-            container.querySelectorAll('pre').forEach(pre => {
-                if (pre.closest('.code-block-wrapper')) return;
-
-                const codeEl = pre.querySelector('code');
-                const rawCode = codeEl ? codeEl.innerText : pre.innerText;
-
-                let lang = 'code';
-                if (codeEl && codeEl.className) {
-                    const match = codeEl.className.match(/language-([^\s]+)/);
-                    if (match) lang = match[1].toLowerCase();
-                }
-
-                const displayLang = lang === 'code' ? 'Code' : (lang.charAt(0).toUpperCase() + lang.slice(1));
-                const wrapper = document.createElement('div');
-                wrapper.className = 'code-block-wrapper my-3 rounded-2xl bg-[#1e1f20] border border-gray-800/80 overflow-hidden shadow-lg';
-
-                const header = document.createElement('div');
-                header.className = 'flex items-center justify-between px-4 py-2.5 bg-[#282a2c] text-xs font-semibold text-gray-300 border-b border-gray-700/40 select-none';
-                header.innerHTML = `
-                    <span class="text-gray-200 font-medium tracking-wide">${escapeHtml(displayLang)}</span>
-                    <div class="flex items-center space-x-2">
-                        <button class="download-code-btn p-1.5 hover:bg-gray-700/60 text-gray-300 hover:text-white rounded-lg transition" title="Unduh Kode">
-                            <i class="fa-solid fa-download text-sm"></i>
-                        </button>
-                        <button class="copy-code-btn p-1.5 hover:bg-gray-700/60 text-gray-300 hover:text-white rounded-lg transition" title="Salin Kode">
-                            <i class="fa-regular fa-copy text-sm"></i>
-                        </button>
-                    </div>
-                `;
-
-                const contentArea = document.createElement('div');
-                contentArea.className = 'p-4 overflow-x-auto text-sm leading-relaxed';
-
-                pre.parentNode.insertBefore(wrapper, pre);
-                contentArea.appendChild(pre);
-                wrapper.appendChild(header);
-                wrapper.appendChild(contentArea);
-
-                header.querySelector('.download-code-btn').addEventListener('click', () => {
-                    const blob = new Blob([rawCode], { type: 'text/plain;charset=utf-8' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `script.${lang === 'python' ? 'py' : lang === 'javascript' ? 'js' : 'txt'}`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                    showToast('Kode berhasil diunduh!', 'info');
-                });
-
-                header.querySelector('.copy-code-btn').addEventListener('click', function() {
-                    copyToClipboard(rawCode);
-                    this.innerHTML = '<i class="fa-solid fa-check text-sm text-emerald-400"></i>';
-                    showToast('Kode berhasil disalin!', 'info');
-                    setTimeout(() => {
-                        this.innerHTML = '<i class="fa-regular fa-copy text-sm"></i>';
-                    }, 2000);
-                });
-            });
-        }
-
-        // =====================================================================
-        // REST SUPABASE SYNC LOGIC (REST HTTP ONLY - NO WEBSOCKET)
-        // =====================================================================
         async function setupSupabaseSync() {
+            const cleanEmail = state.user.email ? state.user.email.toLowerCase().trim() : '';
+
+            // Check local backups
+            const planFromUserId = localStorage.getItem('skyai_user_plan_' + currentUserId);
+            const planFromEmail = cleanEmail ? localStorage.getItem('skyai_user_plan_' + cleanEmail) : null;
+            const planFromDevice = localStorage.getItem('skyai_device_plan');
+            
+            state.userPlan = mergePlans(state.userPlan, mergePlans(planFromUserId, mergePlans(planFromEmail, planFromDevice)));
+            updateModelLockIcons();
+
             try {
-                // Fetch User Chats for currentUserId
-                const { data: chatsData, error: chatsErr } = await supabaseClient
+                // 1. Fetch User Chats
+                const { data: chatsData } = await supabaseClient
                     .from('chats')
                     .select('*')
                     .eq('user_id', currentUserId)
                     .order('created_at', { ascending: false });
-
-                if (chatsErr) throw chatsErr;
 
                 if (chatsData && chatsData.length > 0) {
                     state.chats = chatsData.map(c => ({
@@ -1161,29 +1541,60 @@
                         created_at: c.created_at
                     }));
                     state.currentChatId = state.chats[0].id;
-                } else {
-                    state.chats = [];
+                } else if (state.chats.length === 0) {
                     createNewChat();
                 }
 
-                // Fetch User Profile
-                const { data: profileData } = await supabaseClient
-                    .from('profiles')
-                    .select('*')
-                    .eq('user_id', currentUserId)
-                    .single();
-
-                if (profileData) {
-                    state.userPlan = profileData.user_plan || 'free';
-                    state.usageCount = profileData.usage_count || 0;
-                    updateUsageUI();
-                    updateModelLockIcons();
+                // 2. Fetch Profiles from Supabase (by User ID or Email)
+                let profileQuery = supabaseClient.from('profiles').select('*');
+                if (cleanEmail && cleanEmail !== 'belum masuk akun google') {
+                    profileQuery = profileQuery.or(`user_id.eq.${currentUserId},email.eq.${cleanEmail}`);
+                } else {
+                    profileQuery = profileQuery.eq('user_id', currentUserId);
+                }
+                
+                const { data: profileList } = await profileQuery;
+                if (profileList && profileList.length > 0) {
+                    profileList.forEach(prof => {
+                        if (prof.user_plan) {
+                            state.userPlan = mergePlans(state.userPlan, prof.user_plan);
+                        }
+                        if (prof.usage_count) {
+                            state.usageCount = Math.max(state.usageCount, prof.usage_count);
+                        }
+                    });
                 }
 
+                // 3. ALSO fetch all redeemed codes in Supabase for this user or email
+                let codeQuery = supabaseClient.from('redeem_codes').select('plan').eq('is_used', true);
+                if (cleanEmail && cleanEmail !== 'belum masuk akun google') {
+                    codeQuery = codeQuery.or(`used_by.eq.${currentUserId},used_by.eq.${cleanEmail},user_email.eq.${cleanEmail}`);
+                } else {
+                    codeQuery = codeQuery.eq('used_by', currentUserId);
+                }
+
+                const { data: redeemedList } = await codeQuery;
+                if (redeemedList && redeemedList.length > 0) {
+                    redeemedList.forEach(item => {
+                        if (item.plan) {
+                            state.userPlan = mergePlans(state.userPlan, item.plan);
+                        }
+                    });
+                }
+
+                // Save merged plan back to local storage backups
+                if (state.userPlan !== 'free') {
+                    localStorage.setItem('skyai_user_plan_' + currentUserId, state.userPlan);
+                    if (cleanEmail) localStorage.setItem('skyai_user_plan_' + cleanEmail, state.userPlan);
+                    localStorage.setItem('skyai_device_plan', state.userPlan);
+                }
+
+                updateUsageUI();
+                updateModelLockIcons();
                 renderChatHistory();
                 renderMessages();
             } catch (err) {
-                console.warn("Supabase REST Sync Warning:", err.message);
+                console.warn("Supabase Sync Warning:", err.message);
                 if (state.chats.length === 0) createNewChat();
             }
         }
@@ -1197,35 +1608,174 @@
                     messages: chat.messages,
                     created_at: chat.created_at || new Date().toISOString()
                 });
-            } catch (e) {
-                console.error("Gagal menyimpan ke Supabase:", e);
-            }
+            } catch (e) {}
         }
 
         async function deleteChatFromSupabase(chatId) {
             try {
                 await supabaseClient.from('chats').delete().eq('id', chatId);
-            } catch (e) {
-                console.error("Gagal menghapus dari Supabase:", e);
-            }
+            } catch (e) {}
         }
 
         async function saveUserSettingsToSupabase() {
+            const cleanEmail = state.user.email ? state.user.email.toLowerCase().trim() : '';
+            if (currentUserId) {
+                localStorage.setItem('skyai_user_plan_' + currentUserId, state.userPlan);
+                if (cleanEmail) localStorage.setItem('skyai_user_plan_' + cleanEmail, state.userPlan);
+                localStorage.setItem('skyai_device_plan', state.userPlan);
+            }
             try {
                 await supabaseClient.from('profiles').upsert({
                     user_id: currentUserId,
+                    email: cleanEmail || null,
                     user_plan: state.userPlan,
                     usage_count: state.usageCount,
                     updated_at: new Date().toISOString()
                 });
-            } catch (e) {
-                console.error("Gagal menyimpan profil ke Supabase:", e);
-            }
+            } catch (e) {}
         }
 
-        // =====================================================================
-        // GROQ AI FETCH LOGIC WITH AUTO-RETRY ROTATION
-        // =====================================================================
+        async function fetchRedeemCodesFromSupabase() {
+            try {
+                const { data } = await supabaseClient
+                    .from('redeem_codes')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                if (data) state.redeemCodes = data;
+            } catch (e) {
+                console.log("Using local redeem code state");
+            }
+            renderAdminCodeList();
+        }
+
+        function renderAdminCodeList() {
+            if (!elements.adminCodeList) return;
+            elements.adminCodeList.innerHTML = '';
+
+            if (elements.codeCountBadge) {
+                elements.codeCountBadge.textContent = `${state.redeemCodes.length} Kode`;
+            }
+
+            if (state.redeemCodes.length === 0) {
+                elements.adminCodeList.innerHTML = '<div class="text-center text-xs text-gray-500 py-4">Belum ada kode yang dibuat.</div>';
+                return;
+            }
+
+            state.redeemCodes.forEach(item => {
+                const row = document.createElement('div');
+                row.className = `flex items-center justify-between p-2.5 rounded-xl border text-xs font-mono ${
+                    item.is_used 
+                        ? 'bg-gray-800/40 border-gray-700/50 text-gray-500 line-through' 
+                        : 'bg-purple-950/30 border-purple-800/50 text-purple-200'
+                }`;
+                row.innerHTML = `
+                    <div class="truncate mr-2">
+                        <div class="font-bold tracking-wider">${escapeHtml(item.code)}</div>
+                        <div class="text-[9px] text-gray-400 no-underline font-sans uppercase">Paket: ${escapeHtml(item.plan)} ${item.is_used ? '(Terpakai)' : '(Aktif)'}</div>
+                    </div>
+                    <button class="copy-code-btn px-2.5 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition font-sans text-[10px]">
+                        Salin
+                    </button>
+                `;
+
+                row.querySelector('.copy-code-btn').addEventListener('click', () => {
+                    copyToClipboard(item.code);
+                    showToast(`Kode ${item.code} berhasil disalin!`, 'info');
+                });
+
+                elements.adminCodeList.appendChild(row);
+            });
+        }
+
+        async function handleGenerateRedeemCode() {
+            const selectedPlan = elements.adminPlanSelect.value;
+            const randomString = Math.random().toString(36).substring(2, 8).toUpperCase();
+            const generatedCode = `SKY-${selectedPlan.toUpperCase()}-${randomString}`;
+
+            const newCodeObj = {
+                code: generatedCode,
+                plan: selectedPlan,
+                is_used: false,
+                created_at: new Date().toISOString()
+            };
+
+            state.redeemCodes.unshift(newCodeObj);
+
+            try {
+                await supabaseClient.from('redeem_codes').insert(newCodeObj);
+            } catch (e) {
+                console.warn("Saved code locally");
+            }
+
+            renderAdminCodeList();
+            copyToClipboard(generatedCode);
+            showToast(`Kode ${generatedCode} berhasil dibuat & disalin!`, 'info');
+        }
+
+        async function handleRedeemCodeSubmit() {
+            const inputCode = elements.redeemCodeInput.value.trim().toUpperCase();
+            if (!inputCode) {
+                showToast('Masukkan kode redeem terlebih dahulu!', 'error');
+                return;
+            }
+
+            let found = state.redeemCodes.find(c => c.code === inputCode);
+
+            if (!found) {
+                try {
+                    const { data } = await supabaseClient
+                        .from('redeem_codes')
+                        .select('*')
+                        .eq('code', inputCode)
+                        .single();
+                    if (data) found = data;
+                } catch(e) {}
+            }
+
+            if (!found) {
+                showToast('Kode redeem tidak valid. Periksa kembali kodenya!', 'error');
+                return;
+            }
+
+            if (found.is_used) {
+                showToast('Kode redeem ini sudah pernah digunakan!', 'error');
+                return;
+            }
+
+            found.is_used = true;
+            const cleanEmail = state.user.email ? state.user.email.toLowerCase().trim() : '';
+
+            let currentPlans = (typeof state.userPlan === 'string' && state.userPlan !== 'free') 
+                ? state.userPlan.split(',').map(p => p.trim()).filter(Boolean) 
+                : [];
+            if (!currentPlans.includes(found.plan)) {
+                currentPlans.push(found.plan);
+            }
+            state.userPlan = currentPlans.join(',');
+
+            localStorage.setItem('skyai_user_plan_' + currentUserId, state.userPlan);
+            if (cleanEmail) localStorage.setItem('skyai_user_plan_' + cleanEmail, state.userPlan);
+            localStorage.setItem('skyai_device_plan', state.userPlan);
+
+            try {
+                await supabaseClient
+                    .from('redeem_codes')
+                    .update({ 
+                        is_used: true, 
+                        used_by: currentUserId,
+                        user_email: cleanEmail || currentUserId
+                    })
+                    .eq('code', inputCode);
+            } catch(e) {}
+
+            saveUserSettingsToSupabase();
+            updateModelLockIcons();
+
+            elements.redeemCodeInput.value = '';
+            elements.redeemModal.classList.add('hidden');
+            showToast(`SELAMAT! Kode berhasil ditukarkan. Paket Sky AI ${found.plan.toUpperCase()} Anda kini AKTIF! 🎉`, 'info');
+        }
+
         async function fetchGroqResponse(messages) {
             const systemPrompt = "Anda adalah Sky AI, asisten AI cerdas dan sangat membantu.";
             const formattedMessages = [
@@ -1265,12 +1815,7 @@
 
                     const errJson = await res.json().catch(() => ({}));
                     lastError = errJson.error?.message || `HTTP ${res.status}`;
-
-                    if (res.status === 401 || (lastError && lastError.toLowerCase().includes('key'))) {
-                        continue; // try next key automatically
-                    } else {
-                        continue;
-                    }
+                    continue;
                 } catch (err) {
                     lastError = err.message;
                 }
@@ -1286,17 +1831,14 @@
                 <div class="w-7 h-7 rounded-full overflow-hidden border border-skyai-borderLight dark:border-skyai-borderDark flex-shrink-0">
                     <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI" class="w-full h-full object-cover">
                 </div>
-                <div class="flex items-center space-x-2 bg-skyai-cardLight dark:bg-skyai-cardDark px-4 py-2.5 rounded-2xl border border-skyai-borderLight dark:border-skyai-borderDark">
-                    <i class="fa-solid fa-circle-notch fa-spin text-blue-500 text-sm"></i>
+                <div class="flex items-center space-x-2 bg-skyai-cardLight dark:bg-skyai-cardDark px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl border border-skyai-borderLight dark:border-skyai-borderDark">
+                    <i class="fa-solid fa-circle-notch fa-spin text-blue-500 text-xs sm:text-sm"></i>
                     <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">Sky AI (${escapeHtml(state.currentModelName)}) sedang berpikir...</span>
                 </div>
             `;
             return el;
         }
 
-        // =====================================================================
-        // EVENT LISTENERS BINDING
-        // =====================================================================
         if (elements.chatForm) {
             elements.chatForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -1367,7 +1909,38 @@
             });
         }
 
+        if (elements.landingLoginBtn) {
+            elements.landingLoginBtn.addEventListener('click', () => {
+                if (elements.loginModal) elements.loginModal.classList.remove('hidden');
+            });
+        }
+
+        if (elements.getStartedBtn) {
+            elements.getStartedBtn.addEventListener('click', () => {
+                if (elements.loginModal) elements.loginModal.classList.remove('hidden');
+            });
+        }
+
+        if (elements.tryAsGuestBtn) {
+            elements.tryAsGuestBtn.addEventListener('click', enterWorkspaceAsGuest);
+        }
+
+        if (elements.landingThemeToggleBtn) {
+            elements.landingThemeToggleBtn.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.contains('dark');
+                if (isDark) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('skyai_theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('skyai_theme', 'dark');
+                }
+                setupTheme();
+            });
+        }
+
         if (elements.newChatBtn) elements.newChatBtn.addEventListener('click', createNewChat);
+        if (elements.mobileNewChatBtn) elements.mobileNewChatBtn.addEventListener('click', createNewChat);
         if (elements.sidebarLogoBtn) elements.sidebarLogoBtn.addEventListener('click', toggleSidebar);
         if (elements.collapseSidebarBtn) elements.collapseSidebarBtn.addEventListener('click', toggleSidebar);
         if (elements.floatingToggleBtn) elements.floatingToggleBtn.addEventListener('click', toggleSidebar);
@@ -1398,18 +1971,16 @@
                 const modelKey = btn.getAttribute('data-model');
                 const requiredPlan = btn.getAttribute('data-plan');
 
-                let isUnlocked = !requiredPlan || 
-                    (requiredPlan === 'plus' && (state.userPlan === 'plus' || state.userPlan === 'pro')) ||
-                    (requiredPlan === 'pro' && state.userPlan === 'pro');
+                let isUnlocked = checkPlanUnlocked(requiredPlan);
 
                 if (!isUnlocked) {
                     elements.modelDropdown.classList.add('hidden');
-                    showToast('Upgrade paket untuk memakai model ini.', 'error');
+                    showToast('Model ini terkunci! Beli paket langganan dan masukkan Kode Redeem.', 'error');
                     openSubscriptionModal();
                     return;
                 }
 
-                state.currentModelName = btn.querySelector('.font-semibold').childNodes[0].textContent.trim();
+                state.currentModelName = btn.getAttribute('data-name') || 'Sky Med';
                 state.currentProvider = 'groq';
 
                 if (modelKey === 'sky-mini') {
@@ -1417,16 +1988,31 @@
                 } else if (modelKey === 'sky-med') {
                     state.currentModelKey = 'llama-3.3-70b-versatile';
                 } else if (modelKey === 'sky-plus') {
-                    state.currentModelKey = 'mixtral-8x7b-32768';
+                    state.currentModelKey = 'llama-3.3-70b-versatile';
                 } else if (modelKey === 'sky-pro') {
-                    state.currentModelKey = 'llama3-70b-8192';
+                    state.currentModelKey = 'llama-3.3-70b-versatile';
                 }
 
                 elements.currentModelLabel.textContent = state.currentModelName;
                 elements.modelDropdown.classList.add('hidden');
-                showToast(`Model diubah ke ${state.currentModelName} (Groq)`, 'info');
+                showToast(`Model diubah ke ${state.currentModelName}`, 'info');
             });
         });
+
+        if (elements.themeToggleBtn) {
+            elements.themeToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isDark = document.documentElement.classList.contains('dark');
+                if (isDark) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('skyai_theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('skyai_theme', 'dark');
+                }
+                setupTheme();
+            });
+        }
 
         if (elements.attachImageBtn) elements.attachImageBtn.addEventListener('click', () => elements.imageInput.click());
         if (elements.imageInput) {
@@ -1446,33 +2032,6 @@
 
         if (elements.removeImageBtn) elements.removeImageBtn.addEventListener('click', clearAttachedImage);
 
-        // Voice Input (Web Speech API)
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRecognition && elements.voiceBtn) {
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'id-ID';
-            recognition.continuous = false;
-
-            elements.voiceBtn.addEventListener('click', () => {
-                try {
-                    recognition.start();
-                    showToast('Mendengarkan suara...', 'info');
-                } catch (e) {
-                    recognition.stop();
-                }
-            });
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                elements.userInput.value = transcript;
-                showToast('Teks berhasil dikonversi dari suara!', 'info');
-            };
-        } else if (elements.voiceBtn) {
-            elements.voiceBtn.addEventListener('click', () => {
-                showToast('Fitur recognisi suara tidak didukung oleh browser Anda', 'error');
-            });
-        }
-
         document.querySelectorAll('.prompt-card').forEach(card => {
             card.addEventListener('click', () => {
                 elements.userInput.value = card.textContent.trim();
@@ -1483,7 +2042,7 @@
         if (elements.userInput) {
             elements.userInput.addEventListener('input', () => {
                 elements.userInput.style.height = 'auto';
-                elements.userInput.style.height = Math.min(elements.userInput.scrollHeight, 120) + 'px';
+                elements.userInput.style.height = Math.min(elements.userInput.scrollHeight, 110) + 'px';
             });
 
             elements.userInput.addEventListener('keydown', (e) => {
@@ -1494,31 +2053,29 @@
             });
         }
 
-        // Handle Google Sign-In Trigger
-        if (elements.googleAuthBtn) elements.googleAuthBtn.addEventListener('click', handleGoogleAuthClick);
-
-        // Handle Inline Manual Google Form Submit
         if (elements.submitManualGoogleBtn) {
             elements.submitManualGoogleBtn.addEventListener('click', () => {
-                const email = elements.manualGoogleEmail ? elements.manualGoogleEmail.value.trim() : '';
-                const name = elements.manualGoogleName ? elements.manualGoogleName.value.trim() : '';
+                const rawEmail = elements.manualGoogleEmail ? elements.manualGoogleEmail.value : '';
+                const rawName = elements.manualGoogleName ? elements.manualGoogleName.value : '';
 
-                if (!email || !email.includes('@')) {
+                const cleanEmail = rawEmail.trim().toLowerCase();
+                const cleanName = rawName.trim();
+
+                if (!cleanEmail || !cleanEmail.includes('@')) {
                     showToast('Silakan masukkan email Google yang valid', 'error');
                     return;
                 }
 
-                const displayName = name || email.split('@')[0];
-                const customUid = 'google_' + btoa(email.toLowerCase().trim()).replace(/=/g, '');
+                const displayName = cleanName || cleanEmail.split('@')[0];
+                const customUid = 'google_' + btoa(cleanEmail).replace(/=/g, '');
 
                 setGoogleUser({
                     uid: customUid,
                     name: displayName,
-                    email: email,
+                    email: cleanEmail,
                     photoURL: null
                 });
 
-                if (elements.manualGoogleForm) elements.manualGoogleForm.classList.add('hidden');
                 if (elements.loginModal) elements.loginModal.classList.add('hidden');
                 showToast(`Selamat datang, ${displayName}!`, 'info');
             });
@@ -1537,22 +2094,9 @@
             });
         }
 
-        if (elements.refreshLocationBtn) {
-            elements.refreshLocationBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (elements.userLocationText) elements.userLocationText.textContent = 'Memperbarui...';
-                fetchUserIpAndLocation();
-                showToast('Lokasi diperbarui', 'info');
-            });
-        }
-
-        if (elements.themeToggleBtn) {
-            elements.themeToggleBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const isDark = document.documentElement.classList.toggle('dark');
-                localStorage.setItem('skyai_theme', isDark ? 'dark' : 'light');
-                setupTheme();
-            });
+        const logoutBtnEl = document.getElementById('logoutBtn');
+        if (logoutBtnEl) {
+            logoutBtnEl.addEventListener('click', logoutUser);
         }
 
         if (elements.usageLimitsBtn) {
@@ -1576,23 +2120,126 @@
             elements.closeSubscriptionBtn.addEventListener('click', () => elements.subscriptionModal.classList.add('hidden'));
         }
 
-        document.querySelectorAll('.subscribe-action-btn').forEach((btn, index) => {
+        document.querySelectorAll('.subscribe-action-btn').forEach((btn) => {
             btn.addEventListener('click', () => {
-                const chosenPlan = index === 0 ? 'plus' : 'pro';
-                state.userPlan = chosenPlan;
-                saveUserSettingsToSupabase();
-                updateModelLockIcons();
-                showToast(`Berhasil berlangganan Sky AI ${chosenPlan === 'plus' ? 'Plus' : 'Pro'}!`, 'info');
-                elements.subscriptionModal.classList.add('hidden');
+                const planType = btn.getAttribute('data-plan-type') || 'plus';
+                const planName = planType === 'plus' ? 'Sky AI Plus' : 'Sky AI Pro';
+                const nominal = planType === 'plus' ? 'Rp 7.500' : 'Rp 31.000';
+
+                if (elements.paymentPlanTitle) elements.paymentPlanTitle.textContent = `Langganan ${planName}`;
+                if (elements.paymentNominalText) elements.paymentNominalText.textContent = nominal;
+
+                const waMessage = `Hallo, saya sudah melakukan pembayaran untuk Langganan ${planName}. Tolong berikan Kode Redeem-nya.`;
+                const waUrl = `https://wa.me/6285143217120?text=${encodeURIComponent(waMessage)}`;
+                if (elements.paymentWaBtn) elements.paymentWaBtn.href = waUrl;
+
+                if (elements.subscriptionModal) elements.subscriptionModal.classList.add('hidden');
+                if (elements.paymentModal) elements.paymentModal.classList.remove('hidden');
+
+                showToast(`Scan QR Code pembayaran untuk ${planName}. Setelah bayar, minta Kode Redeem ke Admin!`, 'info');
             });
         });
 
-        // Initialize App on DOM Load
+        if (elements.closePaymentModalBtn) {
+            elements.closePaymentModalBtn.addEventListener('click', () => {
+                if (elements.paymentModal) elements.paymentModal.classList.add('hidden');
+            });
+        }
+
+        const openRedeemModal = () => {
+            if (elements.settingsMenu) elements.settingsMenu.classList.add('hidden');
+            if (elements.subscriptionModal) elements.subscriptionModal.classList.add('hidden');
+            if (elements.redeemModal) elements.redeemModal.classList.remove('hidden');
+        };
+
+        if (elements.searchChatBtn) {
+            elements.searchChatBtn.addEventListener('click', () => {
+                if (elements.searchModal) {
+                    elements.searchModal.classList.remove('hidden');
+                    if (elements.chatSearchInput) {
+                        elements.chatSearchInput.value = '';
+                        elements.chatSearchInput.focus();
+                    }
+                    renderSearchConversationResults('');
+                }
+            });
+        }
+
+        if (elements.closeSearchModalBtn) {
+            elements.closeSearchModalBtn.addEventListener('click', () => {
+                if (elements.searchModal) elements.searchModal.classList.add('hidden');
+            });
+        }
+
+        if (elements.chatSearchInput) {
+            elements.chatSearchInput.addEventListener('input', (e) => {
+                renderSearchConversationResults(e.target.value);
+            });
+        }
+
+        if (elements.openRedeemModalBtn) elements.openRedeemModalBtn.addEventListener('click', openRedeemModal);
+        if (elements.openRedeemFromSubBtn) elements.openRedeemFromSubBtn.addEventListener('click', openRedeemModal);
+        if (elements.closeRedeemModalBtn) {
+            elements.closeRedeemModalBtn.addEventListener('click', () => {
+                if (elements.redeemModal) elements.redeemModal.classList.add('hidden');
+            });
+        }
+        if (elements.submitRedeemCodeBtn) elements.submitRedeemCodeBtn.addEventListener('click', handleRedeemCodeSubmit);
+
+        if (elements.openAdminModalBtn) {
+            elements.openAdminModalBtn.addEventListener('click', () => {
+                if (elements.settingsMenu) elements.settingsMenu.classList.add('hidden');
+                if (elements.adminPinInput) elements.adminPinInput.value = '';
+                if (elements.adminPinModal) elements.adminPinModal.classList.remove('hidden');
+            });
+        }
+
+        if (elements.closeAdminPinBtn) {
+            elements.closeAdminPinBtn.addEventListener('click', () => {
+                if (elements.adminPinModal) elements.adminPinModal.classList.add('hidden');
+            });
+        }
+
+        if (elements.submitAdminPinBtn) {
+            elements.submitAdminPinBtn.addEventListener('click', () => {
+                const pin = elements.adminPinInput ? elements.adminPinInput.value.trim() : '';
+                if (pin === ADMIN_PIN) {
+                    if (elements.adminPinModal) elements.adminPinModal.classList.add('hidden');
+                    if (elements.adminModal) elements.adminModal.classList.remove('hidden');
+                    fetchRedeemCodesFromSupabase();
+                } else {
+                    showToast("PIN Admin Salah!", "error");
+                }
+            });
+        }
+
+        if (elements.closeAdminModalBtn) {
+            elements.closeAdminModalBtn.addEventListener('click', () => {
+                if (elements.adminModal) elements.adminModal.classList.add('hidden');
+            });
+        }
+
+        if (elements.generateCodeBtn) {
+            elements.generateCodeBtn.addEventListener('click', handleGenerateRedeemCode);
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             setupMarkdown();
             setupTheme();
             fetchUserIpAndLocation();
-            setupSupabaseSync();
+
+            const savedUser = localStorage.getItem('skyai_google_user');
+            if (savedUser) {
+                try {
+                    setGoogleUser(JSON.parse(savedUser));
+                } catch(e) {
+                    updateLandingPageState();
+                    setupSupabaseSync();
+                }
+            } else {
+                updateLandingPageState();
+                setupSupabaseSync();
+            }
         });
     </script>
 </body>
