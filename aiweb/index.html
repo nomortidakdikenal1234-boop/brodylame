@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Sky AI</title>
-    <!-- Tailwind CSS -->
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -29,14 +29,11 @@
             }
         }
     </script>
-    <!-- Font Awesome Icons -->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Marked.js for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Highlight.js for Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/tokyo-night-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     
     <style>
@@ -91,7 +88,6 @@
         .sidebar-transition {
             transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        /* Custom Dot Pattern Background for Landing Page */
         .dot-bg-dark {
             background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
             background-size: 24px 24px;
@@ -100,144 +96,148 @@
             background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px);
             background-size: 24px 24px;
         }
-        /* Floating Animation */
+
+        /* Floating keyframes and active animation classes */
         @keyframes float-slow {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(1deg); }
+            0%, 100% { transform: translateY(0px) rotate(-1deg); }
+            50% { transform: translateY(-12px) rotate(1.5deg); }
         }
         @keyframes float-reverse {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(10px) rotate(-1deg); }
+            0%, 100% { transform: translateY(0px) rotate(1deg); }
+            50% { transform: translateY(12px) rotate(-1.5deg); }
         }
-        .animate-float-1 { animation: float-slow 6s ease-in-out infinite; }
-        .animate-float-2 { animation: float-reverse 7s ease-in-out infinite; }
+        .animate-float-1 { 
+            animation: float-slow 5s ease-in-out infinite !important; 
+            will-change: transform;
+        }
+        .animate-float-2 { 
+            animation: float-reverse 6s ease-in-out infinite !important; 
+            will-change: transform;
+        }
     </style>
 </head>
 <body class="bg-skyai-bgLight dark:bg-skyai-bgDark text-gray-800 dark:text-gray-100 h-[100dvh] flex overflow-hidden antialiased">
 
-    <!-- ===================================================================== -->
-    <!-- LANDING PAGE (FULL COVER WHEN NOT LOGGED IN) -->
-    <!-- ===================================================================== -->
-    <div id="landingPage" class="fixed inset-0 z-50 bg-gray-50 dark:bg-[#111213] dot-bg-light dark:dot-bg-dark flex flex-col justify-between overflow-y-auto">
-        <!-- Landing Navbar -->
-        <header class="w-full max-w-7xl mx-auto px-4 sm:px-8 py-5 flex items-center justify-between z-10 flex-shrink-0">
+    <div id="landingPage" class="fixed inset-0 z-50 bg-skyai-bgLight dark:bg-[#0d0e0f] dot-bg-light dark:dot-bg-dark flex flex-col justify-between overflow-y-auto overflow-x-hidden antialiased text-gray-900 dark:text-white transition-colors duration-200">
+        
+        <header class="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between z-20 flex-shrink-0">
             <div class="flex items-center space-x-3">
-                <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI Logo" class="w-9 h-9 rounded-full object-cover shadow-md border border-gray-200 dark:border-gray-700">
+                <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI Logo" class="w-8 h-8 rounded-full object-cover shadow-md">
                 <span class="font-bold text-xl tracking-tight text-gray-900 dark:text-white">Sky AI</span>
             </div>
             <div class="flex items-center space-x-3">
-                <button id="landingThemeToggleBtn" class="p-2.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition shadow-sm">
-                    <i id="landingThemeIcon" class="fa-solid fa-moon text-sm"></i>
+                <button id="landingThemeToggleBtn" class="w-9 h-9 rounded-full bg-skyai-cardLight dark:bg-[#1e1f20] border border-skyai-borderLight dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition flex items-center justify-center shadow-sm">
+                    <i id="landingThemeIcon" class="fa-solid fa-moon text-xs"></i>
                 </button>
-                <button id="landingLoginBtn" class="px-5 py-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm shadow-md transition transform active:scale-95">
+                <button id="landingLoginBtn" class="px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm shadow-md transition transform active:scale-95">
                     Login
                 </button>
             </div>
         </header>
 
-        <!-- Landing Hero & Floating Widgets -->
-        <main class="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-12 flex-1 flex flex-col items-center justify-center relative my-auto">
+        <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 flex flex-col items-center justify-center relative my-auto min-h-[580px]">
             
-            <div class="hidden lg:block absolute left-4 top-12 w-64 p-4 rounded-2xl bg-amber-100 dark:bg-amber-900/30 border border-amber-300/60 dark:border-amber-700/50 shadow-xl animate-float-1 transform -rotate-3 backdrop-blur-sm">
-                <div class="flex items-center space-x-2 text-amber-800 dark:text-amber-300 text-xs font-bold mb-1.5">
+            <!-- Top Left Floating Card: AI Idea Notes -->
+            <div class="hidden lg:block absolute left-2 xl:left-8 top-4 xl:top-8 w-64 xl:w-72 p-4 rounded-2xl bg-amber-500/10 dark:bg-[#1e1610] border border-amber-500/30 dark:border-amber-900/60 shadow-xl backdrop-blur-md z-10 animate-float-1">
+                <div class="flex items-center space-x-2 text-amber-600 dark:text-amber-500 text-xs font-bold mb-2">
                     <i class="fa-solid fa-thumbtack"></i>
                     <span>AI Idea Notes</span>
                 </div>
-                <p class="text-xs text-amber-900 dark:text-amber-200 font-medium leading-relaxed">
+                <p class="text-xs text-gray-700 dark:text-amber-100/90 leading-relaxed font-normal">
                     Write project ideas, summarize long documents, and organize business strategies in just one instruction..
                 </p>
-                <div class="mt-2.5 flex justify-end">
-                    <span class="p-1.5 rounded-lg bg-amber-200/80 dark:bg-amber-800/60 text-amber-900 dark:text-amber-200 text-[10px] font-bold">
-                        <i class="fa-solid fa-check text-xs"></i>
-                    </span>
+                <div class="mt-3 flex justify-end">
+                    <div class="w-6 h-6 rounded-lg bg-amber-500/20 dark:bg-amber-800/70 text-amber-700 dark:text-amber-200 flex items-center justify-center text-[10px]">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
                 </div>
             </div>
 
-            <div class="hidden lg:block absolute right-4 top-10 w-60 p-4 rounded-2xl bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-gray-700 shadow-xl animate-float-2 transform rotate-2">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">Response Speed</span>
+            <!-- Top Right Floating Card: Response Speed -->
+            <div class="hidden lg:block absolute right-2 xl:right-8 top-4 xl:top-8 w-64 xl:w-72 p-4 rounded-2xl bg-skyai-cardLight dark:bg-[#1e1f20] border border-skyai-borderLight dark:border-gray-800 shadow-xl z-10 animate-float-2">
+                <div class="flex items-center justify-between mb-1.5">
+                    <span class="text-[11px] font-medium text-gray-500 dark:text-gray-400">Response Speed</span>
                     <i class="fa-solid fa-bolt text-amber-500 text-xs"></i>
                 </div>
-                <div class="text-sm font-bold text-gray-900 dark:text-white mb-1">Super Fast Sky Engine</div>
-                <div class="flex items-center space-x-2 text-[10px] text-emerald-500 font-medium">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <div class="text-sm font-bold text-gray-900 dark:text-white mb-2">Super Fast Sky Engine</div>
+                <div class="flex items-center space-x-2 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
                     <span>99.9% Uptime • Instant Reply</span>
                 </div>
             </div>
 
-            <div class="hidden lg:block absolute left-8 bottom-8 w-64 p-3.5 rounded-2xl bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-gray-700 shadow-xl animate-float-2 transform rotate-1">
-                <div class="text-[11px] font-bold text-gray-800 dark:text-gray-200 mb-2 flex items-center space-x-2">
-                    <i class="fa-solid fa-code text-blue-500"></i>
+            <!-- Bottom Left Floating Card: Smart Code Generator -->
+            <div class="hidden lg:block absolute left-2 xl:left-8 bottom-4 xl:bottom-8 w-64 xl:w-72 p-4 rounded-2xl bg-skyai-cardLight dark:bg-[#1e1f20] border border-skyai-borderLight dark:border-gray-800 shadow-xl z-10 animate-float-2">
+                <div class="text-xs font-bold text-gray-900 dark:text-white mb-2 flex items-center space-x-2">
+                    <span class="text-blue-500 font-mono font-bold">&lt;/&gt;</span>
                     <span>Smart Code Generator</span>
                 </div>
-                <div class="bg-gray-900 text-gray-200 p-2.5 rounded-xl font-mono text-[10px] space-y-1">
-                    <div class="text-purple-400">async function <span class="text-blue-300">skyScrape</span>() {</div>
+                <div class="bg-gray-900 text-gray-300 p-3 rounded-xl font-mono text-[11px] leading-relaxed space-y-1 border border-gray-800/80">
+                    <div class="text-purple-400">async function <span class="text-blue-400">skyScrape</span>() {</div>
                     <div class="pl-3 text-emerald-400">// AI Otomasi Data</div>
                     <div class="pl-3 text-amber-300">await sky.generate()</div>
                     <div class="text-purple-400">}</div>
                 </div>
             </div>
 
-            <div class="hidden lg:block absolute right-8 bottom-12 w-64 p-4 rounded-2xl bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-gray-700 shadow-xl animate-float-1 transform -rotate-2">
-                <div class="text-[11px] font-bold text-gray-800 dark:text-gray-200 mb-2">Integrated AI Model</div>
-                <div class="grid grid-cols-2 gap-2 text-[10px] font-semibold">
-                    <div class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-emerald-600 dark:text-emerald-400 flex items-center space-x-1.5">
-                        <i class="fa-solid fa-bolt"></i>
-                        <span>Sky Mini</span>
+            <!-- Bottom Right Floating Card: Integrated AI Model -->
+            <div class="hidden lg:block absolute right-2 xl:right-8 bottom-4 xl:bottom-8 w-64 xl:w-72 p-4 rounded-2xl bg-skyai-cardLight dark:bg-[#1e1f20] border border-skyai-borderLight dark:border-gray-800 shadow-xl z-10 animate-float-1">
+                <div class="text-xs font-bold text-gray-800 dark:text-gray-200 mb-3">Integrated AI Model</div>
+                <div class="grid grid-cols-2 gap-2 text-xs font-semibold">
+                    <div class="p-2.5 rounded-xl bg-skyai-hoverLight dark:bg-[#282a2c] text-emerald-600 dark:text-emerald-400 flex items-center space-x-2">
+                        <i class="fa-solid fa-bolt text-xs"></i>
+                        <span class="text-gray-800 dark:text-gray-200">Sky Mini</span>
                     </div>
-                    <div class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-amber-600 dark:text-amber-400 flex items-center space-x-1.5">
-                        <i class="fa-solid fa-bolt"></i>
-                        <span>Sky Med</span>
+                    <div class="p-2.5 rounded-xl bg-skyai-hoverLight dark:bg-[#282a2c] text-amber-600 dark:text-amber-400 flex items-center space-x-2">
+                        <i class="fa-solid fa-bolt text-xs"></i>
+                        <span class="text-gray-800 dark:text-gray-200">Sky Med</span>
                     </div>
-                    <div class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-blue-600 dark:text-blue-400 flex items-center space-x-1.5">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <span>Sky Plus</span>
+                    <div class="p-2.5 rounded-xl bg-skyai-hoverLight dark:bg-[#282a2c] text-blue-600 dark:text-blue-400 flex items-center space-x-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                        <span class="text-gray-800 dark:text-gray-200">Sky Plus</span>
                     </div>
-                    <div class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-purple-600 dark:text-purple-400 flex items-center space-x-1.5">
-                        <i class="fa-solid fa-crown"></i>
-                        <span>Sky Pro</span>
+                    <div class="p-2.5 rounded-xl bg-skyai-hoverLight dark:bg-[#282a2c] text-purple-600 dark:text-purple-400 flex items-center space-x-2">
+                        <i class="fa-solid fa-crown text-xs"></i>
+                        <span class="text-gray-800 dark:text-gray-200">Sky Pro</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Center Hero -->
             <div class="text-center max-w-2xl mx-auto z-10 space-y-6">
-                <div class="inline-flex items-center justify-center p-3 sm:p-4 rounded-3xl bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-gray-700 shadow-xl mb-2">
-                    <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI Hero" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover shadow-inner">
+                <div class="w-16 h-16 rounded-2xl bg-skyai-cardLight dark:bg-[#1e1f20] border border-skyai-borderLight dark:border-gray-800 flex items-center justify-center shadow-xl mx-auto mb-4">
+                    <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI" class="w-10 h-10 rounded-xl object-cover">
                 </div>
 
-                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
-                    Think, create, and manifest in <span class="text-blue-600 dark:text-blue-500">one place</span>
+                <h1 class="text-4xl sm:text-6xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-[1.15]">
+                    Think, create, and<br>
+                    manifest in <span class="text-blue-600 dark:text-blue-500">one place</span>
                 </h1>
 
-                <p class="text-xs sm:text-base text-gray-600 dark:text-gray-300 font-normal leading-relaxed max-w-xl mx-auto">
+                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-normal leading-relaxed max-w-lg mx-auto">
                     Manage ideas, code programs, and get intelligent answers efficiently with the next-generation AI assistant.
                 </p>
 
-                <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <button id="getStartedBtn" class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold text-sm sm:text-base shadow-lg shadow-blue-500/25 transition flex items-center justify-center space-x-2">
+                <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <button id="getStartedBtn" class="w-full sm:w-auto px-7 py-3 rounded-full bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold text-sm shadow-lg shadow-blue-600/40 transition flex items-center justify-center space-x-2">
                         <span>Get Started</span>
                         <i class="fa-solid fa-arrow-right text-xs"></i>
                     </button>
-                    <button id="tryAsGuestBtn" class="w-full sm:w-auto px-6 py-3.5 rounded-full bg-white dark:bg-[#1e1f20] hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700 font-semibold text-xs sm:text-sm transition">
+                    <button id="tryAsGuestBtn" class="w-full sm:w-auto px-6 py-3 rounded-full bg-skyai-cardLight dark:bg-[#1e1f20] hover:bg-skyai-hoverLight dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200 border border-skyai-borderLight dark:border-gray-700 font-semibold text-sm transition">
                         Continue as Guest
                     </button>
                 </div>
 
-                <p class="text-[11px] text-gray-400 dark:text-gray-500">
+                <p class="text-xs text-gray-500 dark:text-gray-500 pt-1">
                     Free to try • No credit card required
                 </p>
             </div>
         </main>
 
-        <footer class="w-full max-w-7xl mx-auto px-4 sm:px-8 py-4 text-center text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">
+        <footer class="w-full max-w-7xl mx-auto px-6 py-6 text-center text-xs text-gray-500 dark:text-gray-500 flex-shrink-0">
             © 2026 Sky AI Web App. Seluruh hak cipta dilindungi.
         </footer>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- WORKSPACE SIDEBAR (HIDDEN UNTIL ACTIVE WORKSPACE) -->
-    <!-- ===================================================================== -->
     <aside id="sidebar" class="sidebar-transition fixed md:static inset-y-0 left-0 z-40 w-72 md:w-64 -translate-x-full md:translate-x-0 bg-skyai-sidebarLight dark:bg-skyai-sidebarDark border-r border-skyai-borderLight dark:border-skyai-borderDark flex flex-col justify-between flex-shrink-0 shadow-2xl md:shadow-none hidden">
         <div class="p-3">
             <div class="flex items-center justify-between mb-4 px-2 pt-1">
@@ -355,7 +355,6 @@
 
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden md:hidden"></div>
 
-    <!-- Main Workspace Area -->
     <main class="flex-1 flex flex-col h-full relative overflow-hidden bg-skyai-bgLight dark:bg-skyai-bgDark">
         <div class="md:hidden flex items-center justify-between px-3 py-2 border-b border-skyai-borderLight dark:border-skyai-borderDark bg-skyai-sidebarLight/80 dark:bg-skyai-sidebarDark/80 backdrop-blur z-20 flex-shrink-0">
             <button id="floatingToggleBtn" title="Buka Sidebar" class="p-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-skyai-hoverLight dark:hover:bg-skyai-hoverDark transition">
@@ -489,8 +488,6 @@
         </div>
     </main>
 
-    <!-- Modals -->
-    <!-- Login Modal -->
     <div id="loginModal" class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm">
         <div class="bg-skyai-bgLight dark:bg-skyai-cardDark border border-skyai-borderLight dark:border-skyai-borderDark rounded-3xl p-5 sm:p-6 w-[92%] max-w-sm text-center shadow-2xl">
             <div id="modalUserAvatarBox" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-2xl mx-auto mb-3 sm:mb-4 overflow-hidden shadow-md">
@@ -604,7 +601,7 @@
                     <label class="block text-xs font-semibold mb-1 text-gray-300">Pilih Tipe Paket Langganan:</label>
                     <select id="adminPlanSelect" class="w-full px-3 py-2 text-xs rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 dark:text-white outline-none">
                         <option value="plus">Sky AI Plus (Rp 7.500)</option>
-                        <option value="pro">Sky AI Pro (Rp 30.000)</option>
+                        <option value="pro">Sky AI Pro (Rp 31.000)</option>
                     </select>
                 </div>
                 <button id="generateCodeBtn" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-full transition shadow">
@@ -624,44 +621,44 @@
 
     <!-- Usage Limits Modal -->
     <div id="usageLimitsModal" class="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-sm">
-        <div class="bg-[#181818] text-white border border-gray-800 rounded-3xl p-5 md:p-8 w-[92%] max-w-xl shadow-2xl relative max-h-[85dvh] overflow-y-auto">
-            <button id="closeUsageLimitsBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition">
+        <div class="bg-white dark:bg-[#181818] text-gray-900 dark:text-white border border-skyai-borderLight dark:border-gray-800 rounded-3xl p-5 md:p-8 w-[92%] max-w-xl shadow-2xl relative max-h-[85dvh] overflow-y-auto">
+            <button id="closeUsageLimitsBtn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
             
             <h2 class="text-xl md:text-2xl font-bold mb-2 tracking-tight">Batas penggunaan</h2>
-            <p class="text-xs md:text-sm text-gray-400 mb-4 leading-relaxed">
+            <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">
                 Batas paket menentukan seberapa banyak Anda dapat menggunakan Sky AI seiring waktu.
             </p>
 
-            <div class="bg-[#212121] border border-gray-800/80 rounded-2xl p-4 mb-3">
+            <div class="bg-gray-50 dark:bg-[#212121] border border-skyai-borderLight dark:border-gray-800/80 rounded-2xl p-4 mb-3">
                 <div class="flex items-center justify-between text-xs sm:text-sm font-semibold mb-3">
                     <span>Penggunaan saat ini</span>
-                    <span id="currentUsagePercentText" class="font-bold text-gray-200">0% digunakan</span>
+                    <span id="currentUsagePercentText" class="font-bold text-gray-800 dark:text-gray-200">0% digunakan</span>
                 </div>
-                <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden mb-2">
+                <div class="w-full bg-gray-200 dark:bg-gray-800 h-2 rounded-full overflow-hidden mb-2">
                     <div id="usageProgressBar" class="bg-blue-500 h-full rounded-full transition-all duration-300" style="width: 0%;"></div>
                 </div>
-                <div class="flex justify-between items-center text-[10px] sm:text-[11px] text-gray-400">
+                <div class="flex justify-between items-center text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400">
                     <span id="resetTimeText">Direset pukul 24.00</span>
-                    <span id="usageRatioText" class="text-gray-400 font-medium">0 / 30 jawaban</span>
+                    <span id="usageRatioText" class="text-gray-500 dark:text-gray-400 font-medium">0 / 30 jawaban</span>
                 </div>
             </div>
 
-            <div class="bg-[#212121] border border-gray-800/80 rounded-2xl p-4 mb-4">
+            <div class="bg-gray-50 dark:bg-[#212121] border border-skyai-borderLight dark:border-gray-800/80 rounded-2xl p-4 mb-4">
                 <div class="flex items-center justify-between text-xs sm:text-sm font-semibold mb-2">
                     <span>Batas mingguan</span>
-                    <span id="weeklyUsagePercentText" class="font-bold text-gray-200">0% digunakan</span>
+                    <span id="weeklyUsagePercentText" class="font-bold text-gray-800 dark:text-gray-200">0% digunakan</span>
                 </div>
-                <div class="text-[10px] sm:text-[11px] text-gray-400">Direset pada minggu depan</div>
+                <div class="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400">Direset pada minggu depan</div>
             </div>
 
-            <div class="bg-[#212121] border border-gray-800/80 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
+            <div class="bg-gray-50 dark:bg-[#212121] border border-skyai-borderLight dark:border-gray-800/80 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
                 <div>
-                    <div class="text-xs sm:text-sm font-bold text-white mb-0.5">Dapatkan penggunaan 2x lebih banyak dengan AI Plus</div>
-                    <div class="text-xs text-gray-400">
-                        <span class="line-through text-gray-500 mr-1.5">Rp 10.000</span>
-                        <span class="text-emerald-400 font-medium">Rp 7.500/bulan</span>
+                    <div class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white mb-0.5">Dapatkan penggunaan 2x lebih banyak dengan AI Plus</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                        <span class="line-through text-gray-400 dark:text-gray-500 mr-1.5">Rp 75.000</span>
+                        <span class="text-emerald-600 dark:text-emerald-400 font-medium">Rp 7.500/bulan</span>
                     </div>
                 </div>
                 <button id="upgradeFromLimitsBtn" class="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs rounded-full transition shadow-md flex-shrink-0">
@@ -708,12 +705,12 @@
                         </div>
 
                         <div class="mb-5">
-                            <div class="text-xs text-gray-400 line-through">Rp 10.000</div>
+                            <div class="text-xs text-gray-400 line-through">Rp 75.000</div>
                             <div class="flex items-baseline space-x-1">
                                 <span class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp 7.500</span>
                                 <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">/bln</span>
                             </div>
-                            <div class="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 10.000/bln setelahnya</div>
+                            <div class="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 75.000/bln setelahnya</div>
                         </div>
 
                         <button class="subscribe-action-btn w-full py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-full transition shadow-md" data-plan-type="plus">
@@ -735,12 +732,12 @@
                         </div>
 
                         <div class="mb-5">
-                            <div class="text-xs text-gray-400 line-through">Rp 40.000</div>
+                            <div class="text-xs text-gray-400 line-through">Rp 309.000</div>
                             <div class="flex items-baseline space-x-1">
-                                <span class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp 30.000</span>
+                                <span class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp 31.000</span>
                                 <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">/bln</span>
                             </div>
-                            <div class="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 40.000/bln setelahnya</div>
+                            <div class="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 309.000/bln setelahnya</div>
                         </div>
 
                         <button class="subscribe-action-btn w-full py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-full transition shadow-md" data-plan-type="pro">
@@ -788,16 +785,13 @@
         </div>
     </div>
 
-    <!-- Toast Notification Container -->
+    <!-- Toast Container -->
     <div id="toastContainer" class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 z-[70] flex flex-col space-y-2 pointer-events-none items-center sm:items-end"></div>
 
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // =====================================================================
-        // SUPABASE CONFIGURATION
-        // =====================================================================
         const SUPABASE_URL = "https://eamaqwlimqhmjfovumjt.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_2GPAiWkbMwL9VTwyxZ9KTQ_1AbYQpMN";
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -816,7 +810,7 @@
 
         let currentUserId = getClientId();
 
-        // Groq API Key Rotation
+        // Groq API Keys Rotation
         const b64_groq = [
             'Z3NrX3RuTkxHcEVCRFlPcXgyRzdmemRDV0dkeWIzRll4QnBFQTV3NUVtYm5yWWh5cm0zUW1pZzc=',
             'Z3NrX25WYU1QM0ZmYTN5QWxMb2JtN3NjV0dkeWIzRllqWGd2NXlGNmtVdU5aTEJSYWg4TXlMbGE=',
@@ -1057,7 +1051,6 @@
             };
             localStorage.setItem('skyai_google_user', JSON.stringify(userPayload));
 
-            // Retrieve backups by ID, Email, and Device
             const planFromUserId = localStorage.getItem('skyai_user_plan_' + currentUserId);
             const planFromEmail = cleanEmail ? localStorage.getItem('skyai_user_plan_' + cleanEmail) : null;
             const planFromDevice = localStorage.getItem('skyai_device_plan');
@@ -1195,12 +1188,12 @@
                 document.documentElement.classList.add('dark');
                 if (elements.themeIcon) elements.themeIcon.className = 'fa-solid fa-moon w-5 text-gray-400';
                 if (elements.themeLabel) elements.themeLabel.textContent = 'Gelap';
-                if (elements.landingThemeIcon) elements.landingThemeIcon.className = 'fa-solid fa-moon text-sm';
+                if (elements.landingThemeIcon) elements.landingThemeIcon.className = 'fa-solid fa-moon text-xs text-amber-400';
             } else {
                 document.documentElement.classList.remove('dark');
                 if (elements.themeIcon) elements.themeIcon.className = 'fa-solid fa-sun w-5 text-amber-500';
                 if (elements.themeLabel) elements.themeLabel.textContent = 'Terang';
-                if (elements.landingThemeIcon) elements.landingThemeIcon.className = 'fa-solid fa-sun text-amber-500 text-sm';
+                if (elements.landingThemeIcon) elements.landingThemeIcon.className = 'fa-solid fa-sun text-xs text-amber-500';
             }
         }
 
@@ -1368,7 +1361,6 @@
             });
         }
 
-        // ENHANCE CODE BLOCKS WITH COPY AND DOWNLOAD BUTTONS
         function enhanceCodeBlocks(container) {
             if (!container) return;
             container.querySelectorAll('pre').forEach(pre => {
@@ -1378,7 +1370,6 @@
                 const codeEl = pre.querySelector('code');
                 if (!codeEl) return;
 
-                // Detect Language
                 let lang = 'code';
                 codeEl.classList.forEach(cls => {
                     if (cls.startsWith('language-')) {
@@ -1386,7 +1377,6 @@
                     }
                 });
 
-                // File Extension Mapping
                 const extMap = {
                     python: 'py', py: 'py',
                     javascript: 'js', js: 'js', jsx: 'jsx', ts: 'ts', typescript: 'ts', tsx: 'tsx',
@@ -1399,7 +1389,6 @@
                 };
                 const ext = extMap[lang.toLowerCase()] || 'txt';
 
-                // Create Header Element
                 const header = document.createElement('div');
                 header.className = 'flex items-center justify-between bg-gray-800 dark:bg-[#18191a] text-gray-300 text-[11px] font-sans px-3.5 py-1.5 rounded-t-xl border-b border-gray-700/60 select-none';
                 
@@ -1425,7 +1414,6 @@
 
                 pre.insertBefore(header, codeEl);
 
-                // Copy Event Handler
                 header.querySelector('.copy-code-btn').addEventListener('click', function() {
                     const codeText = codeEl.innerText;
                     copyToClipboard(codeText);
@@ -1439,7 +1427,6 @@
                     }, 2000);
                 });
 
-                // Download Event Handler
                 header.querySelector('.download-code-btn').addEventListener('click', function() {
                     const codeText = codeEl.innerText;
                     const blob = new Blob([codeText], { type: 'text/plain;charset=utf-8' });
@@ -1516,7 +1503,6 @@
         async function setupSupabaseSync() {
             const cleanEmail = state.user.email ? state.user.email.toLowerCase().trim() : '';
 
-            // Check local backups
             const planFromUserId = localStorage.getItem('skyai_user_plan_' + currentUserId);
             const planFromEmail = cleanEmail ? localStorage.getItem('skyai_user_plan_' + cleanEmail) : null;
             const planFromDevice = localStorage.getItem('skyai_device_plan');
@@ -1525,7 +1511,6 @@
             updateModelLockIcons();
 
             try {
-                // 1. Fetch User Chats
                 const { data: chatsData } = await supabaseClient
                     .from('chats')
                     .select('*')
@@ -1545,7 +1530,6 @@
                     createNewChat();
                 }
 
-                // 2. Fetch Profiles from Supabase (by User ID or Email)
                 let profileQuery = supabaseClient.from('profiles').select('*');
                 if (cleanEmail && cleanEmail !== 'belum masuk akun google') {
                     profileQuery = profileQuery.or(`user_id.eq.${currentUserId},email.eq.${cleanEmail}`);
@@ -1565,7 +1549,6 @@
                     });
                 }
 
-                // 3. ALSO fetch all redeemed codes in Supabase for this user or email
                 let codeQuery = supabaseClient.from('redeem_codes').select('plan').eq('is_used', true);
                 if (cleanEmail && cleanEmail !== 'belum masuk akun google') {
                     codeQuery = codeQuery.or(`used_by.eq.${currentUserId},used_by.eq.${cleanEmail},user_email.eq.${cleanEmail}`);
@@ -1582,7 +1565,6 @@
                     });
                 }
 
-                // Save merged plan back to local storage backups
                 if (state.userPlan !== 'free') {
                     localStorage.setItem('skyai_user_plan_' + currentUserId, state.userPlan);
                     if (cleanEmail) localStorage.setItem('skyai_user_plan_' + cleanEmail, state.userPlan);
@@ -1928,13 +1910,16 @@
         if (elements.landingThemeToggleBtn) {
             elements.landingThemeToggleBtn.addEventListener('click', () => {
                 const isDark = document.documentElement.classList.contains('dark');
-                if (isDark) {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('skyai_theme', 'light');
-                } else {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('skyai_theme', 'dark');
-                }
+                localStorage.setItem('skyai_theme', isDark ? 'light' : 'dark');
+                setupTheme();
+            });
+        }
+
+        if (elements.themeToggleBtn) {
+            elements.themeToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isDark = document.documentElement.classList.contains('dark');
+                localStorage.setItem('skyai_theme', isDark ? 'light' : 'dark');
                 setupTheme();
             });
         }
