@@ -749,7 +749,6 @@
         </div>
     </div>
 
-    <!-- QRIS Payment Modal -->
     <div id="paymentModal" class="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-md overflow-y-auto">
         <div class="bg-white dark:bg-[#181818] text-gray-900 dark:text-white border border-skyai-borderLight dark:border-gray-800 rounded-3xl p-5 md:p-6 w-[92%] max-w-md shadow-2xl relative my-auto text-center">
             <button id="closePaymentModalBtn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-white p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
@@ -771,7 +770,7 @@
             </div>
 
             <div class="bg-white p-3 rounded-2xl border border-gray-200 dark:border-gray-700 inline-block shadow-sm mb-3 max-w-[240px] mx-auto">
-                <img id="paymentQrImage" src="https://i.ibb.co.com/7JWbr4Db/image.png" alt="QR Code Pembayaran Sky AI" class="w-full h-auto rounded-lg object-contain mx-auto" onerror="this.onerror=null; this.src='https://i.ibb.co/7JWbr4Db/image.png';">
+                <img id="paymentQrImage" src="https://i.ibb.co/7JWbr4Db/image.png" alt="QR Code Pembayaran Sky AI" class="w-full h-auto rounded-lg object-contain mx-auto" referrerpolicy="no-referrer" onerror="if(!this.dataset.retry){this.dataset.retry=true; this.src='https://i.ibb.co.com/7JWbr4Db/image.png';}">
             </div>
 
             <div class="mb-4">
@@ -1990,21 +1989,6 @@
                 showToast(`Model diubah ke ${state.currentModelName}`, 'info');
             });
         });
-
-        if (elements.themeToggleBtn) {
-            elements.themeToggleBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const isDark = document.documentElement.classList.contains('dark');
-                if (isDark) {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('skyai_theme', 'light');
-                } else {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('skyai_theme', 'dark');
-                }
-                setupTheme();
-            });
-        }
 
         if (elements.attachImageBtn) elements.attachImageBtn.addEventListener('click', () => elements.imageInput.click());
         if (elements.imageInput) {
