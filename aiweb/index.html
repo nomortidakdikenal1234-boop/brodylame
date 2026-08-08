@@ -816,13 +816,13 @@
 
         let currentUserId = getClientId();
 
-        // Groq API Keys Rotation
+        // Groq API Keys Rotation (Base64 encoded per line)
         const b64_groq = [
-            'Z3NrX3RuTkxHcEVCRFlPcXgyRzdmemRDV0dkeWIzRll4QnBFQTV3NUVtYm5yWWh5cm0zUW1pZzc=',
-            'Z3NrX25WYU1QM0ZmYTN5QWxMb2JtN3NjV0dkeWIzRllqWGd2NXlGNmtVdU5aTEJSYWg4TXlMbGE=',
-            'Z3NrX3dCNE1DTDF5OHRzQ1gzeUZWZXpjV0dkeWIzRllSZTdrd2V5MmgyMDFqQUl3S0syc0k2c0c=',
-            'Z3NrX01aM3dMcGxZZTN3RWhiMzJiQ3ptV0dkeWIzRllDZ1hxZnY1MDhXVWV3VE50QVdmOHgyZ28=',
-            'Z3NrX0hhbkRvUmhFeW5Vd1FVZ3RaVmhqV0dkeWIzRlljZ0ZyS054dmhjano0TU5XcVdhbGQzSlE='
+            'Z3NrX2xqMXdacUMxU29mbEZwN0xDOUI1V0dkeWIzRll1S0dmTm91MElkUWdtdXc0ZVNuNjdHckw=',
+            'Z3NrX2hyanJWZVpuMFF3OTRWUWhkbEVRV0dkeWIzRllUOTBiQzZacFo3T0txVUdRT3VIdlVUVFI=',
+            'Z3NrX3BON214bG5oMUVmQ3NKOHBBcFFLV0dkeWIzRllNellFdGFhSEdWWFV1WnBuVXNtaEpKOTc=',
+            'Z3NrX0RITkdUMXlETUpFVVNkUHM2eVFzV0dkeWIzRllrb2s4dm5lZGNEV3E5T3RVWUNOWUE1ZWI=',
+            'Z3NrXzhUR1VyaXVqWVFjYU9lejEyN2lwV0dkeWIzRllUc0NjcTJBbHVUbzFoN0U2MkZpSmNFVTM='
         ];
 
         function getRawKey(base64Str) {
