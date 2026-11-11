@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sky AI Website | Official Website</title>
+<title>Sky AI | Official Website</title>
 
 <!-- =====================================================================
      KODE DISCORD EMBED / OPEN GRAPH META TAGS
@@ -12,7 +12,6 @@
 <meta property="og:title" content="Sky AI Website | Official Website" />
 <meta property="og:description" content="Generative AI web interface terintegrasi untuk masa depan yang lebih cerdas bersama SkyTech." />
 <meta property="og:url" content="https://sky-ai.my.id/" />
-<!-- Ganti link gif/png di bawah ini dengan link logo resmi Sky AI kamu nanti -->
 <meta property="og:image" content="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" />
 
 <!-- Warna bar vertikal di sebelah kiri kotakan Discord (Premium Deep Blue) -->
@@ -28,14 +27,66 @@
 
 <style>
 :root {
-  /* Tema Premium Dark Blue Sesuai Gambar */
-  --bg-dark: #020613;
-  --bg-gradient-start: #060f26;
+  /* Dynamic Theme Variables */
+  --bg-dark: #030a1c;
+  --bg-gradient-start: #081a3e;
   --bg-gradient-end: #020613;
   --blue-glow: #0055ff;
   --blue-hover: #0044cc;
   --text-white: #ffffff;
   --text-muted: #94a3b8;
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --card-border: rgba(255, 255, 255, 0.08);
+}
+
+/* DAY MODE THEME */
+body.day-mode {
+  --bg-dark: #e0f2fe;
+  --text-white: #0f172a;
+  --text-muted: #475569;
+  --blue-glow: #0284c7;
+  --blue-hover: #0369a1;
+  --card-bg: rgba(255, 255, 255, 0.65);
+  --card-border: rgba(56, 189, 248, 0.25);
+  background-color: #bae6fd;
+}
+
+body.day-mode nav#navbar {
+  background: rgba(224, 242, 254, 0.85);
+  border-bottom: 1px solid rgba(2, 132, 199, 0.15);
+}
+
+body.day-mode .hero-center h2,
+body.day-mode .section-title,
+body.day-mode .dev-name,
+body.day-mode .update-title,
+body.day-mode .user-detail h4,
+body.day-mode .discord-channel-name,
+body.day-mode .msg-author {
+  color: #0f172a !important;
+}
+
+body.day-mode .discord-container,
+body.day-mode .terminal-container,
+body.day-mode .update-card,
+body.day-mode .testi-card,
+body.day-mode .card,
+body.day-mode .dev-card {
+  background: rgba(255, 255, 255, 0.78) !important;
+  border-color: rgba(56, 189, 248, 0.3) !important;
+  box-shadow: 0 10px 30px rgba(2, 132, 199, 0.1) !important;
+}
+
+body.day-mode .msg-content {
+  background: rgba(2, 132, 199, 0.06) !important;
+  color: #1e293b !important;
+  border-color: rgba(2, 132, 199, 0.15) !important;
+}
+
+body.day-mode .discord-input {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: rgba(2, 132, 199, 0.2) !important;
 }
 
 * {
@@ -49,12 +100,7 @@ body {
   background-color: var(--bg-dark);
   color: var(--text-white);
   overflow-x: hidden;
-  cursor: none; /* Kursor asli dimatikan */
-}
-
-/* Penyesuaian otomatis jika banner pengumuman aktif agar konten utama terdorong rapi */
-body.has-banner {
-  padding-top: 45px !important;
+  cursor: none;
 }
 
 /* Scrollbar kustom premium */
@@ -77,59 +123,39 @@ a {
   color: inherit;
 }
 
-/* =====================================================================
-   KONTEN INDUK NAVBAR (BACKDROP BLUR TETAP TIPIS DI ATAS)
-   ===================================================================== */
-nav#navbar {
+/* BACKGROUND CANVAS AWAN & BINTANG */
+#bg-particles {
   position: fixed;
-  top: 0 !important;
-  left: 0 !important;
+  top: 0;
+  left: 0;
   width: 100%;
-  z-index: 100000;
-  background: rgba(2, 6, 19, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: stretch;
-  
-  padding: 0 !important;
-  height: auto !important;
-  overflow: visible !important; /* WAJIB visible agar banner absolute kelihatan di luar */
-  transition: all 0.3s ease;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
 }
 
-/* =====================================================================
-   KONTEN INDUK NAVBAR (DIKUNCI BIAR GAK MELAR)
-   ===================================================================== */
+/* KONTEN INDUK NAVBAR */
 nav#navbar {
   position: fixed;
   top: 0 !important;
   left: 0 !important;
   width: 100%;
   z-index: 100000;
-  background: rgba(2, 6, 19, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  
-  /* HAPUS flex-direction vertikal biar elemen absolute di dalamnya bebas meluncur ke bawah */
+  background: rgba(3, 10, 28, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   display: block !important; 
-  
   padding: 0 !important;
   height: auto !important;
   overflow: visible !important; 
   transition: all 0.3s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* =====================================================================
-   STRUKTUR MENU UTAMA (LOGO KIRI | MENU TENGAH | LOGIN KANAN)
-   ===================================================================== */
 nav#navbar .nav-main {
   width: 100%;
-  padding: 20px 6% !important; /* Menu atas dikunci tetep tipis & presisi */
+  padding: 14px 6% !important;
   margin: 0 !important;
-  
   display: flex !important;
   flex-direction: row !important;
   justify-content: space-between; 
@@ -138,96 +164,122 @@ nav#navbar .nav-main {
   transition: all 0.3s ease;
 }
 
-/* Sisi Kiri */
 .nav-brand {
   display: flex;
   align-items: center;
   gap: 12px;
   flex: 1; 
   justify-content: flex-start;
+  cursor: pointer;
 }
 
-/* Sisi Tengah */
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 12px;
   flex: 2;
   justify-content: center;
 }
 
-/* Sisi Kanan */
-.nav-auth {
+.nav-tab-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: none;
+  transition: all 0.3s ease;
   display: flex;
-  flex: 1;
-  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
 }
 
-/* Ketika di-scroll ke bawah */
-nav#navbar.scrolled .nav-main {
-  padding: 12px 6% !important;
+.nav-tab-btn:hover {
+  color: var(--text-white);
+  background: rgba(255, 255, 255, 0.05);
 }
 
-/* =====================================================================
-   TAB PENGUMUMAN (BISA DIATUR TURUN MANUAL SESUKA HATI)
-   ===================================================================== */
+.nav-tab-btn.active {
+  color: #ffffff;
+  background: var(--blue-glow);
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0, 85, 255, 0.35);
+}
+
+/* BROADCAST BANNER STYLING RAPI */
 .broadcast-banner {
-  width: 100%;
-  background: rgba(255, 170, 0, 0.15); 
-  border-top: 1px solid rgba(255, 170, 0, 0.3);
-  border-bottom: 1px solid rgba(255, 170, 0, 0.3);
-  box-sizing: border-box;
-  
-  /* Di-absolute-kan agar keluar dari jeratan background blur menu utama */
-  position: absolute !important;
-  left: 0 !important;
-  
-  /* 💡 OTAK-ATIK DI BARIS INI UNTUK NGATUR TURUNNYA: */
-  top: calc(100% + 50px) !important; /* Ganti 30px ke 40px, 50px, dst kalau mau makin turun */
-  
-  display: none; 
-}
-
-/* Aktif saat muncul */
-.broadcast-banner.show-banner {
-  display: block !important;
+  background: linear-gradient(90deg, #0055ff, #0284c7);
+  color: #ffffff;
+  padding: 8px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  display: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 15px rgba(0, 85, 255, 0.3);
 }
 
 .banner-content {
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 10px 6%;
-  position: relative;
+  justify-content: space-between;
+  gap: 15px;
 }
 
 .banner-content span {
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .banner-close-btn {
-  position: absolute;
-  right: 6%;
-  background: none;
+  background: rgba(255, 255, 255, 0.2);
   border: none;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 18px;
-  cursor: none; 
-  padding: 0;
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s;
 }
-  
-/* =====================================================================
-   PRELOADER / LANDING INTRO 10 DETIK (KURSOR SUDAH MUNCUL)
-   ===================================================================== */
+
+.banner-close-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* SISTEM TAB CONTAINER (MEMBATASI PANJANG HALAMAN) */
+.page-tab-content {
+  display: none;
+  animation: fadeInTab 0.4s ease forwards;
+  min-height: calc(100vh - 80px);
+  padding-top: 100px;
+}
+
+.page-tab-content.active {
+  display: block;
+}
+
+@keyframes fadeInTab {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* PRELOADER INTRO - BG SINKRON DENGAN WEBSITE */
 #intro-overlay {
   position: fixed;
   inset: 0;
-  background-color: #01040f;
-  background-image: radial-gradient(circle at center, #06112c 0%, #01040f 100%);
-  z-index: 200000 !important; /* Biar tetep di atas navbar pas awal load */
+  background-color: var(--bg-dark);
+  background: radial-gradient(circle at center, #081a3e 0%, #020613 100%);
+  z-index: 200000 !important;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -316,7 +368,6 @@ nav#navbar.scrolled .nav-main {
   height: 20px;
 }
 
-/* Tombol Launch Inisialisasi */
 #intro-start-btn {
   background: linear-gradient(135deg, #0055ff, #0033aa);
   color: white;
@@ -325,10 +376,7 @@ nav#navbar.scrolled .nav-main {
   font-size: 14px;
   font-weight: 700;
   border-radius: 8px;
-  
-  /* FIX: kursor diubah jadi pointer (tangan penunjuk) biar muncul lagi normal */
   cursor: pointer !important; 
-  
   letter-spacing: 1px;
   box-shadow: 0 5px 25px rgba(0, 85, 255, 0.4);
   transition: all 0.3s ease;
@@ -379,18 +427,7 @@ nav#navbar.scrolled .nav-main {
   font-weight: bold;
 }
 
-#bg-particles {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(circle at 50% 30%, #0d1e42 0%, var(--bg-dark) 80%);
-}
-
-/* --- CUSTOM CURSOR --- */
+/* CUSTOM CURSOR */
 #custom-cursor {
   width: 20px;
   height: 20px;
@@ -399,26 +436,22 @@ nav#navbar.scrolled .nav-main {
   border-radius: 50%;
   position: fixed;
   pointer-events: none;
-  
-  /* FIX: Naikkan z-index di atas preloader (200000) agar selalu kelihatan */
   z-index: 999999 !important; 
-  
   transition: transform 0.1s ease-out; 
   transform: translate(-50%, -50%);
 }
 
 #custom-cursor.click-anim {
-  /* Tetap pertahankan posisi center saat animasi klik membesar */
   transform: translate(-50%, -50%) scale(2) !important;
   background: rgba(0, 85, 255, 0.3);
   border-color: #ffffff;
 }
   
-/* Interactive Star Rating Form */
+/* STAR RATING */
 .star-rating-input {
   display: inline-flex;
   gap: 8px;
-  font-size: 32px;
+  font-size: 30px;
   color: #334155;
   cursor: none;
 }
@@ -434,7 +467,7 @@ nav#navbar.scrolled .nav-main {
 }
 
 .testi-submit-panel {
-  background: rgba(3, 8, 22, 0.6);
+  background: rgba(3, 10, 28, 0.7);
   border: 1px dashed rgba(0, 85, 255, 0.4);
   box-shadow: 0 0 20px rgba(0, 85, 255, 0.15);
   border-radius: 16px;
@@ -442,7 +475,7 @@ nav#navbar.scrolled .nav-main {
   margin: 0 auto 45px auto;
   text-align: left;
   max-width: 600px;
-  display: none; /* Dipicu lewat tombol tulis testimoni */
+  display: none;
 }
 .btn-toggle-testi {
   background: rgba(0, 85, 255, 0.1);
@@ -466,31 +499,45 @@ nav#navbar.scrolled .nav-main {
   transform: translateY(-2px);
 }
 
-/* ===== FIXED NAVBAR ===== */
-nav {
-  position: fixed;
-  top: 0;
+/* GENERAL FORM STYLING INTEGRATED */
+.form-input {
   width: 100%;
-  padding: 20px 8%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 1000;
-  background: rgba(3, 8, 22, 0.3);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: 0.4s;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 13.5px;
+  outline: none;
+  font-family: inherit;
+  transition: 0.3s;
 }
-nav.scrolled {
-  background: rgba(3, 8, 22, 0.9);
-  padding: 15px 8%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+.form-input:focus {
+  border-color: var(--blue-glow);
+  box-shadow: 0 0 12px rgba(0, 85, 255, 0.3);
+  background: rgba(255, 255, 255, 0.07);
 }
-nav .nav-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+
+.btn-publish {
+  background: var(--blue-glow);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 13.5px;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: none;
+  transition: 0.3s;
+  width: 100%;
 }
+
+.btn-publish:hover {
+  background: var(--blue-hover);
+  box-shadow: 0 5px 20px rgba(0, 85, 255, 0.4);
+}
+
+/* NAVBAR BRAND */
 nav .nav-brand img {
   width: 32px;
   height: 32px;
@@ -503,47 +550,14 @@ nav .nav-brand span {
   font-size: 18px;
   letter-spacing: 0.5px;
 }
-nav .nav-links {
-  display: flex;
-  align-items: center;
-  gap: 25px;
-}
-nav .nav-links a {
-  color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 500;
-  transition: 0.3s;
-}
-nav .nav-links a:hover {
-  color: var(--text-white);
-}
-.nav-login-btn {
-  background: var(--blue-glow);
-  color: white;
-  border: none;
-  padding: 8px 18px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 6px;
-  cursor: none;
-  transition: 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.nav-login-btn:hover {
-  background: var(--blue-hover);
-  transform: translateY(-2px);
-}
 
-/* ===== HERO SECTION ===== */
+/* HERO SECTION */
 .hero-wrapper {
   position: relative;
-  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 120px 4% 60px 4%;
+  padding: 40px 4% 60px 4%;
   overflow: hidden;
 }
 
@@ -557,7 +571,6 @@ nav .nav-links a:hover {
   z-index: 10;
 }
 
-/* Tampilan Tengah Hero */
 .hero-center {
   display: flex;
   flex-direction: column;
@@ -565,11 +578,10 @@ nav .nav-links a:hover {
   text-align: center;
 }
 
-/* Badge Atas */
 .ai-badge {
-  background: rgba(0, 85, 255, 0.1);
-  border: 1px solid rgba(0, 85, 255, 0.2);
-  color: #3b82f6;
+  background: rgba(0, 85, 255, 0.15);
+  border: 1px solid rgba(0, 85, 255, 0.3);
+  color: #60a5fa;
   padding: 6px 16px;
   border-radius: 20px;
   font-size: 11px;
@@ -577,9 +589,11 @@ nav .nav-links a:hover {
   letter-spacing: 1px;
   margin-bottom: 25px;
   text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-/* Logo Box Tengah (Animasi Bergerak & Glowing) */
 .logo-container {
   width: 110px;
   height: 110px;
@@ -594,16 +608,7 @@ nav .nav-links a:hover {
   animation: floatLogo 4s ease-in-out infinite, pulseGlow 3s ease-in-out infinite;
   overflow: hidden;
 }
-.logo-container::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 30px;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
-  z-index: -1;
-}
 
-/* Styling Gambar Animasi GIF agar Pas di Dalam Kotak Logo */
 .logo-container img {
   width: 100%;
   height: 100%;
@@ -622,7 +627,6 @@ nav .nav-links a:hover {
   50% { box-shadow: 0 0 45px rgba(0, 85, 255, 0.7); }
 }
 
-/* Judul Utama */
 .hero-center h1 {
   font-size: 36px;
   font-weight: 800;
@@ -649,11 +653,10 @@ nav .nav-links a:hover {
   max-width: 320px;
 }
 
-/* Button Group */
 .btn-group {
   display: flex;
   gap: 15px;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
 }
 .btn-primary {
   background: var(--blue-glow);
@@ -673,8 +676,8 @@ nav .nav-links a:hover {
   transform: translateY(-2px);
 }
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
@@ -686,11 +689,10 @@ nav .nav-links a:hover {
   gap: 8px;
 }
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
 }
 
-/* Stats Row Bawah */
 .stats-container {
   display: flex;
   gap: 25px;
@@ -710,14 +712,7 @@ nav .nav-links a:hover {
   color: white;
 }
 
-/* --- SIDE MOCKUPS (PERSPEKTIF 3D MIRING MASUK DALAM) --- */
-.showcase-container-left {
-  perspective: 1200px;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-.showcase-container-right {
+.showcase-container-left, .showcase-container-right {
   perspective: 1200px;
   display: flex;
   justify-content: center;
@@ -728,7 +723,7 @@ nav .nav-links a:hover {
   width: 100%;
   max-width: 380px;
   border-radius: 16px;
-  border: 4px solid rgba(255, 255, 255, 0.08);
+  border: 4px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 30px 60px rgba(0,0,0,0.6);
   background: #000;
   overflow: hidden;
@@ -741,7 +736,6 @@ nav .nav-links a:hover {
   display: block;
 }
 
-/* Rotasi miring ke dalam untuk mockup kiri */
 .mockup-left {
   transform: rotateY(20deg) rotateX(8deg) rotateZ(-3deg);
 }
@@ -749,7 +743,6 @@ nav .nav-links a:hover {
   transform: rotateY(5deg) rotateX(2deg) rotateZ(-1deg) scale(1.05);
 }
 
-/* Rotasi miring ke dalam untuk mockup kanan */
 .mockup-right {
   transform: rotateY(-20deg) rotateX(8deg) rotateZ(3deg);
 }
@@ -757,11 +750,11 @@ nav .nav-links a:hover {
   transform: rotateY(-5deg) rotateX(2deg) rotateZ(1deg) scale(1.05);
 }
 
-/* ===== MAIN CONTENT SECTION (DASHBOARD) ===== */
+/* SECTION DASHBOARD & DEV */
 section {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 80px 20px;
+  padding: 40px 20px;
   position: relative;
   z-index: 10;
 }
@@ -773,7 +766,7 @@ section {
 }
 .section-title span {
   color: #3b82f6;
-  background: linear-gradient(135deg, #3b82f6, #0055ff);
+  background: linear-gradient(135deg, #60a5fa, #0055ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -787,10 +780,9 @@ section {
   font-weight: 700;
 }
 
-/* Card Invite System */
 .card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 30px;
   border-radius: 12px;
   transition: 0.3s;
@@ -798,11 +790,11 @@ section {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
 }
 .card:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(0, 85, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(0, 85, 255, 0.4);
   transform: translateY(-5px);
 }
 .card code {
@@ -813,17 +805,17 @@ section {
   font-family: monospace;
 }
 
-/* ===== DEVELOPER PROFILE SECTION ===== */
+/* DEVELOPER PROFILE SECTION */
 .developer-section {
-  padding: 80px 20px;
+  padding: 50px 20px 80px 20px;
   max-width: 900px;
   margin: 0 auto;
   text-align: center;
 }
 .dev-card {
-  background: linear-gradient(135deg, rgba(6, 15, 38, 0.9) 0%, rgba(2, 6, 19, 0.95) 100%);
-  border: 1px solid rgba(0, 85, 255, 0.2);
-  box-shadow: 0 0 30px rgba(0, 85, 255, 0.1), inset 0 0 15px rgba(0, 85, 255, 0.05);
+  background: linear-gradient(135deg, rgba(8, 26, 62, 0.85) 0%, rgba(3, 10, 28, 0.9) 100%);
+  border: 1px solid rgba(0, 85, 255, 0.25);
+  box-shadow: 0 0 30px rgba(0, 85, 255, 0.12), inset 0 0 15px rgba(0, 85, 255, 0.05);
   border-radius: 20px;
   padding: 40px;
   display: flex;
@@ -840,16 +832,7 @@ section {
   box-shadow: 0 0 45px rgba(0, 85, 255, 0.35), inset 0 0 20px rgba(0, 85, 255, 0.1);
   transform: translateY(-5px);
 }
-.dev-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(0, 85, 255, 0.08) 0%, transparent 70%);
-  pointer-events: none;
-}
+
 .dev-avatar-container {
   position: relative;
   width: 140px;
@@ -860,7 +843,7 @@ section {
   position: absolute;
   inset: -5px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0055ff, #00ffcc);
+  background: linear-gradient(135deg, #0055ff, #38bdf8);
   filter: blur(8px);
   opacity: 0.75;
   animation: rotateGlow 6s linear infinite;
@@ -883,11 +866,7 @@ section {
   overflow: hidden;
   box-shadow: inset 0 0 15px rgba(0, 85, 255, 0.5);
 }
-.dev-avatar-img span {
-  background: linear-gradient(135deg, #ffffff, #60a5fa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+
 .dev-info {
   flex: 1;
   display: flex;
@@ -898,13 +877,13 @@ section {
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 2px;
-  color: #00ffcc;
+  color: #38bdf8;
   text-transform: uppercase;
-  background: rgba(0, 255, 204, 0.1);
+  background: rgba(56, 189, 248, 0.12);
   padding: 4px 12px;
   border-radius: 20px;
   width: fit-content;
-  border: 1px solid rgba(0, 255, 204, 0.2);
+  border: 1px solid rgba(56, 189, 248, 0.25);
 }
 .dev-name {
   font-size: 26px;
@@ -947,27 +926,10 @@ section {
   text-decoration: underline;
 }
 
-@media (max-width: 640px) {
-  .dev-card {
-    flex-direction: column;
-    text-align: center;
-    padding: 30px 20px;
-    gap: 25px;
-  }
-  .dev-info {
-    align-items: center;
-  }
-  .dev-details-grid {
-    grid-template-columns: 1fr;
-    width: 100%;
-    text-align: left;
-  }
-}
-
-/* ===== COMMAND REFERENCE SECTION ===== */
+/* COMMAND REFERENCE SECTION */
 .commands-section {
   text-align: center;
-  padding: 100px 20px;
+  padding: 40px 20px 80px 20px;
   max-width: 900px;
   margin: 0 auto;
 }
@@ -987,24 +949,22 @@ section {
 .commands-subtitle {
   color: var(--text-muted);
   font-size: 14px;
-  margin-bottom: 45px;
+  margin-bottom: 35px;
   font-weight: 400;
 }
 
-/* Terminal Simulator Container */
 .terminal-container {
-  background: #050b18;
+  background: rgba(5, 11, 24, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   text-align: left;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
 }
 
-/* Terminal Header Mac Style */
 .terminal-header {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   padding: 14px 20px;
   display: flex;
@@ -1032,7 +992,6 @@ section {
   font-weight: 500;
 }
 
-/* Terminal Body Content */
 .terminal-body {
   padding: 24px 30px;
   font-family: monospace;
@@ -1041,11 +1000,10 @@ section {
   color: #cbd5e1;
 }
 
-/* Command Row */
 .command-row {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   padding: 12px 0;
 }
 .command-row:last-child {
@@ -1085,9 +1043,9 @@ section {
   50% { background-color: transparent; }
 }
 
-/* ===== SKY AI UPDATE INFORMATION SECTION (TAB UPDATE TERBARU) ===== */
+/* SKY AI UPDATE SECTION */
 .updates-section {
-  padding: 80px 20px;
+  padding: 40px 20px 80px 20px;
   max-width: 900px;
   margin: 0 auto;
   text-align: center;
@@ -1112,76 +1070,6 @@ section {
   font-weight: 400;
 }
 
-/* Admin Dashboard Web Panel Form */
-.admin-update-panel {
-  background: rgba(3, 8, 22, 0.6);
-  border: 1px dashed rgba(0, 85, 255, 0.4);
-  box-shadow: 0 0 20px rgba(0, 85, 255, 0.15);
-  border-radius: 16px;
-  padding: 30px;
-  margin-bottom: 45px;
-  text-align: left;
-  display: none; /* Hanya muncul ketika Admin Berhasil Terautentikasi */
-}
-.admin-update-panel h3 {
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-bottom: 15px;
-}
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.form-group label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-}
-.form-input {
-  background: #050b18;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 12px 16px;
-  color: #fff;
-  font-size: 13.5px;
-  outline: none;
-  font-family: inherit;
-  transition: 0.3s;
-}
-.form-input:focus {
-  border-color: var(--blue-glow);
-  box-shadow: 0 0 10px rgba(0, 85, 255, 0.1);
-}
-.btn-publish {
-  background: linear-gradient(135deg, #0055ff, #0033aa);
-  color: white;
-  border: none;
-  padding: 14px 28px;
-  font-size: 13.5px;
-  font-weight: 700;
-  border-radius: 8px;
-  cursor: none;
-  transition: 0.3s;
-  width: 100%;
-}
-.btn-publish:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 15px rgba(0, 85, 255, 0.4);
-}
-
-/* Timeline Cards */
 .updates-list {
   display: flex;
   flex-direction: column;
@@ -1189,8 +1077,8 @@ section {
   text-align: left;
 }
 .update-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   padding: 28px;
   position: relative;
@@ -1198,7 +1086,7 @@ section {
   backdrop-filter: blur(10px);
 }
 .update-card:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   border-color: rgba(0, 85, 255, 0.3);
   transform: translateY(-2px);
 }
@@ -1250,24 +1138,10 @@ section {
   color: #cbd5e1;
   white-space: pre-wrap;
 }
-.btn-delete-update {
-  background: none;
-  border: none;
-  color: #ef4444;
-  font-size: 16px;
-  cursor: none;
-  opacity: 0.6;
-  transition: 0.3s;
-  display: none; /* Muncul jika admin aktif */
-}
-.btn-delete-update:hover {
-  opacity: 1;
-  transform: scale(1.1);
-}
 
-/* ===== SKY AI LIVE TESTING PLAYGROUND (CHAT REAL-TIME PUBLIK) ===== */
+/* PLAYGROUND SECTION */
 .playground-section {
-  padding: 100px 20px;
+  padding: 40px 20px 80px 20px;
   max-width: 900px;
   margin: 0 auto;
   text-align: center;
@@ -1292,9 +1166,8 @@ section {
   font-weight: 400;
 }
 
-/* Discord Window Simulator */
 .discord-container {
-  background: #0f1524;
+  background: rgba(15, 21, 36, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
@@ -1303,11 +1176,11 @@ section {
   display: flex;
   flex-direction: column;
   height: 520px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
 }
 
 .discord-header {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   padding: 16px 24px;
   display: flex;
@@ -1332,7 +1205,6 @@ section {
   margin-left: auto;
 }
 
-/* Area Menampilkan Bubble Chat */
 .discord-messages {
   flex: 1;
   overflow-y: auto;
@@ -1342,7 +1214,6 @@ section {
   gap: 20px;
 }
 
-/* Desain Message Row */
 .discord-msg-row {
   display: flex;
   gap: 15px;
@@ -1399,19 +1270,18 @@ section {
   font-size: 13.5px;
   color: #cbd5e1;
   line-height: 1.5;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
   padding: 10px 14px;
   border-radius: 0 12px 12px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.04);
   max-width: 100%;
   word-break: break-word;
 }
 .discord-msg-row.ai-message .msg-content {
   border-left: 3px solid var(--blue-glow);
-  background: rgba(0, 85, 255, 0.03);
+  background: rgba(0, 85, 255, 0.05);
 }
 
-/* Loading Typing Simulator */
 .typing-indicator {
   display: flex;
   align-items: center;
@@ -1432,7 +1302,6 @@ section {
   40% { transform: scale(1); }
 }
 
-/* Kolom Input Discord Style */
 .discord-input-area {
   background: rgba(255, 255, 255, 0.02);
   border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -1444,7 +1313,7 @@ section {
 .discord-input {
   flex: 1;
   background: #090e1a;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   padding: 14px 20px;
   color: #ffffff;
@@ -1467,6 +1336,9 @@ section {
   border-radius: 10px;
   cursor: none;
   transition: 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .discord-send-btn:hover {
   background: var(--blue-hover);
@@ -1476,10 +1348,10 @@ section {
   color: #64748b;
 }
 
-/* ===== TESTIMONI SECTION (PERSIS GAMBAR KEDUA) ===== */
+/* TESTIMONI SECTION */
 .testi-section {
   text-align: center;
-  padding: 100px 20px;
+  padding: 40px 20px 80px 20px;
 }
 .testi-badge {
   background: rgba(0, 85, 255, 0.1);
@@ -1504,10 +1376,9 @@ section {
 .testi-subtitle {
   color: var(--text-muted);
   font-size: 14px;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
 }
 
-/* Grid Testimoni */
 .testi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1516,8 +1387,8 @@ section {
   margin: 0 auto;
 }
 .testi-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   padding: 30px;
   text-align: left;
@@ -1528,7 +1399,7 @@ section {
   backdrop-filter: blur(10px);
 }
 .testi-card:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   border-color: rgba(0, 85, 255, 0.3);
   transform: translateY(-5px);
 }
@@ -1571,33 +1442,92 @@ section {
   color: var(--text-muted);
 }
 
-/* ===== CONTACT SECTION ===== */
-#contact {
-  padding-bottom: 120px;
-}
-
-/* ===== FOOTER ===== */
+/* FOOTER */
 footer {
   text-align: center;
   padding: 40px 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.35);
   font-size: 13px;
   position: relative;
   z-index: 10;
 }
 
-/* ===== MODAL OVERLAYS ===== */
-#adminLogin, #consoleSelection {
+/* FLOATING BUTTON (FAB) BUG REPORT AT RIGHT BOTTOM */
+.floating-bug-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 99999;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 14px 22px;
+  border-radius: 50px;
+  font-size: 13.5px;
+  font-weight: 700;
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+  cursor: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.floating-bug-btn:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 15px 35px rgba(239, 68, 68, 0.6);
+  background: linear-gradient(135deg, #f87171, #ef4444);
+}
+
+/* MODAL BUG REPORT (REFINED & NO WHITE BORDERS) */
+#bugReportModal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7); 
+  background: rgba(2, 6, 19, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 100000;
+}
+
+.bug-box {
+  background: linear-gradient(145deg, #091124 0%, #030816 100%);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 20px;
+  padding: 35px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 50px rgba(239, 68, 68, 0.15), 0 0 30px rgba(0, 0, 0, 0.8);
+  color: white;
+  text-align: left;
+}
+
+.bug-box h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* MODAL OVERLAYS */
+#limitModal, #captchaModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(15px);
   display: none;
   justify-content: center;
   align-items: center;
-  z-index: 2000;
+  z-index: 3000;
 }
+
 .login-box {
   background: #091124;
   border: 1px solid rgba(0, 85, 255, 0.2);
@@ -1608,12 +1538,7 @@ footer {
   box-shadow: 0 25px 50px rgba(0,0,0,0.5);
   color: white;
 }
-.login-box h3 {
-  color: white;
-  margin-bottom: 20px;
-  font-weight: 700;
-}
-.close-btn, .login-box button {
+.close-btn {
   margin-top: 15px;
   width: 100%;
   padding: 12px;
@@ -1625,70 +1550,24 @@ footer {
   font-weight: 600;
   transition: 0.3s;
 }
-.close-btn:hover, .login-box button:hover {
-  background: var(--blue-hover);
-}
-.login-box input {
-  width: 100%;
-  padding: 12px;
-  margin-top: 15px;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.05);
-  color: #fff;
-  font-size: 1rem;
-  outline: none;
-}
-#errorMsg {
-  color: #f87171;
-  margin-top: 15px;
-  font-size: 0.9rem;
-}
-.console-btn {
-  background: rgba(255,255,255,0.02) !important;
-  color: white !important;
-  border: 1px solid rgba(255,255,255,0.1) !important;
-  display: block;
-  text-align: center;
-  margin-bottom: 10px;
-}
-.console-btn:hover {
-  background: var(--blue-glow) !important;
-  border-color: var(--blue-glow) !important;
-}
 
-/* MODAL LIMIT HARIAN */
-#limitModal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(15px);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 3000;
-}
-
-/* MODAL SECURITY CAPTCHA */
-#captchaModal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(15px);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 3500;
-}
-
-/* Responsivitas Layout yang Dioptimalkan agar Gambar Miring Tetap Muncul di Desktop/Laptop */
 @media (max-width: 820px) {
   .hero-grid {
     grid-template-columns: 1fr;
     gap: 40px;
   }
   .showcase-container-left, .showcase-container-right {
-    display: none; /* Hanya disembunyikan jika dibuka di layar sekecil tablet tegak atau HP (di bawah 820px) */
+    display: none; 
+  }
+  .nav-tab-btn span {
+    display: none;
+  }
+  .floating-bug-btn span {
+    display: none;
+  }
+  .floating-bug-btn {
+    padding: 14px;
+    border-radius: 50%;
   }
 }
 </style>
@@ -1699,11 +1578,8 @@ footer {
 
 <body>
 
-<!-- =====================================================================
-     PRELOADER / LANDING INTRO 10 DETIK
-     ===================================================================== -->
+<!-- PRELOADER INTRO -->
 <div id="intro-overlay">
-  <!-- Elemen audio intro premium -->
   <audio id="intro-audio" src="https://b.top4top.io/m_3810q84bd1.mp3" preload="auto"></audio>
   
   <div class="intro-content">
@@ -1717,10 +1593,8 @@ footer {
     <h1 class="intro-title">Sky AI Website</h1>
     <p class="intro-status" id="intro-status-text">Click launch to activate portal security handshake...</p>
     
-    <!-- Tombol mulai interaktif -->
     <button id="intro-start-btn" onclick="startIntro()">LAUNCH SYSTEM</button>
     
-    <!-- Sci-fi progres bar loader -->
     <div class="intro-loader-container" id="intro-loader-container">
       <div class="intro-progress-bar">
         <div class="intro-progress-fill" id="intro-progress-fill"></div>
@@ -1733,410 +1607,428 @@ footer {
   </div>
 </div>
 
-<!-- Background Partikel Bintang -->
+<!-- Background Canvas Awan & Bintang Dynamic -->
 <canvas id="bg-particles"></canvas>
 
 <!-- Custom Cursor -->
 <div id="custom-cursor"></div>
 
+<!-- NAVBAR MULTI-TAB NAVIGATION -->
 <nav id="navbar">
   <div class="nav-main">
-    <div class="nav-brand">
+    <div class="nav-brand" onclick="switchTab('tab-home')">
       <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Logo" />
       <span>Sky AI Website</span>
     </div>
     
     <div class="nav-links">
-      <a href="#hero" onclick="scrollToId('hero'); return false;">Home</a>
-      <a href="#developer" onclick="scrollToId('developer'); return false;">Developer</a>
-      <a href="#features" onclick="scrollToId('features'); return false;">Features</a>
-      <a href="#updates" onclick="scrollToId('updates'); return false;">Updates</a>
-      <a href="#playground" onclick="scrollToId('playground'); return false;">Playground</a>
-      <a href="#portfolio" onclick="scrollToId('portfolio'); return false;">Dashboard</a>
-      <a href="#contact" onclick="scrollToId('contact'); return false;">Contact</a>
-    </div>
-
-    <div class="nav-auth">
-      <button class="nav-login-btn" onclick="openAdmin()" id="nav-admin-btn">
-        <span>🔒</span> Login Admin
+      <button class="nav-tab-btn active" id="btn-tab-home" onclick="switchTab('tab-home')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-tab-btn" id="btn-tab-features" onclick="switchTab('tab-features')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        <span>Features</span>
+      </button>
+      <button class="nav-tab-btn" id="btn-tab-playground" onclick="switchTab('tab-playground')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <span>Playground</span>
+      </button>
+      <button class="nav-tab-btn" id="btn-tab-updates" onclick="switchTab('tab-updates')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span>Updates</span>
+      </button>
+      <button class="nav-tab-btn" id="btn-tab-testimonials" onclick="switchTab('tab-testimonials')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+        <span>Reviews</span>
       </button>
     </div>
+
+    <div class="nav-auth"></div>
   </div>
 
   <div class="broadcast-banner" id="broadcastBanner">
     <div class="banner-content">
-      <span>📢 {dashboardData.bannerText}</span>
+      <span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg> 
+        <span id="announcement-text"></span>
+      </span>
       <button class="banner-close-btn" onclick="closeBanner()">×</button>
     </div>
   </div>
 </nav>
 
-<!-- HERO SECTION -->
-<div class="hero-wrapper" id="hero">
-  <div class="hero-grid">
-    
-    <!-- Mockup Kiri (Miring Masuk ke Dalam) -->
-    <div class="showcase-container-left">
-      <div class="tablet-mockup mockup-left">
-        <img src="https://www.upload.ee/image/19381660/Screenshot_2026-05-26_113707.png" alt="Portfolio Left" />
-      </div>
-    </div>
-    
-    <!-- Konten Tengah Utama -->
-    <div class="hero-center">
-      <div class="ai-badge">✦ Sky AI Discord Bot</div>
-      
-      <div class="logo-container">
-        <!-- Logo Menggunakan GIF Animasi Kustom -->
-        <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI Animated Logo" />
-      </div>
-      
-      <h1>Sky Artificial</h1>
-      <h2>Intelligence</h2>
-      <p>Smart Discord Bot For Modern Community</p>
-      
-      <div class="btn-group">
-        <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot" target="_blank" class="btn-primary" id="btnInviteDirect">
-          🚀 Add Sky AI to your Discord Server
-        </a>
-        <a href="#features" onclick="scrollToId('features'); return false;" class="btn-secondary">
-          ⚡ View Features
-        </a>
-      </div>
-      
-      <div class="stats-container">
-        <div class="stat-item">
-          <span>👥 <span id="displayUsers">4</span></span> Users
-        </div>
-        <div class="stat-item">
-          <span>🌐 298.5K</span> Commands Used
-        </div>
-        <div class="stat-item">
-          <span style="color: #10b981;">⚡ Online 24/7</span>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Mockup Kanan (Miring Masuk ke Dalam) -->
-    <div class="showcase-container-right">
-      <div class="tablet-mockup mockup-right">
-        <img src="https://www.upload.ee/image/19381675/ChatGPT_Image_26_Mei_2026__11.41.49.png" alt="Portfolio Right" />
-      </div>
-    </div>
+<!-- FLOATING BUG REPORT BUTTON (SELALU MENGIKUTI DI KANAN BAWAH) -->
+<button class="floating-bug-btn" onclick="openBugReportModal()">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="6" width="8" height="14" rx="4"></rect><path d="M6 18h12"></path><path d="M6 14h12"></path><path d="M6 10h12"></path><path d="M12 2v4"></path></svg>
+  <span>Report Bug</span>
+</button>
 
+<!-- =====================================================================
+     TAB 1: HOME (DASHBOARD UTAMA + MEET THE DEVELOPER ONLY)
+     ===================================================================== -->
+<div id="tab-home" class="page-tab-content active">
+  <div class="hero-wrapper" id="hero">
+    <div class="hero-grid">
+      
+      <div class="showcase-container-left">
+        <div class="tablet-mockup mockup-left">
+          <img src="https://www.upload.ee/image/19381660/Screenshot_2026-05-26_113707.png" alt="Portfolio Left" />
+        </div>
+      </div>
+      
+      <div class="hero-center">
+        <div class="ai-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          Sky AI Discord Bot
+        </div>
+        
+        <div class="logo-container">
+          <img src="https://www.upload.ee/image/19383636/ezgif.com-video-to-gif-converter.gif" alt="Sky AI Animated Logo" />
+        </div>
+        
+        <h1>Sky Artificial</h1>
+        <h2>Intelligence</h2>
+        <p>Smart Discord Bot For Modern Community</p>
+        
+        <div class="btn-group">
+          <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot" target="_blank" class="btn-primary" id="btnInviteDirect">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            Add Sky AI to Discord
+          </a>
+          <button onclick="switchTab('tab-features')" class="btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            View Features
+          </button>
+        </div>
+        
+        <div class="stats-container">
+          <div class="stat-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #60a5fa;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <span><span id="displayUsers">4</span></span> Users
+          </div>
+          <div class="stat-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #60a5fa;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>298.5K</span> Commands Used
+          </div>
+          <div class="stat-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="color: #10b981;"><circle cx="12" cy="12" r="10"></circle></svg>
+            <span style="color: #10b981;">Online 24/7</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="showcase-container-right">
+        <div class="tablet-mockup mockup-right">
+          <img src="https://www.upload.ee/image/19381675/ChatGPT_Image_26_Mei_2026__11.41.49.png" alt="Portfolio Right" />
+        </div>
+      </div>
+
+    </div>
   </div>
+
+  <section id="portfolio">
+    <h2 class="section-title">Sky Artificial Intelligence Dashboard</h2>
+    
+    <div class="visitor-counter-text">
+      Total Pengunjung Website saat ini: <span id="totalVisitors">21</span> orang
+    </div>
+    
+    <div class="card" id="inviteBotCard" style="cursor: none;">
+      <div>
+        <h3 style="font-size: 18px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #60a5fa;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          Setup Instructions
+        </h3>
+        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+          Jika kamu ingin menambahkan channel untuk chat dengan Sky AI, kamu harus menjalankan command <code>/setup</code> dan pilih channel yang ingin kamu tambahkan.
+        </p>
+      </div>
+      <div style="background: rgba(0,85,255,0.05); border: 1px dashed rgba(0,85,255,0.3); padding: 12px; border-radius: 8px; font-size: 14px;">
+        It has been used by <span id="totalInvites" style="color: #60a5fa; font-weight: 700;">4</span> several people.
+      </div>
+    </div>
+  </section>
+
+  <section id="developer" class="developer-section">
+    <h2 class="section-title">Meet The <span>Developer</span></h2>
+    <p class="commands-subtitle" style="margin-bottom: 35px;">Otak di balik arsitektur cerdas platform Sky AI</p>
+    
+    <div class="dev-card">
+      <div class="dev-avatar-container">
+        <div class="dev-avatar-glow"></div>
+        <div class="dev-avatar-img">
+          <img src="https://www.upload.ee/image/19441901/ChatGPT_Image_14_Jun_2026__10.47.23.png" alt="Syahrulatala Anapara Noorsy" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+      </div>
+      
+      <div class="dev-info">
+        <span class="dev-role">Founder & Lead Developer</span>
+        <h3 class="dev-name">Syahrulatala Anapara Noorsy</h3>
+        <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.6;">
+          Kreator di balik ekosistem kecerdasan buatan Sky AI. Berkomitmen menghadirkan solusi teknologi modern, interaktif, dan andal untuk komunitas Discord di seluruh penjuru tanah air.
+        </p>
+        
+        <div class="dev-details-grid">
+          <div class="dev-detail-item">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            </span>
+            <span><strong>Umur:</strong> 26 Tahun</span>
+          </div>
+          <div class="dev-detail-item">
+            <span class="icon">
+              <svg viewBox="0 0 127.14 96.36" fill="currentColor" style="width:14px; height:14px;"><path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.5-5c.9-.65,1.76-1.34,2.58-2a75.58,75.58,0,0,0,73.1,0c.82.71,1.68,1.4,2.58,2a75.58,75.58,0,0,0,73.1,0c.82.71,1.68,1.4,2.58,2a68.43,68.43,0,0,1-10.5,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31-18.83C129,50.7,122.64,27.78,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/></svg>
+            </span>
+            <span><strong>Discord:</strong> <a href="https://discord.com/users/skydev_2025" target="_blank">@skydev_2025</a></span>
+          </div>
+          <div class="dev-detail-item">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </span>
+            <span><strong>No. Telp / WA:</strong> <a href="https://wa.me/6285195520118" target="_blank">085195520118</a></span>
+          </div>
+          <div class="dev-detail-item">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            </span>
+            <span><strong>WhatsApp:</strong> <a href="https://wa.me/6285195520118" target="_blank">Hubungi Langsung</a></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
-<!-- BACKEND HUB / PORTFOLIO AREA -->
-<section id="portfolio">
-  <h2 class="section-title">Sky Artificial Intelligence Dashboard</h2>
-  
-  <div class="visitor-counter-text">
-    Total Pengunjung Website saat ini: <span id="totalVisitors">21</span> orang
-  </div>
-  
-  <div class="card" id="inviteBotCard" style="cursor: none;">
-    <div>
-      <h3 style="font-size: 18px; margin-bottom: 10px;">Setup Instructions</h3>
-      <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
-        Jika kamu ingin menambahkan channel untuk chat dengan Sky AI, kamu harus menjalankan command <code>/addchannel</code> dan pilih channel yang ingin kamu tambahkan.
-      </p>
-    </div>
-    <div style="background: rgba(0,85,255,0.05); border: 1px dashed rgba(0,85,255,0.3); padding: 12px; border-radius: 8px; font-size: 14px;">
-      It has been used by <span id="totalInvites" style="color: #60a5fa; font-weight: 700;">4</span> several people.
-    </div>
-  </div>
-</section>
+<!-- =====================================================================
+     TAB 2: FEATURES (COMMAND REFERENCE)
+     ===================================================================== -->
+<div id="tab-features" class="page-tab-content">
+  <section class="commands-section">
+    <h2>Command <span>Reference</span></h2>
+    <p class="commands-subtitle">Semua command yang tersedia di SkyTech Bot</p>
 
-<!-- ===== DEVELOPER PROFILE SECTION ===== -->
-<section id="developer" class="developer-section">
-  <h2 class="section-title">Meet The <span>Developer</span></h2>
-  <p class="commands-subtitle" style="margin-bottom: 35px;">Otak di balik arsitektur cerdas platform Sky AI</p>
-  
-  <div class="dev-card">
-    <div class="dev-avatar-container">
-      <div class="dev-avatar-glow"></div>
-      <div class="dev-avatar-img">
-        <img src="https://www.upload.ee/image/19441901/ChatGPT_Image_14_Jun_2026__10.47.23.png" alt="Syahrulatala Anapara Noorsy" style="width: 100%; height: 100%; object-fit: cover;">
+    <div class="terminal-container">
+      <div class="terminal-header">
+        <div class="terminal-buttons">
+          <span class="terminal-btn btn-red"></span>
+          <span class="terminal-btn btn-yellow"></span>
+          <span class="terminal-btn btn-green"></span>
+        </div>
+        <div class="terminal-title">SkyTech Terminal - Discord Bot CLI</div>
+        <div style="width: 52px;"></div>
       </div>
+
+      <div class="terminal-body">
+        <div class="command-row">
+          <span class="command-trigger">/setup</span>
+          <span class="command-desc"># Setup Sky AI in current channel / Atur Sky AI di channel ini</span>
+        </div>
+        <div class="command-row">
+          <span class="command-trigger">/deleteai</span>
+          <span class="command-desc"># Remove Sky AI from current channel / Hapus Sky AI dari channel ini</span>
+        </div>
+        <div class="command-row">
+          <span class="command-trigger">/setlanguage</span>
+          <span class="command-desc"># Change AI language for server / Ubah bahasa AI untuk server ini</span>
+        </div>
+        <div class="command-row">
+          <span class="command-trigger">/resethistory</span>
+          <span class="command-desc"># Reset your personal chat history / Reset riwayat chat pribadi</span>
+        </div>
+        <div class="command-row">
+          <span class="command-trigger">/status</span>
+          <span class="command-desc"># Check bot operational status / Cek status operasional bot</span>
+        </div>
+        <div class="command-row">
+          <span class="command-trigger">/ping</span>
+          <span class="command-desc"># Check bot latency / Cek latency bot</span>
+        </div>
+        <div class="terminal-footer">
+          skytech@bot:~# <span class="terminal-cursor"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- =====================================================================
+     TAB 3: PLAYGROUND (LIVE CHAT TESTING)
+     ===================================================================== -->
+<div id="tab-playground" class="page-tab-content">
+  <section class="playground-section">
+    <h2>Sky AI <span>Playground</span></h2>
+    <p class="playground-subtitle">Uji coba langsung kemampuan Sky AI di bawah ini secara bersama-sama. Seluruh obrolan disinkronkan secara real-time dan bisa dilihat oleh semua pengunjung website!</p>
+
+    <div class="discord-container">
+      <div class="discord-header">
+        <div class="discord-status-dot"></div>
+        <div class="discord-channel-name">💬｜live-testing-sky-ai</div>
+        <div class="discord-channel-desc">Uji coba interaktif publik</div>
+      </div>
+
+      <div class="discord-messages" id="discord-messages-box">
+        <div style="color: var(--text-muted); font-size: 13px; text-align: center; margin: auto;" id="chat-loading-placeholder">
+          Menghubungkan secure chat stream...
+        </div>
+      </div>
+
+      <div class="discord-input-area" id="chat-input-container">
+        <input type="text" class="discord-input" id="chat-input-field" placeholder="Ketik pesan di sini untuk menguji Sky AI..." onkeydown="handleChatKeyDown(event)" />
+        <button class="discord-send-btn" id="chat-send-button" onclick="sendPublicChatMessage()">
+          <span>Kirim</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </div>
+
+      <div id="chat-maintenance-alert" style="display: none; background: rgba(237, 66, 69, 0.1); border: 1px dashed #ed4245; padding: 15px; border-radius: 8px; text-align: center; color: #ed4245; font-weight: bold; font-size: 14px; margin-top: 10px; font-family: sans-serif;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 5px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+        Maaf, fitur chat sedang dimatikan sementara karena maintenance.
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- =====================================================================
+     TAB 4: UPDATES (LOG RIWAYAT INFORMASI)
+     ===================================================================== -->
+<div id="tab-updates" class="page-tab-content">
+  <section class="updates-section">
+    <h2>Update <span>Information</span></h2>
+    <p class="updates-subtitle">Log riwayat pembaruan, perbaikan bug, dan fitur terbaru Sky AI</p>
+
+    <div class="updates-list" id="updates-rendering-box">
+      <div style="color: var(--text-muted); font-size: 13px; text-align: center; margin: auto;">
+        Menghubungkan update database stream...
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- =====================================================================
+     TAB 5: REVIEWS (TESTIMONI USER)
+     ===================================================================== -->
+<div id="tab-testimonials" class="page-tab-content">
+  <section class="testi-section" id="testimonials">
+    <div class="testi-badge">TESTIMONI</div>
+    <h2>Kata Mereka <span>Tentang Kami</span></h2>
+    <p class="testi-subtitle">Review dari pengguna setia Sky AI App Discord</p>
+
+    <button class="btn-toggle-testi" onclick="toggleTestimonialForm()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+      TULIS TESTIMONI ANDA
+    </button>
+
+    <div class="testi-submit-panel" id="testimonial-form-panel">
+      <h3 style="font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #60a5fa;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        Kirim Testimoni Review
+      </h3>
+      
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Nama Anda / Server Discord</label>
+        <input type="text" class="form-input" id="testi-author" placeholder="Masukkan nama atau nama komunitas server..." />
+      </div>
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Berikan Rating Bintang</label>
+        <div class="star-rating-input" id="star-selector">
+          <span class="star-input active" data-rating="1">★</span>
+          <span class="star-input active" data-rating="2">★</span>
+          <span class="star-input active" data-rating="3">★</span>
+          <span class="star-input active" data-rating="4">★</span>
+          <span class="star-input active" data-rating="5">★</span>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 25px;">
+        <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Isi Testimoni / Pesan Review</label>
+        <textarea class="form-input" id="testi-content" rows="3" placeholder="Bagikan pengalaman mengesankan Anda menggunakan Sky AI..." style="resize: vertical;"></textarea>
+      </div>
+
+      <button class="btn-publish" onclick="publishTestimonial()">KIRIM TESTIMONI</button>
     </div>
     
-    <div class="dev-info">
-      <span class="dev-role">Founder & Lead Developer</span>
-      <h3 class="dev-name">Syahrulatala Anapara Noorsy</h3>
-      <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.6;">
-        Kreator di balik ekosistem kecerdasan buatan Sky AI. Berkomitmen menghadirkan solusi teknologi modern, interaktif, dan andal untuk komunitas Discord di seluruh penjuru tanah air.
-      </p>
-      
-      <div class="dev-details-grid">
-        <div class="dev-detail-item">
-          <span class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          </span>
-          <span><strong>Umur:</strong> 26 Tahun</span>
-        </div>
-        <div class="dev-detail-item">
-          <span class="icon">
-            <svg viewBox="0 0 127.14 96.36" fill="currentColor" style="width:14px; height:14px;"><path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.5-5c.9-.65,1.76-1.34,2.58-2a75.58,75.58,0,0,0,73.1,0c.82.71,1.68,1.4,2.58,2a75.58,75.58,0,0,0,73.1,0c.82.71,1.68,1.4,2.58,2a68.43,68.43,0,0,1-10.5,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31-18.83C129,50.7,122.64,27.78,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/></svg>
-          </span>
-          <span><strong>Discord:</strong> <a href="https://discord.com/users/brody201109" target="_blank">@brody201109</a></span>
-        </div>
-        <div class="dev-detail-item">
-          <span class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-          </span>
-          <span><strong>No. Telp:</strong> <a href="tel:085143217120">085143217120</a></span>
-        </div>
-        <div class="dev-detail-item">
-          <span class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-          </span>
-          <span><strong>WhatsApp:</strong> <a href="https://wa.me/6285143217120" target="_blank">Hubungi Langsung</a></span>
-        </div>
+    <div class="testi-grid" id="testimonials-rendering-box">
+      <div style="color: var(--text-muted); font-size: 13px; text-align: center; margin: auto; padding: 40px 0;">
+        Menghubungkan review database stream...
       </div>
     </div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div style="margin-bottom: 10px;">
+    Email: <a href="mailto:skyaideveloper123@gmail.com" style="color: var(--blue-glow); font-weight: 600;">skyaideveloper123@gmail.com</a> | 
+    Discord: <a href="https://discord.gg/cXYSfSZFUq" target="_blank" rel="noopener noreferrer" style="color: var(--blue-glow); font-weight: 600;">Support Community</a>
   </div>
-</section>
+  © <span id="currentYear"></span> Sky AI Website, Design By Sky Developer.
+</footer>
 
-<!-- SECTION COMMAND REFERENCE (FITUR INTERAKTIF) -->
-<section id="features" class="commands-section">
-  <h2>Command <span>Reference</span></h2>
-  <p class="commands-subtitle">Semua command yang tersedia di SkyTech Bot</p>
+<!-- MODAL BUG REPORT (INTERAKTIF MODAL REPORT BUG REFINED) -->
+<div id="bugReportModal">
+  <div class="bug-box">
+    <h3>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #ef4444;"><rect x="8" y="6" width="8" height="14" rx="4"></rect><path d="M6 18h12"></path><path d="M6 14h12"></path><path d="M6 10h12"></path><path d="M12 2v4"></path></svg>
+      Laporkan Bug / Kendala
+    </h3>
+    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5;">
+      Bantu kami memperbaiki sistem dengan mengirimkan laporan bug yang Anda temukan di bawah ini:
+    </p>
 
-  <div class="terminal-container">
-    <!-- Terminal Header Mac Style -->
-    <div class="terminal-header">
-      <div class="terminal-buttons">
-        <span class="terminal-btn btn-red"></span>
-        <span class="terminal-btn btn-yellow"></span>
-        <span class="terminal-btn btn-green"></span>
-      </div>
-      <div class="terminal-title">SkyTech Terminal - Discord Bot CLI</div>
-      <div style="width: 52px;"></div> <!-- Spacer -->
+    <div class="form-group" style="margin-bottom: 12px;">
+      <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; display: block;">Nama / User Discord Anda</label>
+      <input type="text" class="form-input" id="bug-username" placeholder="Contoh: @brody201109" />
     </div>
 
-    <!-- Terminal Body -->
-    <div class="terminal-body">
-      
-      <div class="command-row">
-        <span class="command-trigger">/addchannel</span>
-        <span class="command-desc"># Menambahkan AI ke channel tertentu agar bisa berbicara</span>
-      </div>
-
-      <div class="command-row">
-        <span class="command-trigger">/channelremove</span>
-        <span class="command-desc"># Menghapus AI dari channel yang ditentukan</span>
-      </div>
-
-      <div class="command-row">
-        <span class="command-trigger">/ping</span>
-        <span class="command-desc"># Melihat ping respon bot</span>
-      </div>
-
-      <div class="command-row">
-        <span class="command-trigger">/setlanguage</span>
-        <span class="command-desc"># Mengatur bahasa komunikasi yang diinginkan</span>
-      </div>
-
-      <div class="command-row">
-        <span class="command-trigger">/resethistory</span>
-        <span class="command-desc"># Mereset riwayat chat (history) dengan AI</span>
-      </div>
-
-      <div class="command-row">
-        <span class="command-trigger">/status</span>
-        <span class="command-desc"># Mengecek status AI (online / maintenance)</span>
-      </div>
-
-      <div class="command-row">
-        <span class="command-trigger">/bantuan</span>
-        <span class="command-desc"># Melihat semua daftar bantuan command bot Sky AI</span>
-      </div>
-
-      <div class="terminal-footer">
-        skytech@bot:~# <span class="terminal-cursor"></span>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ===== SKY AI UPDATE INFORMATION SECTION (TAB LIVE UPDATES DARI WEB) ===== -->
-<section id="updates" class="updates-section">
-  <h2>Update <span>Information</span></h2>
-  <p class="updates-subtitle">Log riwayat pembaruan, perbaikan bug, dan fitur terbaru Sky AI</p>
-
-  <!-- FORMULIR INPUT UPDATE ADMIN (Terproteksi Autentikasi Real-time) -->
-  <div class="admin-update-panel" id="admin-update-form">
-    <h3>⚙️ Admin Panel - Rilis Update Informasi</h3>
-    
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Tipe Pembaruan</label>
-        <select class="form-input" id="update-type">
-          <option value="feature">New Feature ✦</option>
-          <option value="improvement">Improvement ⚡</option>
-          <option value="hotfix">Hotfix 🛠️</option>
-          <option value="major">Major Release 🚀</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Nomor Versi (e.g. v1.2.0)</label>
-        <input type="text" class="form-input" id="update-version" placeholder="v1.0.0" />
-      </div>
+    <div class="form-group" style="margin-bottom: 12px;">
+      <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; display: block;">Nama Server Discord</label>
+      <input type="text" class="form-input" id="bug-server" placeholder="Contoh: SkyTech Official Server" />
     </div>
 
-    <div class="form-group" style="margin-bottom: 15px;">
-      <label>Judul Rilis</label>
-      <input type="text" class="form-input" id="update-title" placeholder="Masukkan judul pembaruan..." />
+    <div class="form-group" style="margin-bottom: 12px;">
+      <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; display: block;">Email Anda</label>
+      <input type="email" class="form-input" id="bug-email" placeholder="Contoh: user@gmail.com" />
+    </div>
+
+    <div class="form-group" style="margin-bottom: 12px;">
+      <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; display: block;">Deskripsi Masalah / Bug</label>
+      <textarea class="form-input" id="bug-desc" rows="3" placeholder="Jelaskan detail bug yang terjadi..." style="resize: vertical;"></textarea>
     </div>
 
     <div class="form-group" style="margin-bottom: 20px;">
-      <label>Detail Pembaruan / Log Informasi</label>
-      <textarea class="form-input" id="update-content" rows="4" placeholder="Tulis rincian log baru di sini... (tekan enter untuk baris baru)" style="resize: vertical;"></textarea>
+      <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; display: block;">Upload Foto / Screenshot Bug (Optional)</label>
+      <input type="file" id="bug-file" accept="image/*" class="form-input" style="padding: 8px;" />
     </div>
 
-    <button class="btn-publish" onclick="publishUpdateLog()">PUBLISH UPDATE INFO 🚀</button>
-  </div>
-
-  <!-- CONTAINER LOG TIMELINE RENDERING -->
-  <div class="updates-list" id="updates-rendering-box">
-    <div style="color: var(--text-muted); font-size: 13px; text-align: center; margin: auto;">
-      Menghubungkan update database stream...
+    <div style="display: flex; gap: 12px;">
+      <button onclick="submitBugReport()" class="btn-publish" style="background: linear-gradient(135deg, #ef4444, #b91c1c); flex: 1;">
+        Kirim Laporan Bug
+      </button>
+      <button onclick="closeBugReportModal()" class="close-btn" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); margin-top: 0; width: auto; padding: 0 20px;">
+        Batal
+      </button>
     </div>
-  </div>
-</section>
-
-<!-- ===== SKY AI LIVE TESTING PLAYGROUND (CHAT REAL-TIME PUBLIK) ===== -->
-<section id="playground" class="playground-section">
-  <h2>Sky AI <span>Playground</span></h2>
-  <p class="playground-subtitle">Uji coba langsung kemampuan Sky AI di bawah ini secara bersama-sama. Seluruh obrolan disinkronkan secara real-time dan bisa dilihat oleh semua pengunjung website!</p>
-
-  <div class="discord-container">
-    <div class="discord-header">
-      <div class="discord-status-dot"></div>
-      <div class="discord-channel-name">💬｜live-testing-sky-ai</div>
-      <div class="discord-channel-desc">Uji coba interaktif publik</div>
-    </div>
-
-    <!-- Tampilan Log Pesan -->
-    <div class="discord-messages" id="discord-messages-box">
-      <!-- Chat akan dimuat secara dinamis dari Firebase -->
-      <div style="color: var(--text-muted); font-size: 13px; text-align: center; margin: auto;" id="chat-loading-placeholder">
-        Menghubungkan secure chat stream...
-      </div>
-    </div>
-
-<!-- Input Box Simulator -->
-    <div class="discord-input-area" id="chat-input-container">
-      <input type="text" class="discord-input" id="chat-input-field" placeholder="Ketik pesan di sini untuk menguji Sky AI..." onkeydown="handleChatKeyDown(event)" />
-      <button class="discord-send-btn" id="chat-send-button" onclick="sendPublicChatMessage()">Kirim 🚀</button>
-    </div>
-
-    <!-- Teks Info Maintenance (Taruh tepat di bawah container input) -->
-    <div id="chat-maintenance-alert" style="display: none; background: rgba(237, 66, 69, 0.1); border: 1px dashed #ed4245; padding: 15px; border-radius: 8px; text-align: center; color: #ed4245; font-weight: bold; font-size: 14px; margin-top: 10px; font-family: sans-serif;">
-      🛠️ Maaf, fitur chat sedang dimatikan sementara karena maintenance.
-    </div>
-  </div>
-</section>
-  
-<!-- TESTIMONI SECTION -->
-<section class="testi-section" id="testimonials">
-  <div class="testi-badge">TESTIMONI</div>
-  <h2>Kata Mereka <span>Tentang Kami</span></h2>
-  <p class="testi-subtitle">Review dari pengguna setia Sky AI App Discord</p>
-
-  <!-- Tombol Pemicu Formulir Testimoni Baru -->
-  <button class="btn-toggle-testi" onclick="toggleTestimonialForm()">
-    TULIS TESTIMONI ANDA ✦
-  </button>
-
-  <!-- FORMULIR INPUT TESTIMONI PUBLIK (Sinkronisasi Real-time) -->
-  <div class="testi-submit-panel" id="testimonial-form-panel">
-    <h3 style="font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">✍️ Kirim Testimoni Review</h3>
-    
-    <div class="form-group" style="margin-bottom: 15px;">
-      <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Nama Anda / Server Discord</label>
-      <input type="text" class="form-input" id="testi-author" placeholder="Masukkan nama atau nama komunitas server..." />
-    </div>
-
-    <div class="form-group" style="margin-bottom: 20px;">
-      <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Berikan Rating Bintang</label>
-      <div class="star-rating-input" id="star-selector">
-        <span class="star-input active" data-rating="1">★</span>
-        <span class="star-input active" data-rating="2">★</span>
-        <span class="star-input active" data-rating="3">★</span>
-        <span class="star-input active" data-rating="4">★</span>
-        <span class="star-input active" data-rating="5">★</span>
-      </div>
-    </div>
-
-    <div class="form-group" style="margin-bottom: 25px;">
-      <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Isi Testimoni / Pesan Review</label>
-      <textarea class="form-input" id="testi-content" rows="3" placeholder="Bagikan pengalaman mengesankan Anda menggunakan Sky AI..." style="resize: vertical;"></textarea>
-    </div>
-
-    <button class="btn-publish" onclick="publishTestimonial()">KIRIM TESTIMONI ✦</button>
-  </div>
-  
-  <div class="testi-grid" id="testimonials-rendering-box">
-    <!-- Testimoni akan ter-render dinamis dari database stream -->
-    <div style="color: var(--text-muted); font-size: 13px; text-align: center; margin: auto; padding: 40px 0;">
-      Menghubungkan review database stream...
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT SECTION -->
-<section id="contact">
-  <h2 class="section-title">Contact Us</h2>
-  <p style="color: var(--text-muted); line-height: 1.8;">
-    Email: <a href="mailto:skyaideveloper123@gmail.com" style="color: var(--blue-glow); font-weight: 600;">skyaideveloper123@gmail.com</a><br />
-    Discord: <a href="https://discord.gg/cXYSfSZFUq" target="_blank" rel="noopener noreferrer" style="color: var(--blue-glow); font-weight: 600;">Discord Support</a>
-  </p>
-</section>
-
-<footer>© 2025 Sky AI Website, Design By Sky Developer.</footer>
-
-<!-- MODAL LOGIN ADMIN -->
-<div id="adminLogin">
-  <div class="login-box">
-    <h3>Admin Login</h3>
-    <input type="password" id="adminPass" placeholder="Admin Password" />
-    <button onclick="loginAdmin()">Login</button>
-    <div class="close-btn" style="background:#475569; margin-top:10px;" onclick="closeAdmin()">Cancel</div>
-    <div id="errorMsg"></div>
-  </div>
-</div>
-
-<!-- MODAL SELECTION CONSOLE -->
-<div id="consoleSelection">
-  <div class="login-box">
-    <h3>Pilih Console Admin</h3>
-    <p style="font-size:13px; color: var(--text-muted); margin-bottom:20px;">Silakan pilih dashboard layanan yang ingin Anda kelola:</p>
-    
-    <button class="console-btn" onclick="openDirectWebUpdateManager()">Manage Web Updates (Directly on Web)</button>
-    <button class="console-btn" onclick="location.href='https://control.bot-hosting.net/server/bb8042f9'">SkyTech Bot Console</button>
-    <button class="console-btn" onclick="location.href='https://control.katabump.com/server/16cff3c0/console'">Sky AI Console</button>
-    
-    <div class="close-btn" style="background:#475569; margin-top:20px;" onclick="closeConsoleSelection()">Tutup</div>
   </div>
 </div>
 
 <!-- MODAL LIMIT HARIAN -->
 <div id="limitModal">
   <div class="login-box" style="text-align: center; max-width: 450px; border: 1px solid rgba(239, 68, 68, 0.4); box-shadow: 0 0 30px rgba(239, 68, 68, 0.2);">
-    <div style="font-size: 50px; margin-bottom: 15px;">🚫</div>
+    <div style="margin-bottom: 15px; color: #ef4444;">
+      <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+    </div>
     <h3 style="color: #ef4444; font-size: 22px; margin-bottom: 10px; font-weight: 800;">Limit Harian Tercapai!</h3>
     <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 25px;">
       Kamu telah menggunakan batas kuota <span style="color: white; font-weight: 700;">10 pertanyaan gratis</span> hari ini di playground website kami. 
     </p>
     <p style="font-size: 13px; color: #3b82f6; font-weight: 600; margin-bottom: 20px; line-height: 1.5;">
-      Tapi jangan khawatir! Kamu bisa terus mengobrol dengan Sky AI tanpa batas dengan menambahkannya ke server Discord kamu! 🎉
+      Tapi jangan khawatir! Kamu bisa terus mengobrol dengan Sky AI tanpa batas dengan menambahkannya ke server Discord kamu!
     </p>
     
     <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot" target="_blank" class="btn-primary" style="display: inline-flex; justify-content: center; width: 100%; margin-bottom: 12px; font-weight: 700; gap: 8px;">
-      🚀 Tambahkan Sky AI ke Server
+      Tambah Sky AI ke Server
     </a>
     <button class="close-btn" style="background: #1e293b; border: 1px solid rgba(255,255,255,0.1); width: 100%; cursor: none;" onclick="closeLimitModal()">
       Tutup
@@ -2147,10 +2039,12 @@ footer {
 <!-- MODAL SECURITY CAPTCHA -->
 <div id="captchaModal">
   <div class="login-box" style="text-align: center; max-width: 400px; border: 1px solid rgba(0, 85, 255, 0.4); box-shadow: 0 0 30px rgba(0, 85, 255, 0.2);">
-    <div style="font-size: 40px; margin-bottom: 15px;">🛡️</div>
+    <div style="margin-bottom: 15px; color: #3b82f6;">
+      <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+    </div>
     <h3 style="color: #3b82f6; font-size: 20px; margin-bottom: 8px; font-weight: 800;">Human Verification</h3>
     <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px;">
-      Selesaikan tantangan keamanan di bawah ini untuk membuktikan bahwa Anda bukan bot jahat:
+      Selesaikan tantangan keamanan di bawah ini untuk membuktikan bahwa Anda bukan bot:
     </p>
     <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
       <span id="captcha-question" style="font-size: 24px; font-weight: 800; color: #fff; letter-spacing: 2px; font-family: monospace;">5 + 7 = ?</span>
@@ -2164,12 +2058,7 @@ footer {
 </div>
 
 <script>
-// Kunci hash SHA-256 dari password administrator untuk otentikasi aman
-const ADMIN_PASSWORD_HASH = "b4601d6b822d174d0899938abbf3a314d6be18b44490ba71449549d95fd86a5b";
-
-// =====================================================================
 // CONFIG FIREBASE PROJECT
-// =====================================================================
 const firebaseConfig = {
   apiKey: "AIzaSyCpOAf9D2Bv31pmqRIjffL-E9IAP8SqTTY",
   authDomain: "shin-taeyoung-website.firebaseapp.com",
@@ -2186,174 +2075,128 @@ if (!firebase.apps.length) {
 }
 const database = firebase.database();
 
-// =====================================================================
-// ATURAN SISTEM (SINKRONISASI UTAMA)
-// =====================================================================
-let wordBlacklist = [];
-let isMaintenanceMode = false;
-let whitelist = [];
-
-// Fungsi bantu untuk membuat elemen banner pengumuman otomatis jika belum ada di HTML
-function buatBannerPengumuman() {
-  let banner = document.getElementById("announcement-banner");
-  if (!banner) {
-    banner = document.createElement('div');
-    banner.id = 'announcement-banner';
-    banner.style.cssText = "display: none; background: #faa61a; color: #000; padding: 12px; text-align: center; font-weight: bold; width: 100%; position: relative; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);";
-    banner.innerHTML = `📢 <span id="announcement-text"></span>`;
-    document.body.prepend(banner);
+// BANNER BROADCAST CONTROL
+function closeBanner() {
+  const banner = document.getElementById("broadcastBanner");
+  if (banner) {
+    banner.style.display = "none";
   }
 }
 
-// PASTIKAN SEMUA LOGIKA PEMBACAAN DATA MASUK KE DALAM BLOK INI:
+// REALTIME BROADCAST BANNER SYNC FROM FIREBASE
 database.ref("system_control").on("value", (snapshot) => {
-    const data = snapshot.val();
-    if (!data) return;
-
-    // 1. Sinkronisasi Data Fitur Bawaan
-    wordBlacklist = data.word_blacklist ? Object.values(data.word_blacklist).map(w => w.toLowerCase()) : [];
-    isMaintenanceMode = data.maintenance_mode === true;
-    whitelist = data.whitelist ? Object.values(data.whitelist) : [];
-    
-    // Sinkronisasi UI Maintenance otomatis
-    const inputContainer = document.getElementById("chat-input-container");
-    const maintenanceAlert = document.getElementById("chat-maintenance-alert");
-    if (inputContainer && maintenanceAlert) {
-        inputContainer.style.setProperty("display", isMaintenanceMode ? "none" : "flex", "important");
-        maintenanceAlert.style.display = isMaintenanceMode ? "block" : "none";
-    }
-
-    // 2. SINKRONISASI PENGUMUMAN WEBSITE (Wajib di dalam blok ini agar variabel 'data' terbaca)
-    buatBannerPengumuman(); 
-    const bannerEl = document.getElementById("announcement-banner");
-    const textEl = document.getElementById("announcement-text");
-
-    if (data.broadcast_message && data.broadcast_message.trim() !== "") {
-        textEl.innerText = data.broadcast_message;
-        
-        // Ambil warna dari Firebase, jika tidak ada default ke oranye
-        const warnaBanner = data.broadcast_color || "#faa61a";
-        bannerEl.style.backgroundColor = warnaBanner;
-        
-        // Auto sesuaikan warna font agar tetap kontras kebaca
-        if (warnaBanner === "#ffffff" || warnaBanner === "#ffff00" || warnaBanner === "#00ffff" || warnaBanner === "#aaaaaa" || warnaBanner === "#dddddd") {
-            bannerEl.style.color = "#000000";
-        } else {
-            bannerEl.style.color = "#ffffff";
-        }
-        
-        bannerEl.style.display = "block";
-    } else {
-        if (bannerEl) bannerEl.style.display = "none";
-    }
-});
-
-database.ref("system_control").on("value", (snapshot) => {
-    const data = snapshot.val();
-    if (!data) return;
-
-    wordBlacklist = data.word_blacklist ? Object.values(data.word_blacklist).map(w => w.toLowerCase()) : [];
-    isMaintenanceMode = data.maintenance_mode === true;
-    whitelist = data.whitelist ? Object.values(data.whitelist) : [];
-    
-    // Sinkronisasi UI Maintenance otomatis
-    const inputContainer = document.getElementById("chat-input-container");
-    const maintenanceAlert = document.getElementById("chat-maintenance-alert");
-    if (inputContainer && maintenanceAlert) {
-        inputContainer.style.setProperty("display", isMaintenanceMode ? "none" : "flex", "important");
-        maintenanceAlert.style.display = isMaintenanceMode ? "block" : "none";
-    }
-
-    // -----------------------------------------------------------------
-    // SINKRONISASI PENGUMUMAN WEBSITE (TAMBAHAN BARU)
-    // -----------------------------------------------------------------
-    buatBannerPengumuman(); // Pastikan elemen banner sudah terpasang di body
-    const bannerEl = document.getElementById("announcement-banner");
-    const textEl = document.getElementById("announcement-text");
-
-    if (data.broadcast_message && data.broadcast_message.trim() !== "") {
-        textEl.innerText = data.broadcast_message;
-        bannerEl.style.display = "block";
-        document.body.style.paddingTop = "45px"; // Dorong konten web ke bawah sedikit biar ga ketutup banner
-    } else {
-        bannerEl.style.display = "none";
-        document.body.style.paddingTop = "0px";
-    }
-});
-
-// =====================================================================
-// FUNGSI VALIDASI SEBELUM KIRIM CHAT
-// =====================================================================
-function isMessageSafe(text) {
-    const lowerText = text.toLowerCase();
-    return !wordBlacklist.some(word => lowerText.includes(word));
-}
-
-// PANGGIL FUNGSI INI DI DALAM sendPublicChatMessage() SEBELUM push ke Firebase
-async function validateAndSendMessage(query) {
-    const currentUsername = sessionStorage.getItem("chatUsername");
-
-    // 1. Cek Maintenance
-    if (isMaintenanceMode && !whitelist.includes(currentUsername)) {
-        alert("Sistem sedang Maintenance! Mohon tunggu ya.");
-        return false;
-    }
-
-    // 2. Cek Blacklist
-    if (!isMessageSafe(query)) {
-        alert("Pesan Anda mengandung kata yang dilarang!");
-        return false;
-    }
-
-    return true; // Lolos validasi
-}
-
-// =====================================================================
-// FUNGSI LAINNYA
-// =====================================================================
-function trackInviteClick() {
-  database.ref("site_stats/invite_click_count").transaction((currentCount) => {
-    return (currentCount || 0) + 1;
-  });
-}
+  const data = snapshot.val();
+  const banner = document.getElementById("broadcastBanner");
+  const textEl = document.getElementById("announcement-text");
   
-// =====================================================================
-// SKY AI LIVE TESTING - REAL-TIME COLLABORATIVE PLAYGROUND (GEMINI STABLE)
-// =====================================================================
-
-// API Key Baru yang sudah di-encode ke Base64 agar aman dari sensor otomatis GitHub!
-const SECURE_KEY_ENCODED = "QUl6YVN5Q0tZN3FYTkdITlM2NFZTV0RqWHU3dGl3anozbl9ldjlr";
-
-// Fungsi atob() otomatis menerjemahkan kembali kodenya saat website dibuka di browser user
-const GEMINI_API_KEY = atob(SECURE_KEY_ENCODED);
+  if (data && data.broadcast_message && data.broadcast_message.trim() !== "") {
+    if (textEl) textEl.innerText = data.broadcast_message;
+    if (banner) {
+      // Menghapus override warna manual lewat script agar menggunakan warna CSS/bawaan lama
+      banner.style.display = "block";
+    }
+  } else {
+    if (banner) banner.style.display = "none";
+  }
+});
 
 const chatsRef = database.ref("public_chats");
 const visitorRef = database.ref("site_stats/visitor_count");
 const inviteRef = database.ref("site_stats/invite_count");
 const updatesRef = database.ref("site_updates");
 const testimonialsRef = database.ref("site_testimonials");
+const bugReportsRef = database.ref("site_bug_reports");
 
-// CAPTCHA State Variables
+const SECURE_KEY_ENCODED = "QUl6YVN5Q0tZN3FYTkdITlM2NFZTV0RqWHU3dGl3anozbl9ldjlr";
+const GEMINI_API_KEY = atob(SECURE_KEY_ENCODED);
+
+// SWITCH TAB NAVIGATION LOGIC
+function switchTab(tabId) {
+  const tabs = document.querySelectorAll('.page-tab-content');
+  const buttons = document.querySelectorAll('.nav-tab-btn');
+
+  tabs.forEach(tab => tab.classList.remove('active'));
+  buttons.forEach(btn => btn.classList.remove('active'));
+
+  document.getElementById(tabId).classList.add('active');
+  const targetBtn = document.getElementById('btn-' + tabId);
+  if (targetBtn) targetBtn.classList.add('active');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// BUG REPORT MODAL & SUBMISSION
+function openBugReportModal() {
+  document.getElementById("bugReportModal").style.display = "flex";
+}
+function closeBugReportModal() {
+  document.getElementById("bugReportModal").style.display = "none";
+}
+
+async function submitBugReport() {
+  const username = document.getElementById("bug-username").value.trim();
+  const serverName = document.getElementById("bug-server").value.trim();
+  const email = document.getElementById("bug-email").value.trim();
+  const desc = document.getElementById("bug-desc").value.trim();
+  const fileInput = document.getElementById("bug-file");
+
+  if (!username || !email || !desc) {
+    alert("Harap isi Nama Discord, Email, dan Deskripsi Bug!");
+    return;
+  }
+
+  let photoBase64 = "";
+  if (fileInput.files && fileInput.files[0]) {
+    const file = fileInput.files[0];
+    photoBase64 = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  try {
+    const newBugRef = bugReportsRef.push();
+    await newBugRef.set({
+      username: username,
+      serverName: serverName || "N/A",
+      email: email,
+      description: desc,
+      photoData: photoBase64 || null,
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    });
+
+    alert("Laporan bug Anda berhasil dikirim! Terima kasih atas bantuan Anda.");
+    document.getElementById("bug-username").value = "";
+    document.getElementById("bug-server").value = "";
+    document.getElementById("bug-email").value = "";
+    document.getElementById("bug-desc").value = "";
+    fileInput.value = "";
+    closeBugReportModal();
+  } catch (err) {
+    console.error("Gagal mengirim laporan bug:", err);
+    alert("Terjadi kesalahan saat mengirim laporan bug.");
+  }
+}
+
+// CAPTCHA & User State
 let captchaVal1 = 0;
 let captchaVal2 = 0;
 let captchaAnswer = 0;
 let pendingMessageQuery = "";
 
-// Menghasilkan ID unik persistent lewat Cookie (bukan localStorage) untuk melacak kuota harian
 let userId = document.cookie.replace(/(?:(?:^|.*;\s*)sky_user_id\s*\=\s*([^;]*).*$)|^.*$/, "$1");
 if (!userId) {
   userId = 'usr_' + Math.random().toString(36).substr(2, 9);
   document.cookie = "sky_user_id=" + userId + ";max-age=31536000;path=/;SameSite=Strict;Secure";
 }
 
-// Menghasilkan Nama Anonim Acak untuk User saat ini
 if (!sessionStorage.getItem("chatUsername")) {
   const randNum = Math.floor(1000 + Math.random() * 9000);
   sessionStorage.setItem("chatUsername", "Tester #" + randNum);
 }
 const currentUsername = sessionStorage.getItem("chatUsername");
 
-// Fungsi untuk Menghasilkan Warna Avatar Berdasarkan Nama
 function stringToColor(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -2363,61 +2206,6 @@ function stringToColor(str) {
   return colors[Math.abs(hash) % colors.length];
 }
 
-// Membaca Chat Publik dari Firebase secara Real-time
-chatsRef.limitToLast(15).on("value", (snapshot) => {
-  const messagesBox = document.getElementById("discord-messages-box");
-  const placeholder = document.getElementById("chat-loading-placeholder");
-  if (placeholder) placeholder.remove();
-  
-  messagesBox.innerHTML = "";
-  
-  const data = snapshot.val();
-  if (!data) {
-    messagesBox.innerHTML = `
-      <div style="color: var(--text-muted); font-size: 13px; text-align: center; margin: auto;">
-        Belum ada obrolan. Jadilah yang pertama menyapa Sky AI di bawah! 👋
-      </div>
-    `;
-    return;
-  }
-  
-  // Mengurutkan pesan berdasarkan timestamp
-  const sortedMessages = Object.keys(data).map(key => ({
-    id: key,
-    ...data[key]
-  })).sort((a, b) => a.timestamp - b.timestamp);
-  
-  sortedMessages.forEach(msg => {
-    const isBot = msg.author.startsWith("Sky AI");
-    const avatarColor = isBot ? "linear-gradient(135deg, #1e40af, #0055ff)" : stringToColor(msg.author);
-    const initial = "S"; // Bot default initial
-    const finalInitial = isBot ? initial : msg.author.charAt(0).toUpperCase();
-    
-    // Tampilkan label platform/model jika tersedia di data obrolan
-    const providerBadge = msg.provider ? `<span style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 9px; padding: 1px 5px; border-radius: 4px; font-weight: bold; margin-left: 5px; text-transform: uppercase; font-family: monospace;">${msg.provider}</span>` : '';
-    
-    const msgRow = document.createElement("div");
-    msgRow.className = "discord-msg-row" + (isBot ? " ai-message" : "");
-    msgRow.innerHTML = `
-      <div class="discord-avatar" style="background: ${avatarColor}">${finalInitial}</div>
-      <div class="msg-details">
-        <div class="msg-meta">
-          <span class="msg-author">${escapeHtml(msg.author)}</span>
-          ${isBot ? '<span class="msg-bot-tag">BOT</span>' : ''}
-          ${providerBadge}
-          <span class="msg-time">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-        </div>
-        <div class="msg-content">${escapeHtml(msg.content)}</div>
-      </div>
-    `;
-    messagesBox.appendChild(msgRow);
-  });
-  
-  // Scroll otomatis ke chat terbawah
-  messagesBox.scrollTop = messagesBox.scrollHeight;
-});
-
-// Menghindari serangan XSS pada chat publik
 function escapeHtml(text) {
   const map = {
     '&': '&amp;',
@@ -2429,17 +2217,9 @@ function escapeHtml(text) {
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-// Pemanggil Gemini API dengan fallback model dan key untuk performa anti-limit (Sangat Aman)
 async function callGeminiAPI(query, systemPrompt) {
-  const keys = [
-    GEMINI_API_KEY, // Kunci API milik Anda (Prioritas utama)
-    ""              // Kunci API bawaan Canvas (Cadangan otomatis)
-  ];
-  
-  const models = [
-    "gemini-2.5-flash",
-    "gemini-1.5-flash"
-  ];
+  const keys = [GEMINI_API_KEY, ""];
+  const models = ["gemini-2.5-flash", "gemini-1.5-flash"];
   
   for (let key of keys) {
     for (let model of models) {
@@ -2458,150 +2238,36 @@ async function callGeminiAPI(query, systemPrompt) {
           const result = await response.json();
           const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
           if (text) {
-            return {
-              text: text,
-              model: "gemini"
-            };
+            return { text: text, model: "gemini" };
           }
         }
       } catch (e) {
-        console.warn(`Gemini Route gagal dengan model ${model} dan key ${key ? 'User' : 'Canvas'}:`, e);
+        console.warn(`Gemini Route error (${model}):`, e);
       }
     }
   }
-  throw new Error("Semua neural route Gemini mengalami limitasi.");
+  throw new Error("Semua route AI mengalami limitasi.");
 }
 
-// Fungsi mengirim pesan dari user ke Firebase
 async function sendPublicChatMessage() {
   const inputField = document.getElementById("chat-input-field");
-  const sendButton = document.getElementById("chat-send-button");
   const query = inputField.value.trim();
-  
   if (!query) return;
-  
-  // Cek Verifikasi Captcha (Sekali per Sesi Browser)
+
   if (!sessionStorage.getItem("isHumanVerified")) {
     generateCaptcha(query);
     return;
   }
-  
-  // Matikan input sementara
+  await sendPublicChatMessageDirectly(query);
   inputField.value = "";
-  inputField.disabled = true;
-  sendButton.disabled = true;
-
-  // Cek limit harian 10 pesan gratis per user per hari
-  const today = getTodayString();
-  const limitRef = database.ref(`user_limits/${userId}`);
-  
-  try {
-    const limitSnapshot = await limitRef.once("value");
-    const limitData = limitSnapshot.val() || { count: 0, date: today };
-    
-    let currentCount = limitData.count;
-    if (limitData.date !== today) {
-      currentCount = 0;
-    }
-    
-    if (currentCount >= 10) {
-      // Hapus placeholder atau loader pengetikan jika ada
-      hideTypingIndicator();
-      
-      // Masukkan pesan sistem langsung ke kotak obrolan Discord Simulator
-      const messagesBox = document.getElementById("discord-messages-box");
-      const errRow = document.createElement("div");
-      errRow.className = "discord-msg-row ai-message";
-      errRow.innerHTML = `
-        <div class="discord-avatar" style="background: linear-gradient(135deg, #ef4444, #b91c1c)">S</div>
-        <div class="msg-details">
-          <div class="msg-meta">
-            <span class="msg-author" style="color: #ef4444;">Sky AI [Limit]</span>
-            <span class="msg-bot-tag" style="background: #ef4444;">LIMIT</span>
-            <span class="msg-time">Sekarang</span>
-          </div>
-          <div class="msg-content" style="border-left: 3px solid #ef4444; background: rgba(239, 68, 68, 0.05); color: #f87171;">
-            Oops! Kamu sudah mencapai batas limit <strong>10 pertanyaan gratis hari ini</strong>. 
-            Silakan <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot" target="_blank" style="color: #60a5fa; text-decoration: underline; font-weight: bold;">tambahkan Sky AI ke server Discord kamu</a> untuk menikmati obrolan tanpa batas! 🚀
-          </div>
-        </div>
-      `;
-      messagesBox.appendChild(errRow);
-      messagesBox.scrollTop = messagesBox.scrollHeight;
-      
-      // Buka modal limit interaktif
-      openLimitModal();
-      
-      inputField.disabled = false;
-      sendButton.disabled = false;
-      inputField.focus();
-      return;
-    }
-    
-    // Catat & update peningkatan kuota ke Firebase
-    await limitRef.set({
-      count: currentCount + 1,
-      date: today,
-      username: currentUsername,
-      timestamp: firebase.database.ServerValue.TIMESTAMP
-    });
-  } catch (e) {
-    console.error("Gagal memeriksa kuota penggunaan harian:", e);
-  }
-
-  // 1. Simpan pesan user ke Firebase
-  const newUserMsgRef = chatsRef.push();
-  await newUserMsgRef.set({
-    author: currentUsername,
-    content: query,
-    timestamp: firebase.database.ServerValue.TIMESTAMP
-  });
-  
-  // Tampilkan indikator Sky AI sedang mengetik
-  showTypingIndicator();
-  
-  try {
-    const systemPrompt = "Anda adalah Sky AI, bot asisten pintar dari SkyTech Company di platform Discord. Sifat Anda adalah ramah, gaul, bersahabat, asyik, dan sopan. Gunakan gaya bahasa Indonesia santai (bisa selipkan istilah slang atau emoji keren). Jawab secara singkat padat dan jelas.";
-    
-    // Panggil sistem Gemini kustom (CORS-friendly)
-    const responseData = await callGeminiAPI(query, systemPrompt);
-    
-    // Hapus indikator mengetik
-    hideTypingIndicator();
-    
-    // 3. Simpan balasan Sky AI ke Firebase
-    const newBotMsgRef = chatsRef.push();
-    await newBotMsgRef.set({
-      author: "Sky AI",
-      content: responseData.text,
-      provider: responseData.model,
-      timestamp: firebase.database.ServerValue.TIMESTAMP
-    });
-  } catch (error) {
-    hideTypingIndicator();
-    console.error("Gagal memproses AI:", error);
-    
-    const newBotMsgRef = chatsRef.push();
-    await newBotMsgRef.set({
-      author: "Sky AI",
-      content: "Maaf, sistem pemrosesan neural saya sedang mengalami gangguan singkat. Silakan coba kembali dalam beberapa saat! 🛠️",
-      timestamp: firebase.database.ServerValue.TIMESTAMP
-    });
-  } finally {
-    inputField.disabled = false;
-    sendButton.disabled = false;
-    inputField.focus();
-  }
 }
 
-// Memproses penekanan tombol Enter pada input chat
 function handleChatKeyDown(event) {
   if (event.key === "Enter") {
     sendPublicChatMessage();
   }
 }
 
-// Menampilkan Animasi Mengetik Sky AI
 let typingElement = null;
 function showTypingIndicator() {
   const messagesBox = document.getElementById("discord-messages-box");
@@ -2629,7 +2295,6 @@ function showTypingIndicator() {
   messagesBox.scrollTop = messagesBox.scrollHeight;
 }
 
-// Menghapus Animasi Mengetik Sky AI
 function hideTypingIndicator() {
   if (typingElement) {
     typingElement.remove();
@@ -2637,41 +2302,151 @@ function hideTypingIndicator() {
   }
 }
 
-// =====================================================================
-// CANVAS PARTICLE SYSTEM (BINTANG DAN GLOW MELAYANG)
-// =====================================================================
+chatsRef.limitToLast(15).on("value", (snapshot) => {
+  const messagesBox = document.getElementById("discord-messages-box");
+  const placeholder = document.getElementById("chat-loading-placeholder");
+  if (placeholder) placeholder.remove();
+  
+  messagesBox.innerHTML = "";
+  
+  const data = snapshot.val();
+  if (!data) {
+    messagesBox.innerHTML = `
+      <div style="color: var(--text-muted); font-size: 13px; text-align: center; margin: auto;">
+        Belum ada obrolan. Jadilah yang pertama menyapa Sky AI di bawah!
+      </div>
+    `;
+    return;
+  }
+  
+  const sortedMessages = Object.keys(data).map(key => ({
+    id: key,
+    ...data[key]
+  })).sort((a, b) => a.timestamp - b.timestamp);
+  
+  sortedMessages.forEach(msg => {
+    const isBot = msg.author.startsWith("Sky AI");
+    const avatarColor = isBot ? "linear-gradient(135deg, #1e40af, #0055ff)" : stringToColor(msg.author);
+    const initial = "S"; 
+    const finalInitial = isBot ? initial : msg.author.charAt(0).toUpperCase();
+    
+    const msgRow = document.createElement("div");
+    msgRow.className = "discord-msg-row" + (isBot ? " ai-message" : "");
+    msgRow.innerHTML = `
+      <div class="discord-avatar" style="background: ${avatarColor}">${finalInitial}</div>
+      <div class="msg-details">
+        <div class="msg-meta">
+          <span class="msg-author">${escapeHtml(msg.author)}</span>
+          ${isBot ? '<span class="msg-bot-tag">BOT</span>' : ''}
+          <span class="msg-time">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+        </div>
+        <div class="msg-content">${escapeHtml(msg.content)}</div>
+      </div>
+    `;
+    messagesBox.appendChild(msgRow);
+  });
+  
+  messagesBox.scrollTop = messagesBox.scrollHeight;
+});
+
+// CANVAS BACKGROUND AWAN & BINTANG ELEGANT
 const canvas = document.getElementById("bg-particles");
 const ctx = canvas.getContext("2d");
 
-let particles = [];
+let clouds = [];
+let stars = [];
+let isDayTime = false;
 
-// Penyesuaian ukuran canvas
+function checkDayNightCycle() {
+  const currentHour = new Date().getHours();
+  isDayTime = currentHour >= 6 && currentHour < 18;
+  
+  if (isDayTime) {
+    document.body.classList.add("day-mode");
+  } else {
+    document.body.classList.remove("day-mode");
+  }
+}
+checkDayNightCycle();
+setInterval(checkDayNightCycle, 60000);
+
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+  initSkyBackground();
 }
 window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
 
-class Particle {
+class Cloud {
   constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.size = Math.random() * 2 + 0.5;
-    this.speedX = Math.random() * 0.4 - 0.2;
-    this.speedY = Math.random() * 0.4 - 0.2;
-    this.alpha = Math.random() * 0.8 + 0.2;
+    this.reset(true);
   }
+
+  reset(initial = false) {
+    this.x = initial ? Math.random() * (canvas.width || window.innerWidth) : -350 - Math.random() * 200;
+    this.y = Math.random() * ((canvas.height || window.innerHeight) * 0.7);
+    this.radius = Math.random() * 70 + 50;
+    this.speed = Math.random() * 0.4 + 0.15;
+    
+    if (isDayTime) {
+      this.color = `rgba(255, 255, 255, ${Math.random() * 0.35 + 0.25})`;
+    } else {
+      const isWhite = Math.random() > 0.3;
+      this.color = isWhite 
+        ? `rgba(240, 246, 255, ${Math.random() * 0.15 + 0.08})` 
+        : `rgba(96, 165, 250, ${Math.random() * 0.2 + 0.1})`;
+    }
+    
+    this.puffs = [
+      { dx: 0, dy: 0, r: this.radius },
+      { dx: this.radius * 0.55, dy: -this.radius * 0.25, r: this.radius * 0.75 },
+      { dx: -this.radius * 0.55, dy: -this.radius * 0.2, r: this.radius * 0.7 },
+      { dx: this.radius * 0.9, dy: this.radius * 0.1, r: this.radius * 0.55 },
+      { dx: -this.radius * 0.9, dy: this.radius * 0.15, r: this.radius * 0.5 }
+    ];
+  }
+
   update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+    this.x += this.speed;
+    if (this.x - this.radius * 2 > (canvas.width || window.innerWidth)) {
+      this.reset(false);
+    }
   }
+
   draw() {
     ctx.save();
-    ctx.globalAlpha = this.alpha;
+    ctx.fillStyle = this.color;
+    ctx.shadowBlur = isDayTime ? 15 : 35;
+    ctx.shadowColor = this.color;
+
+    this.puffs.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(this.x + p.dx, this.y + p.dy, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+}
+
+class Star {
+  constructor() {
+    this.x = Math.random() * (canvas.width || window.innerWidth);
+    this.y = Math.random() * (canvas.height || window.innerHeight);
+    this.size = Math.random() * 2.2 + 0.6;
+    this.alpha = Math.random() * 0.8 + 0.2;
+    this.pulse = Math.random() * 0.02 - 0.01;
+  }
+  update() {
+    this.alpha += this.pulse;
+    if (this.alpha <= 0.15 || this.alpha >= 0.95) this.pulse *= -1;
+  }
+  draw() {
+    if (isDayTime) return;
+    ctx.save();
+    ctx.globalAlpha = Math.max(0.1, Math.min(1, this.alpha));
     ctx.fillStyle = "#ffffff";
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = "#ffffff";
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fill();
@@ -2679,28 +2454,120 @@ class Particle {
   }
 }
 
-function initParticles() {
-  particles = [];
-  const count = Math.min(Math.floor(canvas.width / 15), 100);
-  for (let i = 0; i < count; i++) {
-    particles.push(new Particle());
+function drawSunOrMoon() {
+  const width = canvas.width || window.innerWidth;
+  const height = canvas.height || window.innerHeight;
+  ctx.save();
+  if (isDayTime) {
+    const sunX = width * 0.82;
+    const sunY = height * 0.22;
+    const sunRadius = Math.min(width, height) * 0.06 + 20;
+
+    const glow = ctx.createRadialGradient(sunX, sunY, sunRadius * 0.2, sunX, sunY, sunRadius * 2.5);
+    glow.addColorStop(0, "rgba(255, 225, 120, 0.8)");
+    glow.addColorStop(0.4, "rgba(255, 180, 50, 0.3)");
+    glow.addColorStop(1, "rgba(255, 255, 255, 0)");
+
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, sunRadius * 2.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#fef08a";
+    ctx.shadowBlur = 40;
+    ctx.shadowColor = "#fde047";
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, sunRadius, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    const moonX = width * 0.85;
+    const moonY = height * 0.2;
+    const moonRadius = Math.min(width, height) * 0.05 + 18;
+
+    const glow = ctx.createRadialGradient(moonX, moonY, moonRadius * 0.5, moonX, moonY, moonRadius * 2.2);
+    glow.addColorStop(0, "rgba(186, 230, 253, 0.5)");
+    glow.addColorStop(0.5, "rgba(56, 189, 248, 0.15)");
+    glow.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(moonX, moonY, moonRadius * 2.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#e0f2fe";
+    ctx.shadowBlur = 25;
+    ctx.shadowColor = "#38bdf8";
+    ctx.beginPath();
+    ctx.arc(moonX, moonY, moonRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#0c2859";
+    ctx.beginPath();
+    ctx.arc(moonX - moonRadius * 0.35, moonY - moonRadius * 0.2, moonRadius * 0.85, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function initSkyBackground() {
+  clouds = [];
+  stars = [];
+  
+  const width = canvas.width || window.innerWidth;
+  const cloudCount = Math.max(8, Math.min(Math.floor(width / 90), 25));
+  for (let i = 0; i < cloudCount; i++) {
+    clouds.push(new Cloud());
+  }
+
+  const starCount = Math.max(40, Math.min(Math.floor(width / 10), 160));
+  for (let i = 0; i < starCount; i++) {
+    stars.push(new Star());
   }
 }
-initParticles();
 
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => {
-    p.update();
-    p.draw();
+function animateSkyBackground() {
+  const width = canvas.width || window.innerWidth;
+  const height = canvas.height || window.innerHeight;
+
+  ctx.clearRect(0, 0, width, height);
+  
+  const grad = ctx.createRadialGradient(
+    width / 2, height * 0.2, 50,
+    width / 2, height / 2, width
+  );
+  if (isDayTime) {
+    grad.addColorStop(0, "#bae6fd");
+    grad.addColorStop(0.6, "#7dd3fc");
+    grad.addColorStop(1, "#38bdf8");
+  } else {
+    grad.addColorStop(0, "#0c2859");
+    grad.addColorStop(0.8, "#030a1c");
+    grad.addColorStop(1, "#01040f");
+  }
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, width, height);
+
+  drawSunOrMoon();
+
+  stars.forEach(star => {
+    star.update();
+    star.draw();
   });
-  requestAnimationFrame(animateParticles);
-}
-animateParticles();
 
-// =====================================================================
-// LOGIK INTRO LANDING PAGE 10 DETIK & AUTOPLAY AUDIO SINKRONISASI
-// =====================================================================
+  clouds.forEach(cloud => {
+    cloud.update();
+    cloud.draw();
+  });
+
+  requestAnimationFrame(animateSkyBackground);
+}
+
+// Inisialisasi awal canvas saat script dimuat
+resizeCanvas();
+initSkyBackground();
+animateSkyBackground();
+
+// INTRO LANDING PAGE LOGIC
 function startIntro() {
   const startBtn = document.getElementById("intro-start-btn");
   const loaderContainer = document.getElementById("intro-loader-container");
@@ -2713,26 +2580,21 @@ function startIntro() {
   const progressPercentage = document.getElementById("intro-percentage");
   const progressLog = document.getElementById("intro-log");
 
-  // Mainkan audio file mp3 kustom
   audio.play().catch(err => {
-    console.log("Audio playback failed or was blocked by autoplay security:", err);
+    console.log("Audio autoplay blocked:", err);
   });
 
-  // Ganti tampilan UI
   startBtn.style.display = "none";
   loaderContainer.style.display = "flex";
   statusText.textContent = "Connecting Secure Neural Uplink Handshake...";
 
-  // Mulai animasi putar pada logo
   ring.classList.add("spinning");
   logoBox.classList.add("spinning");
 
-  // Progres bar berjalan 10 detik (10.000 ms)
   const duration = 10000;
   const intervalTime = 50; 
   let elapsed = 0;
 
-  // Daftar status log sci-fi dinamis
   const logs = [
     { threshold: 0, text: "INITIALIZING SKY AI CORES..." },
     { threshold: 2000, text: "CONNECTING TO NEURAL NETWORK..." },
@@ -2745,11 +2607,9 @@ function startIntro() {
     elapsed += intervalTime;
     const progress = Math.min((elapsed / duration) * 100, 100);
 
-    // Update Progres Bar & Persentase
     progressFill.style.width = progress + "%";
     progressPercentage.textContent = Math.floor(progress) + "%";
 
-    // Update Log Teks
     for (let i = logs.length - 1; i >= 0; i--) {
       if (elapsed >= logs[i].threshold) {
         progressLog.textContent = logs[i].text;
@@ -2762,30 +2622,29 @@ function startIntro() {
       statusText.textContent = "PORTAL ONLINE - WELCOME!";
       progressLog.textContent = "SYSTEM DEPLOYED SUCCESSFULLY.";
       
-      // Matikan inisialisasi, hilangkan overlay secara halus
       setTimeout(() => {
         const overlay = document.getElementById("intro-overlay");
         overlay.style.opacity = "0";
         overlay.style.visibility = "hidden";
-        // Aktifkan scroll pada halaman utama
         document.body.style.overflow = "auto";
       }, 800);
     }
   }, intervalTime);
 }
 
-// Blokir scroll selama intro aktif
 document.addEventListener("DOMContentLoaded", () => {
   document.body.style.overflow = "hidden";
+  
+  // Dynamic Year Update
+  const yearSpan = document.getElementById("currentYear");
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
+  }
 });
 
-// =====================================================================
-// SINKRONISASI VISITOR & INVITE BOT STATS
-// =====================================================================
-// Monitor & Perbarui Visitor Otomatis
+// STATS MONITORS
 if (!sessionStorage.getItem("visitedBefore")) {
   visitorRef.transaction((currentValue) => {
-    // Jika database kosong atau nilainya di bawah 21, paksa hitungan baru mulai dari 22
     if (!currentValue || currentValue < 21) return 22;
     return currentValue + 1;
   });
@@ -2794,23 +2653,18 @@ if (!sessionStorage.getItem("visitedBefore")) {
 
 visitorRef.on("value", (snapshot) => {
   let count = snapshot.val() || 0;
-  // Jika isi database real-time masih di bawah 21, tetap tampilkan 21 di website
   if (count < 21) count = 21;
   document.getElementById("totalVisitors").textContent = count;
 });
 
-// Monitor & Perbarui Invite Otomatis
 inviteRef.on("value", (snapshot) => {
   let count = snapshot.val() || 0;
-  // Jika isi database real-time masih di bawah 4, tetap tampilkan 4 di website
   if (count < 4) count = 4;
   
   document.getElementById("totalInvites").textContent = count;
-  // Sinkronisasi data ke tampilan "Users" di atas banner
   document.getElementById("displayUsers").textContent = count >= 1000 ? (count/1000).toFixed(1) + "K" : count;
 });
 
-// Fungsi Trigger Tambah Nilai Invite saat diklik (+1)
 function incrementInvite() {
   inviteRef.transaction((currentValue) => {
     if (!currentValue || currentValue < 4) return 5;
@@ -2821,16 +2675,7 @@ function incrementInvite() {
 document.getElementById("inviteBotCard").addEventListener("click", incrementInvite);
 document.getElementById("btnInviteDirect").addEventListener("click", incrementInvite);
 
-// =====================================================================
-// INTERFACE & NAV & MULTI-MODAL LOGIC
-// =====================================================================
-const adminLogin = document.getElementById("adminLogin");
-const consoleSelection = document.getElementById("consoleSelection");
-const adminPass = document.getElementById("adminPass");
-const errorMsg = document.getElementById("errorMsg");
 const cursor = document.getElementById('custom-cursor');
-
-// Jalankan custom kursor kustom tracking
 document.addEventListener('mousemove', (e) => {
     cursor.style.left = e.clientX + 'px'; 
     cursor.style.top = e.clientY + 'px';
@@ -2838,59 +2683,6 @@ document.addEventListener('mousemove', (e) => {
 document.addEventListener('mousedown', () => cursor.classList.add('click-anim'));
 document.addEventListener('mouseup', () => cursor.classList.remove('click-anim'));
 
-// Efek Scroll Navbar Blur
-window.onscroll = function() {
-    const nav = document.getElementById('navbar');
-    if (window.scrollY > 30) nav.classList.add('scrolled');
-    else nav.classList.remove('scrolled');
-};
-
-function scrollToId(id) {
-  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-}
-
-// Kontrol Modals Login Admin
-function openAdmin() {
-  // Jika Admin sudah masuk sebelumnya pada sesi ini, langsung buka Selection Console
-  if (sessionStorage.getItem("isAdminLoggedIn") === "true") {
-    openConsoleSelection();
-  } else {
-    adminLogin.style.display = "flex";
-    errorMsg.textContent = "";
-    adminPass.value = "";
-  }
-}
-function closeAdmin() { adminLogin.style.display = "none"; }
-function openConsoleSelection() { consoleSelection.style.display = "flex"; }
-function closeConsoleSelection() { consoleSelection.style.display = "none"; }
-
-// Mengaktifkan Editor Updates Form secara On-site bagi Admin
-function openDirectWebUpdateManager() {
-  closeConsoleSelection();
-  scrollToId('updates');
-  // Form sudah otomatis dimunculkan lewat observer status Admin
-}
-
-// Crypto Hash Validation
-async function sha256(t) {
-  const b = new TextEncoder().encode(t);
-  const h = await crypto.subtle.digest("SHA-256", b);
-  return [...new Uint8Array(h)].map((x) => x.toString(16).padStart(2, "0")).join("");
-}
-
-async function loginAdmin() {
-  const i = adminPass.value;
-  if ((await sha256(i)) === ADMIN_PASSWORD_HASH) {
-    sessionStorage.setItem("isAdminLoggedIn", "true");
-    closeAdmin();             
-    openConsoleSelection();   
-    checkAdminModeState(); // Refresh tampilan elemen form update admin
-  } else {
-    errorMsg.textContent = "Password salah";
-  }
-}
-
-// Fungsi pembantu penanganan format tanggal lokal (YYYY-MM-DD)
 function getTodayString() {
   const d = new Date();
   const year = d.getFullYear();
@@ -2899,7 +2691,6 @@ function getTodayString() {
   return `${year}-${month}-${day}`;
 }
 
-// Buka dan tutup modal pemberitahuan limit harian
 function openLimitModal() {
   document.getElementById("limitModal").style.display = "flex";
 }
@@ -2907,15 +2698,12 @@ function closeLimitModal() {
   document.getElementById("limitModal").style.display = "none";
 }
 
-// =====================================================================
-// CAPTCHA SECURITY SYSTEM
-// =====================================================================
+// CAPTCHA LOGIC
 function generateCaptcha(query) {
   pendingMessageQuery = query;
-  captchaVal1 = Math.floor(Math.random() * 8) + 2; // Angka 2-9
-  captchaVal2 = Math.floor(Math.random() * 8) + 2; // Angka 2-9
+  captchaVal1 = Math.floor(Math.random() * 8) + 2;
+  captchaVal2 = Math.floor(Math.random() * 8) + 2;
   
-  // Menggunakan operator matematika random (+ atau *)
   const useMultiply = Math.random() > 0.5;
   if (useMultiply) {
     captchaAnswer = captchaVal1 * captchaVal2;
@@ -2936,7 +2724,6 @@ function verifyCaptcha() {
   if (userAnswer === captchaAnswer) {
     sessionStorage.setItem("isHumanVerified", "true");
     document.getElementById("captchaModal").style.display = "none";
-    // Lanjutkan pengiriman pesan tertunda secara otomatis
     sendPublicChatMessageDirectly(pendingMessageQuery);
   } else {
     document.getElementById("captchaError").textContent = "Jawaban salah! Coba verifikasi lagi.";
@@ -2951,12 +2738,10 @@ function handleCaptchaKeyDown(event) {
   }
 }
 
-// Mengirim pesan langsung setelah verifikasi captcha berhasil tanpa memicu validasi captcha modal lagi
 async function sendPublicChatMessageDirectly(query) {
   const inputField = document.getElementById("chat-input-field");
   const sendButton = document.getElementById("chat-send-button");
   
-  // Matikan input sementara
   inputField.disabled = true;
   sendButton.disabled = true;
 
@@ -2987,7 +2772,7 @@ async function sendPublicChatMessageDirectly(query) {
           </div>
           <div class="msg-content" style="border-left: 3px solid #ef4444; background: rgba(239, 68, 68, 0.05); color: #f87171;">
             Oops! Kamu sudah mencapai batas limit <strong>10 pertanyaan gratis hari ini</strong>. 
-            Silakan <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot" target="_blank" style="color: #60a5fa; text-decoration: underline; font-weight: bold;">tambahkan Sky AI ke server Discord kamu</a> untuk menikmati obrolan tanpa batas! 🚀
+            Silakan <a href="https://discord.com/oauth2/authorize?client_id=1432579240108232905&permissions=8&scope=bot" target="_blank" style="color: #60a5fa; text-decoration: underline; font-weight: bold;">tambahkan Sky AI ke server Discord kamu</a> untuk menikmati obrolan tanpa batas!
           </div>
         </div>
       `;
@@ -3009,7 +2794,6 @@ async function sendPublicChatMessageDirectly(query) {
     console.error(e);
   }
 
-  // Simpan pesan user ke Firebase
   const newUserMsgRef = chatsRef.push();
   await newUserMsgRef.set({
     author: currentUsername,
@@ -3020,7 +2804,7 @@ async function sendPublicChatMessageDirectly(query) {
   showTypingIndicator();
   
   try {
-    const systemPrompt = "Anda adalah Sky AI, bot asisten pintar dari SkyTech Company di platform Discord. Sifat Anda adalah ramah, gaul, bersahabat, asyik, dan sopan. Gunakan gaya bahasa Indonesia santai (bisa selipkan istilah slang atau emoji keren). Jawab secara singkat padat dan jelas.";
+    const systemPrompt = "Anda adalah Sky AI, bot asisten pintar dari SkyTech Company di platform Discord. Sifat Anda adalah ramah, gaul, bersahabat, asyik, dan sopan. Gunakan gaya bahasa Indonesia santai. Jawab secara singkat padat dan jelas.";
     const responseData = await callGeminiAPI(query, systemPrompt);
     hideTypingIndicator();
     
@@ -3036,7 +2820,7 @@ async function sendPublicChatMessageDirectly(query) {
     const newBotMsgRef = chatsRef.push();
     await newBotMsgRef.set({
       author: "Sky AI",
-      content: "Maaf, sistem pemrosesan neural saya sedang mengalami gangguan singkat. Silakan coba kembali dalam beberapa saat! 🛠️",
+      content: "Maaf, sistem pemrosesan neural saya sedang mengalami gangguan singkat. Silakan coba kembali dalam beberapa saat!",
       timestamp: firebase.database.ServerValue.TIMESTAMP
     });
   } finally {
@@ -3046,47 +2830,9 @@ async function sendPublicChatMessageDirectly(query) {
   }
 }
 
-// =====================================================================
-// SKY AI ONLINE UPDATE INFORMATION SYSTEM (LOGIKA CRUD ADMIN WEB)
-// =====================================================================
-// Mengecek Status Login Admin Sesi Ini
-function checkAdminModeState() {
-  const adminPanel = document.getElementById("admin-update-form");
-  const navAdminBtn = document.getElementById("nav-admin-btn");
-  
-  if (sessionStorage.getItem("isAdminLoggedIn") === "true") {
-    // Admin login aktif
-    adminPanel.style.display = "block";
-    if (navAdminBtn) {
-      navAdminBtn.innerHTML = "🔓 Admin Active (Logout)";
-      navAdminBtn.onclick = logoutAdminSession;
-    }
-    // Tampilkan tombol hapus pada log update
-    toggleDeleteButtonsDisplay(true);
-  } else {
-    // Tamu biasa
-    adminPanel.style.display = "none";
-    if (navAdminBtn) {
-      navAdminBtn.innerHTML = "🔒 Login Admin";
-      navAdminBtn.onclick = openAdmin;
-    }
-    toggleDeleteButtonsDisplay(false);
-  }
-}
-
-// Keluar dari Sesi Login Admin
-function logoutAdminSession() {
-  sessionStorage.removeItem("isAdminLoggedIn");
-  checkAdminModeState();
-  scrollToId("hero");
-}
-
-// =====================================================================
-// SKY AI ONLINE TESTIMONIAL SYSTEM (LOGIKA CRUD & RENDERING TESTIMONI)
-// =====================================================================
+// TESTIMONIAL SYSTEM
 let selectedRating = 5;
 
-// Menangani Tampilan Formulir Testimoni
 function toggleTestimonialForm() {
   const panel = document.getElementById("testimonial-form-panel");
   if (panel.style.display === "block") {
@@ -3097,14 +2843,11 @@ function toggleTestimonialForm() {
   }
 }
 
-// Handler Interaktif Pemilihan Bintang
 document.addEventListener("DOMContentLoaded", () => {
   const starElements = document.querySelectorAll("#star-selector .star-input");
   starElements.forEach(star => {
     star.addEventListener("click", () => {
       selectedRating = parseInt(star.getAttribute("data-rating"));
-      
-      // Update visual status bintang
       starElements.forEach(s => {
         const ratingVal = parseInt(s.getAttribute("data-rating"));
         if (ratingVal <= selectedRating) {
@@ -3117,7 +2860,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Menyimpan Testimoni Baru ke Firebase Database
 async function publishTestimonial() {
   const authorField = document.getElementById("testi-author");
   const contentField = document.getElementById("testi-content");
@@ -3139,30 +2881,24 @@ async function publishTestimonial() {
       timestamp: firebase.database.ServerValue.TIMESTAMP
     });
 
-    // Reset isi form rilis
     authorField.value = "";
     contentField.value = "";
-    // Reset bintang ke 5
     selectedRating = 5;
     const starElements = document.querySelectorAll("#star-selector .star-input");
     starElements.forEach(s => s.classList.add("active"));
 
-    // Sembunyikan panel rilis kembali
     document.getElementById("testimonial-form-panel").style.display = "none";
-    scrollToId("testimonials");
   } catch (err) {
     console.error("Gagal menyimpan testimoni baru ke Firebase:", err);
   }
 }
 
-// Membaca Database Testimoni Secara Real-Time dari Firebase
 testimonialsRef.on("value", async (snapshot) => {
   const renderingBox = document.getElementById("testimonials-rendering-box");
   renderingBox.innerHTML = "";
   
   const data = snapshot.val();
   
-  // Jika database kosong, otomatis isi dengan 3 testimoni default yang ada
   if (!data) {
     const defaultTestimonials = [
       {
@@ -3185,21 +2921,18 @@ testimonialsRef.on("value", async (snapshot) => {
       }
     ];
 
-    // Push default testimoni ke Firebase agar database terisi
     for (const item of defaultTestimonials) {
       await testimonialsRef.push().set(item);
     }
     return;
   }
 
-  // Urutkan rilis testimoni dari yang terbaru berada paling atas
   const sortedTestis = Object.keys(data).map(key => ({
     id: key,
     ...data[key]
   })).sort((a, b) => b.timestamp - a.timestamp);
 
   sortedTestis.forEach(testi => {
-    // Generate representasi karakter bintang
     let starsString = "";
     for (let r = 0; r < 5; r++) {
       starsString += r < testi.rating ? "★" : "☆";
@@ -3231,65 +2964,7 @@ testimonialsRef.on("value", async (snapshot) => {
   });
 });
 
-// Toggle Menampilkan / Menyembunyikan Tombol Hapus Update Log
-function toggleDeleteButtonsDisplay(show) {
-  const delBtns = document.querySelectorAll(".btn-delete-update");
-  delBtns.forEach(btn => {
-    btn.style.display = show ? "inline-block" : "none";
-  });
-}
-
-// Menyimpan Log Update Baru dari Form ke Firebase Database
-async function publishUpdateLog() {
-  const typeField = document.getElementById("update-type");
-  const versionField = document.getElementById("update-version");
-  const titleField = document.getElementById("update-title");
-  const contentField = document.getElementById("update-content");
-
-  const type = typeField.value;
-  const version = versionField.value.trim();
-  const title = titleField.value.trim();
-  const content = contentField.value.trim();
-
-  if (!version || !title || !content) {
-    alert("Harap lengkapi semua kolom form update!");
-    return;
-  }
-
-  try {
-    const newUpdateLogRef = updatesRef.push();
-    await newUpdateLogRef.set({
-      type: type,
-      version: version,
-      title: title,
-      content: content,
-      timestamp: firebase.database.ServerValue.TIMESTAMP
-    });
-
-    // Reset isi form setelah berhasil rilis
-    versionField.value = "";
-    titleField.value = "";
-    contentField.value = "";
-    
-    // Scroll mulus ke log rilis terbaru
-    scrollToId("updates");
-  } catch (err) {
-    console.error("Gagal menyimpan update ke Firebase database:", err);
-  }
-}
-
-// Menghapus Log Update Tertentu dari Database
-async function deleteUpdateLog(logId) {
-  if (sessionStorage.getItem("isAdminLoggedIn") === "true") {
-    try {
-      await updatesRef.child(logId).remove();
-    } catch (e) {
-      console.error("Gagal menghapus log update:", e);
-    }
-  }
-}
-
-// Membaca Log Updates Informasi Secara Real-Time dari Database
+// UPDATE LOGS STREAM
 updatesRef.on("value", (snapshot) => {
   const renderingBox = document.getElementById("updates-rendering-box");
   renderingBox.innerHTML = "";
@@ -3298,13 +2973,12 @@ updatesRef.on("value", (snapshot) => {
   if (!data) {
     renderingBox.innerHTML = `
       <div style="color: var(--text-muted); font-size: 13px; text-align: center; margin: auto; padding: 40px 0;">
-        Belum ada riwayat update informasi yang dirilis oleh pengelola. ⚙️
+        Belum ada riwayat update informasi yang dirilis oleh pengelola.
       </div>
     `;
     return;
   }
 
-  // Mengurutkan updates log berdasarkan timestamp rilis (paling baru diletakkan paling atas)
   const sortedLogs = Object.keys(data).map(key => ({
     id: key,
     ...data[key]
@@ -3317,7 +2991,6 @@ updatesRef.on("value", (snapshot) => {
       year: "numeric"
     });
 
-    // Konversi tipe ke badge kelas CSS yang sesuai
     let badgeClass = "tag-feature";
     let badgeText = "Feature";
     
@@ -3342,7 +3015,6 @@ updatesRef.on("value", (snapshot) => {
         </div>
         <div style="display: flex; align-items: center; gap: 15px;">
           <span class="update-date">${dateFormatted}</span>
-          <button class="btn-delete-update" onclick="deleteUpdateLog('${log.id}')" title="Hapus rilis update ini">🗑️</button>
         </div>
       </div>
       <h3 class="update-title">${escapeHtml(log.title)}</h3>
@@ -3350,14 +3022,6 @@ updatesRef.on("value", (snapshot) => {
     `;
     renderingBox.appendChild(card);
   });
-
-  // Sinkronisasi ulang visibility tombol hapus jika status admin aktif
-  checkAdminModeState();
-});
-
-// Jalankan pengecekan status admin pertama kali saat halaman dimuat
-document.addEventListener("DOMContentLoaded", () => {
-  checkAdminModeState();
 });
 </script>
 
