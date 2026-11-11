@@ -219,6 +219,7 @@ nav#navbar .nav-main {
   display: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 4px 15px rgba(0, 85, 255, 0.3);
+  transition: background-color 0.3s ease;
 }
 
 .banner-content {
@@ -273,12 +274,13 @@ nav#navbar .nav-main {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* PRELOADER INTRO - BG SINKRON DENGAN WEBSITE */
+/* PRELOADER INTRO - TRANSPARENT BACKDROP BLUR SINKRON CANVAS */
 #intro-overlay {
   position: fixed;
   inset: 0;
-  background-color: var(--bg-dark);
-  background: radial-gradient(circle at center, #081a3e 0%, #020613 100%);
+  background: rgba(3, 10, 28, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   z-index: 200000 !important;
   display: flex;
   justify-content: center;
@@ -290,17 +292,21 @@ nav#navbar .nav-main {
   text-align: center;
   max-width: 480px;
   width: 90%;
-  padding: 20px;
+  padding: 35px 25px;
+  background: rgba(9, 17, 36, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .intro-logo-wrapper {
-  width: 160px;
-  height: 160px;
+  width: 150px;
+  height: 150px;
   position: relative;
-  margin-bottom: 35px;
+  margin-bottom: 25px;
 }
 
 .intro-outer-ring {
@@ -349,11 +355,11 @@ nav#navbar .nav-main {
 }
 
 .intro-title {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 800;
   letter-spacing: 2px;
   color: white;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   text-transform: uppercase;
   background: linear-gradient(135deg, #ffffff, #60a5fa);
   -webkit-background-clip: text;
@@ -362,9 +368,9 @@ nav#navbar .nav-main {
 
 .intro-status {
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 12.5px;
   font-family: monospace;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   height: 20px;
 }
 
@@ -372,10 +378,10 @@ nav#navbar .nav-main {
   background: linear-gradient(135deg, #0055ff, #0033aa);
   color: white;
   border: none;
-  padding: 14px 35px;
-  font-size: 14px;
+  padding: 13px 35px;
+  font-size: 13.5px;
   font-weight: 700;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer !important; 
   letter-spacing: 1px;
   box-shadow: 0 5px 25px rgba(0, 85, 255, 0.4);
@@ -417,7 +423,7 @@ nav#navbar .nav-main {
   justify-content: space-between;
   align-items: center;
   font-family: monospace;
-  font-size: 12px;
+  font-size: 11.5px;
 }
 #intro-log {
   color: #3b82f6;
@@ -1881,9 +1887,9 @@ footer {
         </button>
       </div>
 
-      <div id="chat-maintenance-alert" style="display: none; background: rgba(237, 66, 69, 0.1); border: 1px dashed #ed4245; padding: 15px; border-radius: 8px; text-align: center; color: #ed4245; font-weight: bold; font-size: 14px; margin-top: 10px; font-family: sans-serif;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 5px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-        Maaf, fitur chat sedang dimatikan sementara karena maintenance.
+      <div id="chat-maintenance-alert" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px dashed var(--card-border); padding: 15px; border-radius: 12px; text-align: center; color: #f87171; font-weight: bold; font-size: 13.5px; margin: 15px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 5px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        Maaf, fitur AI Chat Tester sedang ditutup sementara karena maintenance sistem.
       </div>
     </div>
   </section>
@@ -2075,6 +2081,11 @@ if (!firebase.apps.length) {
 }
 const database = firebase.database();
 
+// GLOBAL SYSTEM CONTROL STATE
+let isMaintenanceActive = false;
+let whitelistUsers = [];
+let bannedUsersList = [];
+
 // BANNER BROADCAST CONTROL
 function closeBanner() {
   const banner = document.getElementById("broadcastBanner");
@@ -2083,22 +2094,59 @@ function closeBanner() {
   }
 }
 
-// REALTIME BROADCAST BANNER SYNC FROM FIREBASE
+// REALTIME BROADCAST BANNER & SYSTEM CONTROL SYNC FROM FIREBASE
 database.ref("system_control").on("value", (snapshot) => {
   const data = snapshot.val();
   const banner = document.getElementById("broadcastBanner");
   const textEl = document.getElementById("announcement-text");
   
-  if (data && data.broadcast_message && data.broadcast_message.trim() !== "") {
-    if (textEl) textEl.innerText = data.broadcast_message;
-    if (banner) {
-      // Menghapus override warna manual lewat script agar menggunakan warna CSS/bawaan lama
-      banner.style.display = "block";
+  if (data) {
+    // 1. Sync Broadcast Message & Color
+    if (data.broadcast_message && data.broadcast_message.trim() !== "") {
+      if (textEl) textEl.innerText = data.broadcast_message;
+      if (banner) {
+        banner.style.display = "block";
+        if (data.broadcast_color) {
+          banner.style.backgroundColor = data.broadcast_color;
+          banner.style.background = data.broadcast_color;
+        }
+      }
+    } else {
+      if (banner) banner.style.display = "none";
     }
-  } else {
-    if (banner) banner.style.display = "none";
+
+    // 2. Sync Maintenance Mode
+    isMaintenanceActive = data.maintenance_mode === true;
+    checkMaintenanceStatus();
+
+    // 3. Sync Whitelist & Banned Users
+    if (data.whitelist) {
+      whitelistUsers = Object.values(data.whitelist);
+    } else {
+      whitelistUsers = [];
+    }
+
+    if (data.banned_users) {
+      bannedUsersList = Object.values(data.banned_users);
+    } else {
+      bannedUsersList = [];
+    }
   }
 });
+
+function checkMaintenanceStatus() {
+  const inputContainer = document.getElementById("chat-input-container");
+  const maintenanceAlert = document.getElementById("chat-maintenance-alert");
+  const isWhitelisted = whitelistUsers.includes(currentUsername);
+
+  if (isMaintenanceActive && !isWhitelisted) {
+    if (inputContainer) inputContainer.style.display = "none";
+    if (maintenanceAlert) maintenanceAlert.style.display = "block";
+  } else {
+    if (inputContainer) inputContainer.style.display = "flex";
+    if (maintenanceAlert) maintenanceAlert.style.display = "none";
+  }
+}
 
 const chatsRef = database.ref("public_chats");
 const visitorRef = database.ref("site_stats/visitor_count");
@@ -2253,6 +2301,11 @@ async function sendPublicChatMessage() {
   const inputField = document.getElementById("chat-input-field");
   const query = inputField.value.trim();
   if (!query) return;
+
+  if (bannedUsersList.includes(userId)) {
+    alert("Cookie ID / IP Anda telah diblokir dari penggunaan AI Tester.");
+    return;
+  }
 
   if (!sessionStorage.getItem("isHumanVerified")) {
     generateCaptcha(query);
@@ -2752,7 +2805,7 @@ async function sendPublicChatMessageDirectly(query) {
     const limitSnapshot = await limitRef.once("value");
     const limitData = limitSnapshot.val() || { count: 0, date: today };
     
-    let currentCount = limitData.count;
+    let currentCount = limitData.count || 0;
     if (limitData.date !== today) {
       currentCount = 0;
     }
