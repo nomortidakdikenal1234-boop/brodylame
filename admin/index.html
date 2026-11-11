@@ -83,18 +83,23 @@
     }
     .input-group { margin-bottom: 15px; text-align: left; }
     .input-group label { display: block; margin-bottom: 6px; font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
-    .input-group input, .input-group textarea { 
+    .input-group input, .input-group textarea, .input-group select { 
       width: 100%; 
       padding: 12px; 
       border: 1px solid var(--card-border); 
-      background: rgba(0, 0, 0, 0.3); 
+      background: rgba(0, 0, 0, 0.4); 
       color: #fff; 
       border-radius: 8px; 
       box-sizing: border-box;
       outline: none;
       transition: 0.3s;
+      font-family: inherit;
     }
-    .input-group input:focus, .input-group textarea:focus {
+    .input-group select option {
+      background: #091124;
+      color: #fff;
+    }
+    .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
       border-color: var(--blurple);
       box-shadow: 0 0 10px rgba(0,85,255,0.3);
     }
@@ -373,6 +378,39 @@
           </div>
         </div>
 
+        <!-- POST UPDATE INFORMATION (FEATURE BARU ADMIN) -->
+        <div class="panel-card">
+          <h2>🚀 Post Update Information</h2>
+          <p style="font-size: 11px; color: var(--text-muted); margin-top: 0; margin-bottom: 14px;">Rilis pengumuman update baru yang akan tampil langsung di halaman website publik tab "Updates".</p>
+          
+          <div class="input-group">
+            <label>Versi Update (misal: v2.4.0)</label>
+            <input type="text" id="update-version-input" placeholder="Contoh: v2.4.0">
+          </div>
+
+          <div class="input-group">
+            <label>Kategori Update</label>
+            <select id="update-type-input">
+              <option value="feature">Feature (Fitur Baru)</option>
+              <option value="improvement">Improvement (Peningkatan Fitur)</option>
+              <option value="hotfix">Hotfix (Perbaikan Bug)</option>
+              <option value="major">Major Release (Update Besar)</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Judul Pembaruan</label>
+            <input type="text" id="update-title-input" placeholder="Judul rilis fitur/update...">
+          </div>
+
+          <div class="input-group">
+            <label>Detail Deskripsi Update</label>
+            <textarea id="update-content-input" rows="3" placeholder="Tuliskan poin-poin fitur baru atau deskripsi perbaikan..."></textarea>
+          </div>
+
+          <button class="btn btn-success" onclick="publishUpdateLog()">Publikasikan Update Log 📢</button>
+        </div>
+
         <!-- BOT GRANULAR MODULE TOGGLES -->
         <div class="panel-card">
           <h2>🎛️ Bot Feature Granular Toggles</h2>
@@ -488,6 +526,26 @@
               </thead>
               <tbody id="user-limits-table">
                 <tr><td colspan="5" style="text-align: center;">Memuat log aktivitas user...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- DAFTAR UPDATE INFO TERPASANG -->
+        <div class="panel-card" style="max-height: 320px; overflow-y: auto;">
+          <h2>📝 Daftar Log Update Publik Active</h2>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Versi</th>
+                  <th>Tipe</th>
+                  <th>Judul Update</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="admin-updates-table">
+                <tr><td colspan="4" style="text-align: center;">Memuat log update...</td></tr>
               </tbody>
             </table>
           </div>
@@ -812,6 +870,30 @@
         }
       });
 
+      // SYNC DAFTAR UPDATE PUBIK ACTIVE
+      database.ref("site_updates").on("value", (snapshot) => {
+        const tableBody = document.getElementById("admin-updates-table");
+        tableBody.innerHTML = "";
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          Object.keys(data).reverse().forEach(key => {
+            const update = data[key];
+            tableBody.innerHTML += `
+              <tr>
+                <td style="font-family: monospace; color: #60a5fa; font-weight: bold;">${escapeHtml(update.version)}</td>
+                <td style="text-transform: uppercase; font-size: 10px; font-weight: bold;">${escapeHtml(update.type)}</td>
+                <td style="font-weight: 600; color: #fff;">${escapeHtml(update.title)}</td>
+                <td>
+                  <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px; width: auto;" onclick="deleteUpdateLog('${key}')">Hapus</button>
+                </td>
+              </tr>
+            `;
+          });
+        } else {
+          tableBody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Belum ada log update yang terbit.</td></tr>`;
+        }
+      });
+
       // SYNC BUG REPORTS FROM PUBLIC WEBSITE
       database.ref("site_bug_reports").on("value", (snapshot) => {
         const tableBody = document.getElementById("bug-reports-table");
@@ -875,6 +957,48 @@
         logActivity(`Menghapus [${value}] dari database ${path}`);
         showToast(`Berhasil menghapus "${value}"!`);
       });
+    }
+
+    function publishUpdateLog() {
+      const version = document.getElementById("update-version-input").value.trim();
+      const type = document.getElementById("update-type-input").value;
+      const title = document.getElementById("update-title-input").value.trim();
+      const content = document.getElementById("update-content-input").value.trim();
+
+      if (!version || !title || !content) {
+        showToast("Harap isi Versi, Judul, dan Deskripsi Update!", true);
+        return;
+      }
+
+      database.ref("site_updates").push({
+        version: version,
+        type: type,
+        title: title,
+        content: content,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      }).then(() => {
+        logActivity(`Menerbitkan Update Informasi baru: ${version} - ${title}`);
+        showToast("Update Information berhasil dipublikasikan ke website publik! 🚀");
+        document.getElementById("update-version-input").value = "";
+        document.getElementById("update-title-input").value = "";
+        document.getElementById("update-content-input").value = "";
+      }).catch((err) => {
+        console.error("Gagal rilis update:", err);
+        showToast("Gagal menerbitkan update log!", true);
+      });
+    }
+
+    function deleteUpdateLog(updateKey) {
+      openModal(
+        "Hapus Log Update",
+        "Apakah Anda yakin ingin menghapus postingan update ini dari website publik?",
+        () => {
+          database.ref(`site_updates/${updateKey}`).remove().then(() => {
+            logActivity(`Menghapus log update (${updateKey})`);
+            showToast("Update log berhasil dihapus!");
+          });
+        }
+      );
     }
 
     function deleteBugReport(bugKey) {
