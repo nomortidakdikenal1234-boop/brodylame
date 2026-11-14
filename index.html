@@ -724,6 +724,60 @@ nav .nav-brand span {
   background: var(--blue-hover);
   transform: translateY(-2px);
 }
+
+/* TOMBOL SKY MUSIC & BADGE NEW BERGOYANG */
+.btn-music-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.btn-music {
+  background: linear-gradient(135deg, #ec4899, #8b5cf6);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35);
+}
+.btn-music:hover {
+  background: linear-gradient(135deg, #db2777, #7c3aed);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5);
+}
+
+.badge-new-shake {
+  position: absolute;
+  top: -10px;
+  right: -8px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.5);
+  animation: wiggleBadge 1.2s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 5;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes wiggleBadge {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  15% { transform: rotate(-12deg) scale(1.1); }
+  30% { transform: rotate(10deg) scale(1.1); }
+  45% { transform: rotate(-8deg) scale(1.05); }
+  60% { transform: rotate(6deg) scale(1.05); }
+  75% { transform: rotate(-3deg) scale(1); }
+}
+
 .btn-secondary {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -1851,6 +1905,16 @@ footer {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             Add Sky AI to Discord
           </a>
+
+          <!-- TOMBOL BARU SKY MUSIC DENGAN KOTAK MERAH "NEW!" BERGOYANG -->
+          <div class="btn-music-wrapper">
+            <span class="badge-new-shake">New!</span>
+            <a href="https://discord.com/oauth2/authorize?client_id=1570614162713739284&permissions=4402378198592&scope=bot" target="_blank" class="btn-music" id="btnInviteMusicDirect">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+              Add Sky Music to Discord
+            </a>
+          </div>
+
           <button onclick="switchTab('tab-features')" class="btn-secondary">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
             View Features
@@ -1961,16 +2025,17 @@ footer {
 <div id="tab-features" class="page-tab-content">
   <section class="commands-section">
     <h2>Command <span>Reference</span></h2>
-    <p class="commands-subtitle">Semua command yang tersedia di SkyTech Bot</p>
+    <p class="commands-subtitle">Semua command yang tersedia di Sky AI & Sky Music Bot</p>
 
-    <div class="terminal-container">
+    <!-- CLI TERAKHIR / MAIN BOT COMMANDS -->
+    <div class="terminal-container" style="margin-bottom: 30px;">
       <div class="terminal-header">
         <div class="terminal-buttons">
           <span class="terminal-btn btn-red"></span>
           <span class="terminal-btn btn-yellow"></span>
           <span class="terminal-btn btn-green"></span>
         </div>
-        <div class="terminal-title">SkyTech Terminal - Discord Bot CLI</div>
+        <div class="terminal-title">Sky AI Terminal - Discord Bot CLI</div>
         <div style="width: 52px;"></div>
       </div>
 
@@ -2000,7 +2065,58 @@ footer {
           <span class="command-desc"># Check bot latency / Cek latency bot</span>
         </div>
         <div class="terminal-footer">
-          skytech@bot:~# <span class="terminal-cursor"></span>
+          skytech@ai-bot:~# <span class="terminal-cursor"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAMPILAN COMMAND KHUSUS SKY MUSIC SESUAI GAMBAR FOTO USER -->
+    <div class="terminal-container" style="border-color: rgba(236, 72, 153, 0.3); box-shadow: 0 15px 40px rgba(236, 72, 153, 0.15);">
+      <div class="terminal-header" style="background: rgba(236, 72, 153, 0.08);">
+        <div class="terminal-buttons">
+          <span class="terminal-btn btn-red"></span>
+          <span class="terminal-btn btn-yellow"></span>
+          <span class="terminal-btn btn-green"></span>
+        </div>
+        <div class="terminal-title" style="color: #f472b6;">Daftar perintah Sky Music</div>
+        <div style="width: 52px;"></div>
+      </div>
+
+      <div class="terminal-body">
+        <div class="command-row">
+          <span class="command-trigger" style="color: #ec4899;">/play</span>
+          <span class="command-desc">— putar lagu atau masukkan ke antrean</span>
+        </div>
+        <div class="command-row">
+          <span class="command-trigger" style="color: #ec4899;">/skip</span>
+          <span class="command-desc">— lewati lagu saat ini</span>
+        </div>
+        <div class="command-row">
+          <span class="command-trigger" style="color: #ec4899;">/stop</span>
+          <span class="command-desc">— hentikan pemutaran & keluar dari VC</span>
+        </div>
+        <div class="command-row">
+          <span class="command-trigger" style="color: #ec4899;">/pause / /resume</span>
+          <span class="command-desc">— jeda / lanjutkan lagu</span>
+        </div>
+        <div class="command-row">
+          <span class="command-trigger" style="color: #ec4899;">/queue</span>
+          <span class="command-desc">— lihat antrean lagu</span>
+        </div>
+        <div class="command-row">
+          <span class="command-trigger" style="color: #ec4899;">/nowplaying</span>
+          <span class="command-desc">— lagu yang sedang diputar</span>
+        </div>
+        <div class="command-row">
+          <span class="command-trigger" style="color: #ec4899;">/volume</span>
+          <span class="command-desc">— atur volume pemutaran</span>
+        </div>
+        <div class="command-row">
+          <span class="command-trigger" style="color: #ec4899;">/loop</span>
+          <span class="command-desc">— atur mode loop (off, track, queue)</span>
+        </div>
+        <div class="terminal-footer" style="color: #ec4899;">
+          skymusic@player:~# <span class="terminal-cursor" style="background-color: #ec4899;"></span>
         </div>
       </div>
     </div>
