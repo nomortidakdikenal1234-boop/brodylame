@@ -657,7 +657,7 @@
                 <div>
                     <div class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white mb-0.5">Dapatkan penggunaan 2x lebih banyak dengan AI Plus</div>
                     <div class="text-xs text-gray-500 dark:text-gray-400">
-                        <span class="line-through text-gray-400 dark:text-gray-500 mr-1.5">Rp 75.000</span>
+                        <span class="line-through text-gray-400 dark:text-gray-500 mr-1.5">Rp 8.000</span>
                         <span class="text-emerald-600 dark:text-emerald-400 font-medium">Rp 7.500/bulan</span>
                     </div>
                 </div>
@@ -705,12 +705,12 @@
                         </div>
 
                         <div class="mb-5">
-                            <div class="text-xs text-gray-400 line-through">Rp 75.000</div>
+                            <div class="text-xs text-gray-400 line-through">Rp 8.000</div>
                             <div class="flex items-baseline space-x-1">
                                 <span class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp 7.500</span>
                                 <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">/bln</span>
                             </div>
-                            <div class="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 75.000/bln setelahnya</div>
+                            <div class="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 8.000/bln setelahnya</div>
                         </div>
 
                         <button class="subscribe-action-btn w-full py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-full transition shadow-md" data-plan-type="plus">
@@ -728,16 +728,16 @@
                         
                         <div class="inline-flex items-center space-x-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-xs font-medium mb-4">
                             <i class="fa-solid fa-cloud text-blue-500 text-xs"></i>
-                            <span>Penyimpanan sebesar 5 TB</span>
+                            <span>Penyimpanan sebesar 1 TB</span>
                         </div>
 
                         <div class="mb-5">
-                            <div class="text-xs text-gray-400 line-through">Rp 309.000</div>
+                            <div class="text-xs text-gray-400 line-through">Rp 20.000</div>
                             <div class="flex items-baseline space-x-1">
-                                <span class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp 31.000</span>
+                                <span class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp 15.000</span>
                                 <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">/bln</span>
                             </div>
-                            <div class="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 309.000/bln setelahnya</div>
+                            <div class="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">untuk 1 bulan, Rp 20.000/bln setelahnya</div>
                         </div>
 
                         <button class="subscribe-action-btn w-full py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-full transition shadow-md" data-plan-type="pro">
@@ -766,11 +766,11 @@
 
             <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/60 rounded-2xl p-3 mb-4">
                 <div class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">Total Nominal Pembayaran</div>
-                <div id="paymentNominalText" class="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400 mt-0.5">Rp 7.500</div>
+                <div id="paymentNominalText" class="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400 mt-0.5">Rp 8.000</div>
             </div>
 
             <div class="bg-white p-3 rounded-2xl border border-gray-200 dark:border-gray-700 inline-block shadow-sm mb-3 max-w-[240px] mx-auto">
-                <img id="paymentQrImage" src="https://cdn.postimage.me/2026/08/06/QR-Payment.jpg" alt="QR Code Pembayaran Sky AI" class="w-full h-auto rounded-lg object-contain mx-auto" referrerpolicy="no-referrer">
+                <img id="paymentQrImage" src="https://www.upload.ee/image/19995967/Kode_QRIS_Sky_Developer_Elektronik_2.webp" alt="QR Code Pembayaran Sky AI" class="w-full h-auto rounded-lg object-contain mx-auto" referrerpolicy="no-referrer">
             </div>
 
             <div class="mb-4">
@@ -1798,7 +1798,7 @@
 
                     if (res.ok) {
                         const data = await res.json();
-                        return data.choices?.[0]?.message?.content || "Tidak ada respon dari Groq AI.";
+                        return data.choices?.[0]?.message?.content || "Tidak ada respon dari Sky AI.";
                     }
 
                     const errJson = await res.json().catch(() => ({}));
@@ -1809,7 +1809,7 @@
                 }
             }
 
-            throw new Error(lastError || "Gagal mendapatkan respon dari server Groq AI.");
+            throw new Error(lastError || "Gagal mendapatkan respon dari server Sky AI.");
         }
 
         function createThinkingIndicator() {
@@ -1887,7 +1887,7 @@
                     renderMessages();
                 } catch (err) {
                     thinkingEl.remove();
-                    const botResponse = `Maaf, terjadi kesalahan saat menghubungi server Groq AI: \n\n\`${err.message}\``;
+                    const botResponse = `Maaf, terjadi kesalahan saat menghubungi server Sky AI: \n\n\`${err.message}\``;
                     chat.messages.push({ role: 'model', content: botResponse });
                     renderMessages();
                 } finally {
