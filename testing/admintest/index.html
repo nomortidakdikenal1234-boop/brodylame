@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src 'self' data: https:; base-uri 'none'; form-action 'none'; connect-src https://api.github.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; base-uri 'none'; form-action 'none'; connect-src https://*.supabase.co">
 <meta name="robots" content="noindex,nofollow">
 <title>Sky AI Admin</title>
 <style>
@@ -44,172 +44,188 @@ textarea{width:100%;min-height:120px;resize:vertical;padding:12px}
 .ok{color:var(--ok)}.bad{color:var(--err)}
 #toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--btn);color:var(--btntx);padding:10px 16px;border-radius:10px;z-index:9;max-width:90vw}
 @media(max-width:720px){#w{flex-direction:column}aside{width:auto;flex-direction:row;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}.br,.rl{display:none}.nav{width:auto;white-space:nowrap}main{padding:18px}}
+.gate{display:grid;place-items:center;height:100%;padding:24px}.gbox{width:100%;max-width:380px}
+.gbox input{width:100%;height:46px;margin:6px 0 12px;padding:0 14px}
+.gbox .p{width:100%;height:46px;margin-top:0}
 </style>
 </head>
 <body>
-<div id="w">
+<div class="gate" id="gate"><form class="gbox" id="gf" novalidate>
+  <h1 class="serif">Admin Sky AI</h1><p class="sub">Masuk dengan email admin. Tautan masuk akan dikirim ke email Anda.</p>
+  <label for="ge" class="sub" style="display:block">Email</label>
+  <input id="ge" type="email" maxlength="254" autocomplete="email">
+  <button class="p" type="submit">Kirim tautan masuk</button>
+  <p class="sub" id="gmsg" role="status" aria-live="polite" style="margin-top:10px;font-size:13px"></p>
+  <button class="b" type="button" id="gout" style="width:100%">Keluar</button>
+</form></div>
+<div id="w" hidden>
   <aside>
     <div class="br serif"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#ececec"/><path d="M16 5l2.600 8.400L27 16l-8.400 2.600L16 27l-2.600-8.400L5 16l8.400-2.600z" fill="#1c1c1c"/></svg>Sky AI</div>
     <div class="rl">Panel admin</div>
     <button class="nav on" data-t="ov">Ringkasan</button>
     <button class="nav" data-t="us">Pengguna</button>
-    <button class="nav" data-t="md">Model dan paket</button>
     <button class="nav" data-t="an">Pengumuman</button>
     <button class="nav" data-t="ak">Set API Key AI</button>
+    <button class="nav" id="out">Keluar</button>
   </aside>
   <main><div class="in">
-    <div class="warn">Menu Pengumuman dan Set API Key AI terhubung ke repo GitHub Anda (isi koneksi di bawah). Menu Ringkasan, Pengguna, dan Model masih data contoh karena belum ada database.</div>
-    <div class="box pad" style="margin-bottom:22px">
-<label class="fld"><span>Repo GitHub (pemilik/nama)</span><input id="gr" maxlength="100" placeholder="namaanda/sky-ai" autocomplete="off"></label>
-<label class="fld"><span>Branch</span><input id="gb" maxlength="60" value="main" autocomplete="off"></label>
-<label class="fld"><span>Token GitHub</span><input id="gt" type="password" maxlength="255" autocomplete="off"></label>
-<p class="sub" style="font-size:13px">Token fine-grained, hanya untuk repo ini, izin Contents: Read and write. Hanya disimpan di tab ini sampai ditutup.</p>
-<button class="b" id="gl">Hubungkan GitHub</button>
-</div>
-<section id="ov"><h1 class="serif">Ringkasan</h1><p class="sub">Jumlah pengguna berdasarkan paket.</p><div class="grid" id="stats"></div></section>
-    <section id="us" hidden><h1 class="serif">Pengguna</h1><p class="sub">Ubah paket atau blokir akun.</p><div class="box"><table><thead><tr><th>Email</th><th>Paket</th><th>Status</th><th></th></tr></thead><tbody id="ub"></tbody></table></div></section>
-    <section id="md" hidden><h1 class="serif">Model dan paket</h1><p class="sub">Nonaktifkan model sementara untuk semua pengguna.</p><div class="box" id="mb"></div></section>
-    <section id="an" hidden><h1 class="serif">Pengumuman</h1><p class="sub">Tampil sebagai panel kecil di atas akun pada sidebar website publik.</p>
-<p class="sub" id="ah">Hubungkan GitHub terlebih dahulu.</p>
-<div class="box pad" id="af" hidden>
-<label class="fld"><span>Judul</span><input id="ati" maxlength="80"></label>
-<label class="fld"><span>Isi pengumuman</span><textarea id="at" maxlength="300"></textarea></label>
-<label class="fld"><span>Foto</span><select id="ap"><option value="no">Tanpa foto</option><option value="keep">Pertahankan foto saat ini</option><option value="up">Upload foto</option><option value="ln">Link foto</option></select></label>
-<label class="fld" id="fu" hidden><span>File foto (PNG, JPG, atau WebP, maksimal 1 MB)</span><input id="af2" type="file" accept="image/png,image/jpeg,image/webp"></label>
-<label class="fld" id="fl" hidden><span>Link foto (harus diawali https://)</span><input id="al" type="url" maxlength="500" placeholder="https://..."></label>
-<label class="chk"><input id="aa" type="checkbox" checked> Tampilkan pengumuman</label>
-<button class="p" id="as">Simpan dan terbitkan</button>
-<p class="sub" id="ast" role="status" aria-live="polite" style="margin-top:10px;font-size:13px"></p>
-</div></section>
-<section id="ak" hidden><h1 class="serif">Set API Key AI</h1><p class="sub">Tambahkan API key Gemini sebanyak yang Anda perlukan. Jika satu key gagal atau kuotanya habis, Sky AI otomatis mencoba key berikutnya.</p>
-<p class="warn">Peringatan: key disimpan di keys.json pada repo dan dibaca langsung oleh browser pengunjung, sehingga siapa pun bisa melihatnya. Di Google AI Studio atau Cloud Console, batasi setiap key ke domain website Anda dan pasang batas kuota.</p>
-<p class="sub" id="kh">Hubungkan GitHub terlebih dahulu.</p>
-<div class="box pad" id="kf" hidden>
-<div id="kl"></div>
-<button class="b" id="ka" type="button">Tambah API key</button>
-<h2 class="serif" style="font-size:20px;margin:22px 0 10px">Nama model Gemini</h2>
-<label class="fld"><span>Sky Lite</span><input id="mlite" maxlength="60"></label>
-<label class="fld"><span>Sky Med</span><input id="mmed" maxlength="60"></label>
-<label class="fld"><span>Sky Pro</span><input id="mpro" maxlength="60"></label>
-<label class="fld"><span>Sky Ultra</span><input id="multra" maxlength="60"></label>
-<button class="p" id="ks">Simpan API key</button>
-<p class="sub" id="kst" role="status" aria-live="polite" style="margin-top:10px;font-size:13px"></p>
-</div></section>
+    <section id="ov"><h1 class="serif">Ringkasan</h1><p class="sub">Jumlah pengguna berdasarkan paket.</p><div class="grid" id="stats"></div></section>
+    <section id="us" hidden><h1 class="serif">Pengguna</h1><p class="sub">Ubah paket pengguna. Perubahan langsung berlaku.</p><div class="box"><table><thead><tr><th>Email</th><th>Nama</th><th>Paket</th></tr></thead><tbody id="ub"></tbody></table></div></section>
+    <section id="an" hidden><h1 class="serif">Pengumuman</h1><p class="sub">Tampil sebagai panel kecil di atas akun pada sidebar website.</p>
+    <div class="box pad">
+      <label class="fld"><span>Judul</span><input id="ati" maxlength="80"></label>
+      <label class="fld"><span>Isi pengumuman</span><textarea id="at" maxlength="300"></textarea></label>
+      <label class="fld"><span>Foto</span><select id="ap"><option value="no">Tanpa foto</option><option value="keep">Pertahankan foto saat ini</option><option value="up">Upload foto</option><option value="ln">Link foto</option></select></label>
+      <label class="fld" id="fu" hidden><span>File foto (PNG, JPG, atau WebP, maksimal 1 MB)</span><input id="af2" type="file" accept="image/png,image/jpeg,image/webp"></label>
+      <label class="fld" id="fl" hidden><span>Link foto (harus diawali https://)</span><input id="al" type="url" maxlength="500" placeholder="https://..."></label>
+      <label class="chk"><input id="aa" type="checkbox" checked> Tampilkan pengumuman</label>
+      <button class="p" id="as">Simpan dan terbitkan</button>
+      <p class="sub" id="ast" role="status" aria-live="polite" style="margin-top:10px;font-size:13px"></p>
+    </div></section>
+    <section id="ak" hidden><h1 class="serif">Set API Key AI</h1><p class="sub">Tambahkan API key Gemini sebanyak yang Anda perlukan. Jika satu key gagal atau kuotanya habis, Sky AI otomatis mencoba key berikutnya. Key disimpan di database dan hanya dibaca server, tidak pernah dikirim ke pengunjung.</p>
+    <div class="box" id="kl" style="margin-bottom:14px"></div>
+    <div class="box pad">
+      <div id="kn"></div>
+      <button class="b" id="ka" type="button">Tambah API key</button>
+      <h2 class="serif" style="font-size:20px;margin:22px 0 10px">Nama model Gemini</h2>
+      <label class="fld"><span>Sky Lite</span><input id="mlite" maxlength="60"></label>
+      <label class="fld"><span>Sky Med</span><input id="mmed" maxlength="60"></label>
+      <label class="fld"><span>Sky Pro</span><input id="mpro" maxlength="60"></label>
+      <label class="fld"><span>Sky Ultra</span><input id="multra" maxlength="60"></label>
+      <button class="p" id="ks">Simpan</button>
+      <p class="sub" id="kst" role="status" aria-live="polite" style="margin-top:10px;font-size:13px"></p>
+    </div></section>
   </div></main>
 </div>
 <div id="toast" role="status" hidden></div>
+<script src="config.js"></script>
+<script src="sb.js"></script>
 <script>
 (function(){
 "use strict";
 var $=function(i){return document.getElementById(i)};
 var el=function(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
-var PLANS=["Free","Pro","Ultra"];
-var users=[{e:"contoh1@mail.com",p:0,b:false},{e:"contoh2@mail.com",p:1,b:false},{e:"contoh3@mail.com",p:2,b:false},{e:"contoh4@mail.com",p:0,b:true}];
-var models=[{n:"Sky Lite",r:0,on:true},{n:"Sky Med",r:0,on:true},{n:"Sky Pro",r:1,on:true},{n:"Sky Ultra",r:2,on:true}];
-var tt;function toast(t){var e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(tt);tt=setTimeout(function(){e.hidden=true},3000)}
-function stats(){
-  var s=$("stats");s.textContent="";
-  [["Total pengguna",users.length]].concat(PLANS.map(function(p,i){return["Paket "+p,users.filter(function(u){return u.p===i}).length]})).forEach(function(x){
-    var d=el("div","stat");d.appendChild(el("b",null,x[1]));d.appendChild(el("span",null,x[0]));s.appendChild(d)});
-}
-function ulist(){
-  var b=$("ub");b.textContent="";
-  users.forEach(function(u){
-    var tr=el("tr");tr.appendChild(el("td",null,u.e));
-    var td=el("td"),sel=el("select");sel.setAttribute("aria-label","Paket "+u.e);
-    PLANS.forEach(function(p,i){var o=el("option",null,p);o.value=i;if(i===u.p)o.selected=true;sel.appendChild(o)});
-    sel.addEventListener("change",function(){u.p=parseInt(sel.value,10)||0;stats();toast("Paket diubah ke "+PLANS[u.p]+" (contoh).")});
-    td.appendChild(sel);tr.appendChild(td);
-    tr.appendChild(el("td",u.b?"bad":"ok",u.b?"Diblokir":"Aktif"));
-    var t3=el("td"),bt=el("button","b",u.b?"Buka blokir":"Blokir");
-    bt.addEventListener("click",function(){u.b=!u.b;ulist()});t3.appendChild(bt);tr.appendChild(t3);b.appendChild(tr);
-  });
-}
-function mlist(){
-  var b=$("mb");b.textContent="";
-  models.forEach(function(m){
-    var r=el("div","row"),l=el("div");l.appendChild(el("b",null,m.n));l.appendChild(el("small",null,m.r?"Berbayar, perlu paket "+PLANS[m.r]:"Gratis untuk semua"));
-    var bt=el("button","b",m.on?"Aktif":"Nonaktif");bt.setAttribute("aria-pressed",String(m.on));
-    bt.addEventListener("click",function(){m.on=!m.on;mlist()});
-    r.appendChild(l);r.appendChild(bt);b.appendChild(r);
-  });
-}
-document.querySelectorAll(".nav").forEach(function(n){n.addEventListener("click",function(){
-  document.querySelectorAll(".nav").forEach(function(x){x.classList.toggle("on",x===n)});
-  ["ov","us","md","an","ak"].forEach(function(t){$(t).hidden=t!==n.getAttribute("data-t")});
+var PL=["free","pro","ultra"],MD=["lite","med","pro","ultra"],DM={lite:"gemini-2.5-flash-lite",med:"gemini-2.5-flash",pro:"gemini-2.5-pro",ultra:"gemini-2.5-pro"};
+var ann={id:null,img:""};
+var tt;function toast(t){var e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(tt);tt=setTimeout(function(){e.hidden=true},3500)}
+function say(id,t,bad){var e=$(id);e.textContent=t;e.className="sub "+(bad?"bad":"")}
+function err(e){toast(e&&e.message?e.message:"Terjadi kesalahan.")}
+var EM=/^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/;
+
+/* MASUK */
+$("gf").addEventListener("submit",function(e){
+  e.preventDefault();var v=$("ge").value.trim();
+  if(!EM.test(v)||v.length>254){say("gmsg","Email tidak valid.",1);return}
+  say("gmsg","Mengirim...");
+  sb.magic(v,"",false).then(function(){say("gmsg","Tautan masuk dikirim. Buka email Anda dan klik tautannya.")}).catch(function(x){say("gmsg",x.message,1)});
+});
+function leave(){sb.out();location.reload()}
+$("gout").addEventListener("click",leave);$("out").addEventListener("click",leave);
+document.querySelectorAll(".nav[data-t]").forEach(function(n){n.addEventListener("click",function(){
+  document.querySelectorAll(".nav[data-t]").forEach(function(x){x.classList.toggle("on",x===n)});
+  ["ov","us","an","ak"].forEach(function(t){$(t).hidden=t!==n.getAttribute("data-t")});
 })});
-var gh={o:"",r:"",b:"main",t:"",sha:"",ksha:"",img:""};
-var DM={lite:"gemini-2.5-flash-lite",med:"gemini-2.5-flash",pro:"gemini-2.5-pro",ultra:"gemini-2.5-pro"};
-function b64(str){var by=new TextEncoder().encode(str),x="";by.forEach(function(c){x+=String.fromCharCode(c)});return btoa(x)}
-function ub64(str){var x=atob(str.replace(/\n/g,"")),by=new Uint8Array(x.length);for(var i=0;i<x.length;i++)by[i]=x.charCodeAt(i);return new TextDecoder().decode(by)}
-function api(path,method,body){
-  var u="https://api.github.com/repos/"+gh.o+"/"+gh.r+"/contents/"+path+(body?"":"?ref="+encodeURIComponent(gh.b));
-  return fetch(u,{method:method||"GET",headers:{"Accept":"application/vnd.github+json","Authorization":"Bearer "+gh.t,"X-GitHub-Api-Version":"2022-11-28"},body:body?JSON.stringify(body):undefined})
-  .then(function(r){return r.json().then(function(j){if(!r.ok){var e=new Error(j.message||String(r.status));e.status=r.status;throw e}return j})});
+
+/* PENGGUNA */
+function users(){
+  return sb.rest("profiles?select=id,email,name,plan&order=created_at.desc&limit=500").then(function(r){
+    var s=$("stats");s.textContent="";
+    [["Total pengguna",r.length]].concat(PL.map(function(p){return["Paket "+p,r.filter(function(u){return u.plan===p}).length]})).forEach(function(x){
+      var d=el("div","stat");d.appendChild(el("b",null,x[1]));d.appendChild(el("span",null,x[0]));s.appendChild(d)});
+    var b=$("ub");b.textContent="";
+    r.forEach(function(u){
+      var tr=el("tr");tr.appendChild(el("td",null,u.email||"-"));tr.appendChild(el("td",null,u.name||"-"));
+      var td=el("td"),sel=el("select");sel.setAttribute("aria-label","Paket "+(u.email||""));
+      PL.forEach(function(p){var o=el("option",null,p);o.value=p;if(p===u.plan)o.selected=true;sel.appendChild(o)});
+      sel.addEventListener("change",function(){
+        sb.rest("profiles?id=eq."+encodeURIComponent(u.id),{method:"PATCH",headers:{Prefer:"return=representation"},body:{plan:sel.value}})
+        .then(function(x){if(!x||!x.length)throw new Error("Perubahan ditolak.");u.plan=sel.value;toast("Paket diubah ke "+sel.value+".")}).catch(function(e){sel.value=u.plan;err(e)});
+      });
+      td.appendChild(sel);tr.appendChild(td);b.appendChild(tr);
+    });
+  });
 }
-function st(t,bad){var e=$("ast");e.textContent=t;e.className="sub "+(bad?"bad":"")}
+
+/* PENGUMUMAN */
 function modeUi(){var m=$("ap").value;$("fu").hidden=m!=="up";$("fl").hidden=m!=="ln"}
 $("ap").addEventListener("change",modeUi);
-function kst(t,bad){var e=$("kst");e.textContent=t;e.className="sub "+(bad?"bad":"")}
-function loadFile(path){return api(path).then(function(j){return{sha:j.sha,data:JSON.parse(ub64(j.content))}},function(e){if(e.status===404)return{sha:"",data:null};throw e})}
-function addRow(v){
-  var r=el("div","krow"),i=el("input");i.type="password";i.maxLength=200;i.autocomplete="off";i.value=v||"";i.setAttribute("aria-label","API key");
-  var s=el("button","b","Lihat");s.type="button";s.addEventListener("click",function(){var h=i.type==="password";i.type=h?"text":"password";s.textContent=h?"Sembunyikan":"Lihat"});
-  var d=el("button","b","Hapus");d.type="button";d.addEventListener("click",function(){r.remove()});
-  r.appendChild(i);r.appendChild(s);r.appendChild(d);$("kl").appendChild(r);
+function annLoad(){
+  return sb.rest("announcements?select=*&order=id.desc&limit=1").then(function(r){
+    var a=r[0];ann.id=a?a.id:null;ann.img=a?String(a.image||""):"";
+    $("ati").value=a?a.title:"";$("at").value=a?a.body:"";$("aa").checked=a?a.active:true;
+    $("ap").value=ann.img?"keep":"no";modeUi();
+  });
 }
-$("ka").addEventListener("click",function(){addRow("")});
-$("gl").addEventListener("click",function(){
-  var rp=$("gr").value.trim().split("/"),br=$("gb").value.trim(),tk=$("gt").value.trim();
-  if(rp.length!==2||!/^[\w.-]+$/.test(rp[0])||!/^[\w.-]+$/.test(rp[1])||!/^[\w.\/-]+$/.test(br)||!tk){toast("Isi repo (pemilik/nama), branch, dan token dengan benar.");return}
-  gh.o=rp[0];gh.r=rp[1];gh.b=br;gh.t=tk;
-  loadFile("announcement.json").then(function(a){
-    gh.sha=a.sha;var d=a.data||{};gh.img=String(d.image||"");
-    $("ati").value=String(d.title||"");$("at").value=String(d.text||"");$("aa").checked=a.data?d.active===true:true;
-    if(/^https:\/\//.test(gh.img)){$("ap").value="ln";$("al").value=gh.img}else $("ap").value=gh.img?"keep":"no";
-    return loadFile("keys.json");
-  }).then(function(k){
-    gh.ksha=k.sha;var d=k.data||{},ms=d.models||{};
-    $("kl").textContent="";(Array.isArray(d.keys)&&d.keys.length?d.keys:[""]).forEach(function(x){addRow(typeof x==="string"?x:"")});
-    ["lite","med","pro","ultra"].forEach(function(n){$("m"+n).value=typeof ms[n]==="string"&&ms[n]?ms[n]:DM[n]});
-    $("af").hidden=false;$("kf").hidden=false;$("ah").hidden=true;$("kh").hidden=true;
-    $("gt").value="";modeUi();st("");kst("");toast("Terhubung ke GitHub.");
-  }).catch(function(e){toast("Gagal memuat: "+e.message)});
-});
-$("ks").addEventListener("click",async function(){
-  var ks=[],seen={},mo={};
-  $("kl").querySelectorAll("input").forEach(function(i){var v=i.value.trim();if(v&&!seen[v]){seen[v]=1;ks.push(v)}});
-  for(var n=0;n<ks.length;n++){if(!/^[\w.-]{20,200}$/.test(ks[n])){kst("API key ke-"+(n+1)+" tidak valid.",1);return}}
-  for(var q of ["lite","med","pro","ultra"]){var mv=$("m"+q).value.trim();if(!/^[\w.-]{3,60}$/.test(mv)){kst("Nama model "+q+" tidak valid.",1);return}mo[q]=mv}
-  $("ks").disabled=true;kst("Menyimpan...");
-  try{
-    var res=await api("keys.json","PUT",{message:"Perbarui konfigurasi AI",content:b64(JSON.stringify({keys:ks,models:mo},null,2)+"\n"),branch:gh.b,sha:gh.ksha||undefined});
-    gh.ksha=res.content.sha;kst("Tersimpan ("+ks.length+" API key).");
-  }catch(e){kst("Gagal: "+e.message,1)}
-  $("ks").disabled=false;
-});
 $("as").addEventListener("click",async function(){
   var title=$("ati").value.trim(),mode=$("ap").value,img="";
-  if(!title){st("Judul wajib diisi.",1);return}
-  $("as").disabled=true;st("Menyimpan...");
+  if(!title){say("ast","Judul wajib diisi.",1);return}
+  $("as").disabled=true;say("ast","Menyimpan...");
   try{
-    if(mode==="keep")img=gh.img;
+    if(mode==="keep")img=ann.img;
     else if(mode==="ln"){img=$("al").value.trim();if(!/^https:\/\/[^\s"'<>]+$/.test(img))throw new Error("Link foto harus diawali https://")}
     else if(mode==="up"){
       var f=$("af2").files[0],ext={"image/png":"png","image/jpeg":"jpg","image/webp":"webp"}[f&&f.type];
       if(!f||!ext)throw new Error("Pilih file PNG, JPG, atau WebP.");
       if(f.size>1048576)throw new Error("Ukuran foto maksimal 1 MB.");
-      var data=await new Promise(function(ok,no){var r=new FileReader();r.onload=function(){ok(String(r.result).split(",")[1])};r.onerror=no;r.readAsDataURL(f)});
-      img="assets/announce-"+Date.now()+"."+ext;
-      await api(img,"PUT",{message:"Foto pengumuman",content:data,branch:gh.b});
+      var nm="a-"+Date.now()+"."+ext;await sb.upload("announce",nm,f);img=sb.pub("announce",nm);
     }
-    var out={id:Date.now(),active:$("aa").checked,title:title,text:$("at").value.trim(),image:img};
-    var res=await api("announcement.json","PUT",{message:"Perbarui pengumuman",content:b64(JSON.stringify(out,null,2)+"\n"),branch:gh.b,sha:gh.sha||undefined});
-    gh.sha=res.content.sha;gh.img=img;st("Tersimpan. Website publik diperbarui dalam beberapa menit.");
-  }catch(e){st("Gagal: "+e.message,1)}
+    var body={active:$("aa").checked,title:title,body:$("at").value.trim(),image:img,updated_at:new Date().toISOString()};
+    var res=ann.id?await sb.rest("announcements?id=eq."+ann.id,{method:"PATCH",headers:{Prefer:"return=representation"},body:body})
+                  :await sb.rest("announcements",{method:"POST",headers:{Prefer:"return=representation"},body:body});
+    if(!res||!res.length)throw new Error("Perubahan ditolak.");
+    ann.id=res[0].id;ann.img=img;say("ast","Tersimpan dan langsung tampil di website.");
+  }catch(e){say("ast","Gagal: "+e.message,1)}
   $("as").disabled=false;
 });
-stats();ulist();mlist();
+
+/* API KEY */
+function mask(k){return k.slice(0,6)+"..."+k.slice(-4)}
+function addRow(){
+  var r=el("div","krow"),i=el("input");i.type="password";i.maxLength=200;i.autocomplete="off";i.setAttribute("aria-label","API key baru");
+  var s=el("button","b","Lihat");s.type="button";s.addEventListener("click",function(){var h=i.type==="password";i.type=h?"text":"password";s.textContent=h?"Sembunyikan":"Lihat"});
+  var d=el("button","b","Hapus");d.type="button";d.addEventListener("click",function(){r.remove()});
+  r.appendChild(i);r.appendChild(s);r.appendChild(d);$("kn").appendChild(r);
+}
+$("ka").addEventListener("click",addRow);
+function keysLoad(){
+  return Promise.all([sb.rest("ai_keys?select=id,key&order=id"),sb.rest("settings?select=value&key=eq.models")]).then(function(x){
+    var l=$("kl");l.textContent="";
+    if(!x[0].length){var e=el("div","row");e.appendChild(el("span",null,"Belum ada API key."));l.appendChild(e)}
+    x[0].forEach(function(k){
+      var r=el("div","row");r.appendChild(el("span",null,mask(k.key)));
+      var d=el("button","b","Hapus");d.addEventListener("click",function(){
+        if(!confirm("Hapus API key ini?"))return;
+        sb.rest("ai_keys?id=eq."+k.id,{method:"DELETE"}).then(keysLoad).catch(err);
+      });r.appendChild(d);l.appendChild(r);
+    });
+    var v=(x[1][0]&&x[1][0].value)||{};
+    MD.forEach(function(n){$("m"+n).value=typeof v[n]==="string"&&v[n]?v[n]:DM[n]});
+    if(!$("kn").children.length)addRow();
+  });
+}
+$("ks").addEventListener("click",async function(){
+  var ks=[],seen={},mo={};
+  $("kn").querySelectorAll("input").forEach(function(i){var v=i.value.trim();if(v&&!seen[v]){seen[v]=1;ks.push(v)}});
+  for(var n=0;n<ks.length;n++){if(!/^[\w.-]{20,200}$/.test(ks[n])){say("kst","API key baru ke-"+(n+1)+" tidak valid.",1);return}}
+  for(var q=0;q<MD.length;q++){var mv=$("m"+MD[q]).value.trim();if(!/^[\w.-]{3,60}$/.test(mv)){say("kst","Nama model "+MD[q]+" tidak valid.",1);return}mo[MD[q]]=mv}
+  $("ks").disabled=true;say("kst","Menyimpan...");
+  try{
+    if(ks.length)await sb.rest("ai_keys?on_conflict=key",{method:"POST",headers:{Prefer:"resolution=ignore-duplicates,return=minimal"},body:ks.map(function(k){return{key:k}})});
+    await sb.rest("settings?on_conflict=key",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:{key:"models",value:mo}});
+    $("kn").textContent="";await keysLoad();say("kst","Tersimpan ("+ks.length+" API key baru).");
+  }catch(e){say("kst","Gagal: "+e.message,1)}
+  $("ks").disabled=false;
+});
+
+/* MULAI */
+sb.init().then(function(u){
+  if(!u)return;
+  return sb.rest("profiles?select=is_admin&id=eq."+encodeURIComponent(u.id)).then(function(r){
+    if(!r[0]||!r[0].is_admin){say("gmsg","Akun "+u.email+" bukan admin.",1);return}
+    $("gate").hidden=true;$("w").hidden=false;
+    return Promise.all([users(),annLoad(),keysLoad()]);
+  });
+}).catch(function(e){say("gmsg",e.message,1)});
 })();
 </script>
 </body>
