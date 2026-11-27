@@ -51,19 +51,14 @@ textarea{width:100%;min-height:120px;resize:vertical;padding:12px}
 </head>
 <body>
 <div class="gate" id="gate"><form class="gbox" id="gf" novalidate>
-  <h1 class="serif">Admin Sky AI</h1><p class="sub">Masuk dengan email admin. Tautan masuk akan dikirim ke email Anda.</p>
+  <h1 class="serif">Admin Sky AI</h1><p class="sub">Masuk dengan email dan password admin.</p>
   <label for="ge" class="sub" style="display:block">Email</label>
-  <input id="ge" type="email" maxlength="254" autocomplete="email">
-  <button class="p" type="submit">Kirim tautan masuk</button>
+  <input id="ge" type="email" maxlength="254" autocomplete="username">
+  <label for="gp" class="sub" style="display:block">Password</label>
+  <input id="gp" type="password" maxlength="200" autocomplete="current-password">
+  <button class="p" type="submit">Masuk</button>
   <p class="sub" id="gmsg" role="status" aria-live="polite" style="margin-top:10px;font-size:13px"></p>
   <button class="b" type="button" id="gout" style="width:100%">Keluar</button>
-</form>
-<form class="gbox" id="cf" novalidate hidden>
-  <h1 class="serif">Masukkan kode</h1><p class="sub">Kami mengirim kode ke email Anda. Masukkan kode itu, atau klik tautan di email.</p>
-  <label for="gc" class="sub" style="display:block">Kode dari email</label>
-  <input id="gc" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10">
-  <button class="p" type="submit">Verifikasi dan masuk</button>
-  <p class="sub" id="cmsg" role="status" aria-live="polite" style="margin-top:10px;font-size:13px"></p>
 </form></div>
 <div id="w" hidden>
   <aside>
@@ -121,16 +116,11 @@ var EM=/^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/;
 
 /* MASUK */
 $("gf").addEventListener("submit",function(e){
-  e.preventDefault();var v=$("ge").value.trim();
+  e.preventDefault();var v=$("ge").value.trim(),pw=$("gp").value;
   if(!EM.test(v)||v.length>254){say("gmsg","Email tidak valid.",1);return}
-  say("gmsg","Mengirim...");ae=v;
-  sb.magic(v,"",false).then(function(){$("gf").hidden=true;$("cf").hidden=false;$("gc").focus()}).catch(function(x){say("gmsg",x.message,1)});
-});
-$("cf").addEventListener("submit",function(e){
-  e.preventDefault();var c=$("gc").value.trim();
-  if(!/^\d{6,10}$/.test(c)){say("cmsg","Masukkan kode angka dari email.",1);return}
-  say("cmsg","Memverifikasi...");
-  sb.verify(ae,c).then(function(){location.reload()}).catch(function(x){say("cmsg",x.message,1)});
+  if(!pw){say("gmsg","Isi password.",1);return}
+  var bt=e.target.querySelector(".p");bt.disabled=true;say("gmsg","Memeriksa...");
+  sb.login(v,pw).then(function(){$("gp").value="";location.reload()}).catch(function(x){bt.disabled=false;say("gmsg",x.message==="Invalid login credentials"?"Email atau password salah.":x.message,1)});
 });
 function leave(){sb.out();location.reload()}
 $("gout").addEventListener("click",leave);$("out").addEventListener("click",leave);
