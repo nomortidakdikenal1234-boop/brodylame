@@ -277,7 +277,7 @@ function enter(email,nm,pl){
   state.user=email;state.plan=pl||0;state.model=1;
   $("who").textContent=nm;$("av").textContent=nm.charAt(0).toUpperCase();
   $("aem").textContent=email;$("greet").textContent="Halo, "+nm;
-  renderAcc();renderModel();loadAnn();location.hash="chat";route();
+  renderAcc();renderModel();loadAnn();loadConvs();location.hash="chat";route();
 }
 document.querySelectorAll(".oauth").forEach(function(b){
   b.addEventListener("click",function(){sb.oauth(b.getAttribute("data-p").toLowerCase()).catch(function(e){toast(e.message)})});
@@ -389,10 +389,36 @@ function renderHist(){
   var lim=(state.all||q)?items.length:5;
   items.slice(0,lim).forEach(function(i){
     var b=el("button","nav"+(i===state.cur?" on":""));b.textContent=state.convs[i].title;
-    b.addEventListener("click",function(){state.cur=i;renderChat();renderHist();$("side").classList.remove("open")});
+    b.addEventListener("click",function(){
+      var c=state.convs[i];state.cur=i;$("side").classList.remove("open");
+      renderChat();renderHist();
+      if(c.loaded)return;
+      sb.rest("messages?select=role,content&conversation_id=eq."+encodeURIComponent(c.id)+"&order=id.asc&limit=500").then(function(r){
+        c.msgs=(r||[]).map(function(m){return{r:m.role==="user"?"u":"a",t:m.content}});c.loaded=true;
+        if(state.convs[state.cur]===c)renderChat();
+      }).catch(function(){toast("Gagal memuat percakapan.")});
+    });
     h.appendChild(b);
   });
   var m=$("more");m.hidden=items.length<=5||!!q;m.textContent=state.all?"Lihat lebih sedikit":"Lihat semua";
+}
+
+/* RIWAYAT (tersimpan di Supabase) */
+function persist(c,role,text){
+  c.q=(c.q||Promise.resolve()).then(function(){
+    return c.id?null:sb.rest("conversations",{method:"POST",headers:{Prefer:"return=representation"},body:{title:c.title}}).then(function(r){c.id=r[0].id});
+  }).then(function(){
+    return sb.rest("messages",{method:"POST",headers:{Prefer:"return=minimal"},body:{conversation_id:c.id,role:role,content:String(text).slice(0,20000)}});
+  }).then(function(){
+    return sb.rest("conversations?id=eq."+c.id,{method:"PATCH",headers:{Prefer:"return=minimal"},body:{updated_at:new Date().toISOString()}});
+  }).catch(function(){toast("Riwayat gagal disimpan. Pastikan supabase/riwayat.sql sudah dijalankan.")});
+}
+function loadConvs(){
+  sb.rest("conversations?select=id,title&order=updated_at.desc&limit=100").then(function(r){
+    if(state.convs.length)return;
+    state.convs=(r||[]).reverse().map(function(x){return{id:x.id,title:x.title||"Percakapan",msgs:[],loaded:false}});
+    state.cur=-1;renderChat();renderHist();
+  }).catch(function(){});
 }
 
 /* AI (lewat Edge Function Supabase) */
@@ -427,8 +453,8 @@ function send(){
   var v=$("inp").value.trim();
   if(!v||state.busy)return;
   if(state.plan<MODELS[state.model].r){toast(MODELS[state.model].n+" khusus pelanggan "+PLANS[MODELS[state.model].r]+".");return}
-  if(state.cur<0){state.convs.push({title:v.slice(0,40),msgs:[]});state.cur=state.convs.length-1}
-  var c=state.convs[state.cur];c.msgs.push({r:"u",t:v});
+  if(state.cur<0){state.convs.push({title:v.slice(0,40),msgs:[],loaded:true,id:null});state.cur=state.convs.length-1}
+  var c=state.convs[state.cur];c.msgs.push({r:"u",t:v});persist(c,"user",v);
   state.busy=true;$("inp").value="";renderChat();renderHist();sync();
   var hist=c.msgs.filter(function(m){return !m.e}).slice(-20).map(function(m){return{role:m.r==="u"?"user":"model",text:m.t}});
   ask(hist).then(function(t){return{t:t}})
@@ -436,7 +462,7 @@ function send(){
     var m=e&&e.message,ok=e&&(e.status||/Project URL|Sky AI/.test(m));
     return{t:ok?m:"Sky AI belum bisa menjawab. Coba lagi nanti.",e:1};
   })
-  .then(function(res){c.msgs.push({r:"a",t:res.t,e:res.e});state.busy=false;if(state.convs[state.cur]===c)renderChat();sync()});
+  .then(function(res){c.msgs.push({r:"a",t:res.t,e:res.e});if(!res.e)persist(c,"model",res.t);state.busy=false;if(state.convs[state.cur]===c)renderChat();sync()});
 }
 $("inp").addEventListener("input",sync);
 $("inp").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();send()}});
