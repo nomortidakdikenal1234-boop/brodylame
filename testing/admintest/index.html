@@ -57,6 +57,13 @@ textarea{width:100%;min-height:120px;resize:vertical;padding:12px}
   <button class="p" type="submit">Kirim tautan masuk</button>
   <p class="sub" id="gmsg" role="status" aria-live="polite" style="margin-top:10px;font-size:13px"></p>
   <button class="b" type="button" id="gout" style="width:100%">Keluar</button>
+</form>
+<form class="gbox" id="cf" novalidate hidden>
+  <h1 class="serif">Masukkan kode</h1><p class="sub">Kami mengirim kode ke email Anda. Masukkan kode itu, atau klik tautan di email.</p>
+  <label for="gc" class="sub" style="display:block">Kode dari email</label>
+  <input id="gc" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10">
+  <button class="p" type="submit">Verifikasi dan masuk</button>
+  <p class="sub" id="cmsg" role="status" aria-live="polite" style="margin-top:10px;font-size:13px"></p>
 </form></div>
 <div id="w" hidden>
   <aside>
@@ -106,7 +113,7 @@ textarea{width:100%;min-height:120px;resize:vertical;padding:12px}
 var $=function(i){return document.getElementById(i)};
 var el=function(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
 var PL=["free","pro","ultra"],MD=["lite","med","pro","ultra"],DM={lite:"gemini-2.5-flash-lite",med:"gemini-2.5-flash",pro:"gemini-2.5-pro",ultra:"gemini-2.5-pro"};
-var ann={id:null,img:""};
+var ann={id:null,img:""},ae="";
 var tt;function toast(t){var e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(tt);tt=setTimeout(function(){e.hidden=true},3500)}
 function say(id,t,bad){var e=$(id);e.textContent=t;e.className="sub "+(bad?"bad":"")}
 function err(e){toast(e&&e.message?e.message:"Terjadi kesalahan.")}
@@ -116,8 +123,14 @@ var EM=/^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/;
 $("gf").addEventListener("submit",function(e){
   e.preventDefault();var v=$("ge").value.trim();
   if(!EM.test(v)||v.length>254){say("gmsg","Email tidak valid.",1);return}
-  say("gmsg","Mengirim...");
-  sb.magic(v,"",false).then(function(){say("gmsg","Tautan masuk dikirim. Buka email Anda dan klik tautannya.")}).catch(function(x){say("gmsg",x.message,1)});
+  say("gmsg","Mengirim...");ae=v;
+  sb.magic(v,"",false).then(function(){$("gf").hidden=true;$("cf").hidden=false;$("gc").focus()}).catch(function(x){say("gmsg",x.message,1)});
+});
+$("cf").addEventListener("submit",function(e){
+  e.preventDefault();var c=$("gc").value.trim();
+  if(!/^\d{6,10}$/.test(c)){say("cmsg","Masukkan kode angka dari email.",1);return}
+  say("cmsg","Memverifikasi...");
+  sb.verify(ae,c).then(function(){location.reload()}).catch(function(x){say("cmsg",x.message,1)});
 });
 function leave(){sb.out();location.reload()}
 $("gout").addEventListener("click",leave);$("out").addEventListener("click",leave);
