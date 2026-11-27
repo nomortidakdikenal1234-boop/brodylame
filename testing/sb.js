@@ -75,9 +75,13 @@ window.sb = {
     });
   },
   oauth: function (p) {
-    try { ready(); } catch (e) { return Promise.reject(e); }
-    location.href = C.url + "/auth/v1/authorize?provider=" + encodeURIComponent(p) + "&redirect_to=" + back() + "&apikey=" + encodeURIComponent(C.key);
-    return Promise.resolve();
+    return Promise.resolve().then(function () {
+      ready();
+      return fetch(C.url + "/auth/v1/settings", { headers: { apikey: C.key } }).then(parse).catch(function () { return null; });
+    }).then(function (st) {
+      if (st && st.external && st.external[p] === false) throw new Error("Login " + p + " belum diaktifkan di Supabase (Authentication > Providers).");
+      location.href = C.url + "/auth/v1/authorize?provider=" + encodeURIComponent(p) + "&redirect_to=" + back() + "&apikey=" + encodeURIComponent(C.key);
+    });
   },
   out: function () {
     var t = S && S.a; S = null; save();
