@@ -1,6 +1,7 @@
 (function () {
 "use strict";
 var C = window.SKY || {}, K = "sky.session", S = null;
+C.url = String(C.url || "").replace(/\/(rest|auth|functions|storage)\/v1.*$/, "").replace(/\/+$/, "");
 try { S = JSON.parse(localStorage.getItem(K)); } catch (e) {}
 function ready() { if (!C.url || /GANTI/.test(C.url) || !C.key) throw new Error("Isi Project URL Supabase di config.js."); }
 function save() { try { S ? localStorage.setItem(K, JSON.stringify(S)) : localStorage.removeItem(K); } catch (e) {} }
@@ -22,10 +23,34 @@ function token() {
 function authed(fn) { return Promise.resolve().then(function () { ready(); return token(); }).then(fn); }
 var back = function () { return encodeURIComponent(location.origin + location.pathname); };
 
+var BAD = "Kode atau tautan tidak valid atau sudah kedaluwarsa.";
+function who() {
+  return token().then(function (t) {
+    return t ? fetch(C.url + "/auth/v1/user", { headers: hdr(t) }).then(parse).catch(function () { return null; }) : null;
+  });
+}
+function tryVerify(body, types) {
+  var i = 0;
+  function next(e) {
+    if (i >= types.length) throw e;
+    var b = { type: types[i++] }; for (var k in body) b[k] = body[k];
+    return fetch(C.url + "/auth/v1/verify", { method: "POST", headers: hdr(), body: JSON.stringify(b) }).then(parse)
+      .then(function (d) { if (!d || !d.access_token) throw new Error(BAD); setS(d); }, next);
+  }
+  return next(new Error(BAD));
+}
+
 window.sb = {
   init: function () {
     return Promise.resolve().then(function () {
       ready();
+      var q = new URLSearchParams(location.search), th = q.get("token_hash");
+      if (th) {
+        var ty = q.get("type"); q.delete("token_hash"); q.delete("type");
+        var qs = q.toString();
+        history.replaceState(null, "", location.pathname + (qs ? "?" + qs : ""));
+        return tryVerify({ token_hash: th }, ty ? [ty, "email", "signup", "magiclink"] : ["email", "signup", "magiclink"]).then(who);
+      }
       var p = new URLSearchParams(location.hash.slice(1));
       if (p.get("access_token")) {
         setS({ access_token: p.get("access_token"), refresh_token: p.get("refresh_token"), expires_in: parseInt(p.get("expires_in"), 10) || 3600 });
@@ -34,9 +59,13 @@ window.sb = {
         history.replaceState(null, "", location.pathname + location.search);
         throw new Error(p.get("error_description"));
       }
-      return token();
-    }).then(function (t) {
-      return t ? fetch(C.url + "/auth/v1/user", { headers: hdr(t) }).then(parse).catch(function () { return null; }) : null;
+      return who();
+    });
+  },
+  verify: function (email, code) {
+    return Promise.resolve().then(function () {
+      ready();
+      return tryVerify({ email: email, token: code }, ["email", "signup", "magiclink"]);
     });
   },
   magic: function (email, name, create) {
@@ -47,7 +76,7 @@ window.sb = {
   },
   oauth: function (p) {
     try { ready(); } catch (e) { return Promise.reject(e); }
-    location.href = C.url + "/auth/v1/authorize?provider=" + encodeURIComponent(p) + "&redirect_to=" + back();
+    location.href = C.url + "/auth/v1/authorize?provider=" + encodeURIComponent(p) + "&redirect_to=" + back() + "&apikey=" + encodeURIComponent(C.key);
     return Promise.resolve();
   },
   out: function () {
