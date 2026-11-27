@@ -167,6 +167,13 @@ aside.open{transform:none}
         <button class="link" type="button" id="backEmail">Ubah email</button>
         <p class="msg" id="nameMsg" role="status" aria-live="polite"></p>
       </form>
+      <form id="codeForm" novalidate hidden>
+        <label for="code">Kode dari email</label>
+        <input class="field" id="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Kode angka">
+        <button class="primary" type="submit">Verifikasi dan masuk</button>
+        <button class="link" type="button" id="backEmail2">Ubah email</button>
+        <p class="msg" id="cmsg" role="status" aria-live="polite"></p>
+      </form>
       <p class="legal">Dengan melanjutkan, Anda menyetujui Ketentuan Layanan dan Kebijakan Privasi Sky AI.</p>
     </div>
   </div>
@@ -286,12 +293,19 @@ $("nameForm").addEventListener("submit",function(e){
   var n=$("nm").value.trim().replace(/\s+/g," "),m=$("nameMsg");
   if(!n){m.className="msg err";m.textContent="Isi nama Anda.";$("nm").focus();return}
   m.className="msg";m.textContent="Mengirim tautan masuk...";var bt=e.target.querySelector(".primary");bt.disabled=true;
-  sb.magic(pending,n,true).then(function(){m.textContent="Tautan masuk sudah dikirim ke "+pending+". Buka email Anda dan klik tautannya."}).catch(function(x){m.className="msg err";m.textContent=x.message}).then(function(){bt.disabled=false});
+  sb.magic(pending,n,true).then(function(){$("nameForm").hidden=true;$("codeForm").hidden=false;$("cmsg").className="msg";$("cmsg").textContent="Kami mengirim kode ke "+pending+". Masukkan kode itu, atau klik tautan di email.";$("code").focus()}).catch(function(x){m.className="msg err";m.textContent=x.message}).then(function(){bt.disabled=false});
 });
 $("backEmail").addEventListener("click",function(){$("nameForm").hidden=true;$("emailForm").hidden=false;$("email").focus()});
+$("codeForm").addEventListener("submit",function(e){
+  e.preventDefault();var c=$("code").value.trim(),m=$("cmsg");
+  if(!/^\d{6,10}$/.test(c)){m.className="msg err";m.textContent="Masukkan kode angka dari email.";return}
+  var bt=e.target.querySelector(".primary");bt.disabled=true;m.className="msg";m.textContent="Memverifikasi...";
+  sb.verify(pending,c).then(function(){location.reload()}).catch(function(x){m.className="msg err";m.textContent=x.message;bt.disabled=false});
+});
+$("backEmail2").addEventListener("click",function(){$("codeForm").hidden=true;$("emailForm").hidden=false;$("email").focus()});
 function logout(){
   sb.out();state.user=null;state.convs=[];state.cur=-1;state.all=false;state.q="";
-  $("q").value="";$("q").hidden=true;renderChat();renderHist();$("email").value="";$("nm").value="";pending="";$("emailForm").hidden=false;$("nameForm").hidden=true;
+  $("q").value="";$("q").hidden=true;renderChat();renderHist();$("email").value="";$("nm").value="";pending="";$("emailForm").hidden=false;$("nameForm").hidden=true;$("codeForm").hidden=true;$("code").value="";
   location.hash="login";route();
 }
 
