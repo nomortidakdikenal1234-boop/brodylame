@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src 'self' data: https:; base-uri 'none'; form-action 'none'; connect-src 'self' https://generativelanguage.googleapis.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: https: file:; base-uri 'none'; form-action 'none'; connect-src https://*.supabase.co">
 <meta name="referrer" content="no-referrer">
 <title>Sky AI</title>
 <style>
@@ -139,7 +139,7 @@ aside.open{transform:none}
 <!-- LOGIN -->
 <section id="login" hidden>
   <div class="art" aria-hidden="true">
-    <img class="bg" src="assets/login.gif" alt="" decoding="async">
+    <img class="bg" src="assets/login.gif" alt="" decoding="async" onerror="this.hidden=true">
     <div class="cap">
       <h2 class="serif">Berpikir lebih jauh, bersama Sky.</h2>
       <p>Empat model untuk setiap kebutuhan, dari jawaban cepat sampai penalaran mendalam.</p>
@@ -215,11 +215,12 @@ aside.open{transform:none}
 </section>
 <div id="toast" role="status" hidden></div>
 
+<script src="config.js"></script>
+<script src="sb.js"></script>
 <script>
 (function(){
 "use strict";
-var DEFMODEL={lite:"gemini-2.5-flash-lite",med:"gemini-2.5-flash",pro:"gemini-2.5-pro",ultra:"gemini-2.5-pro"};
-var cfg=null,pending="";
+var pending="";
 var MODELS=[
  {n:"Sky Lite",d:"Paling cepat, untuk tugas ringan dan harian",r:0},
  {n:"Sky Med",d:"Seimbang antara kecepatan dan kualitas",r:0},
@@ -249,28 +250,28 @@ function soon(n){toast((n||"Fitur ini")+" belum tersedia.")}
 /* PENGUMUMAN */
 function loadAnn(){
   var box=$("ann");box.hidden=true;
-  fetch("announcement.json",{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(a){
-    if(!a||a.active!==true||typeof a.title!=="string"||!a.title)return;
-    var gone="";try{gone=localStorage.getItem("skyAnnGone")||""}catch(e){}
-    if(gone===String(a.id))return;
-    $("annT").textContent=a.title.slice(0,80);$("annX").textContent=String(a.text||"").slice(0,300);
+  sb.rest("announcements?select=id,title,body,image,updated_at&active=eq.true&order=id.desc&limit=1").then(function(r){
+    var a=r&&r[0];if(!a||!a.title)return;
+    var key=a.id+"|"+a.updated_at,gone="";try{gone=localStorage.getItem("skyAnnGone")||""}catch(e){}
+    if(gone===key)return;
+    $("annT").textContent=String(a.title).slice(0,80);$("annX").textContent=String(a.body||"").slice(0,300);
     var im=$("annI"),src=String(a.image||"");im.hidden=true;
-    if(/^assets\/[\w.-]+$/.test(src)||/^https:\/\/[^\s"'<>]+$/.test(src)){im.onerror=function(){im.hidden=true};im.onload=function(){im.hidden=false};im.src=src}
-    $("annC").onclick=function(){try{localStorage.setItem("skyAnnGone",String(a.id))}catch(e){}box.hidden=true};
+    if(/^https:\/\/[^\s"'<>]+$/.test(src)){im.onerror=function(){im.hidden=true};im.onload=function(){im.hidden=false};im.src=src}
+    $("annC").onclick=function(){try{localStorage.setItem("skyAnnGone",key)}catch(e){}box.hidden=true};
     box.hidden=false;
   }).catch(function(){});
 }
 
 /* LOGIN */
 function renderAcc(){$("plan").textContent="\u00b7 "+PLANS[state.plan]}
-function enter(email,nm){
-  state.user=email;state.plan=0;state.model=1;
+function enter(email,nm,pl){
+  state.user=email;state.plan=pl||0;state.model=1;
   $("who").textContent=nm;$("av").textContent=nm.charAt(0).toUpperCase();
   $("aem").textContent=email;$("greet").textContent="Halo, "+nm;
   renderAcc();renderModel();loadAnn();location.hash="chat";route();
 }
 document.querySelectorAll(".oauth").forEach(function(b){
-  b.addEventListener("click",function(){toast("Login "+b.getAttribute("data-p")+" belum tersambung ke server. Hubungkan OAuth di backend terlebih dahulu.")});
+  b.addEventListener("click",function(){sb.oauth(b.getAttribute("data-p").toLowerCase()).catch(function(e){toast(e.message)})});
 });
 $("emailForm").addEventListener("submit",function(e){
   e.preventDefault();
@@ -284,11 +285,12 @@ $("nameForm").addEventListener("submit",function(e){
   e.preventDefault();
   var n=$("nm").value.trim().replace(/\s+/g," "),m=$("nameMsg");
   if(!n){m.className="msg err";m.textContent="Isi nama Anda.";$("nm").focus();return}
-  m.textContent="";enter(pending,n);
+  m.className="msg";m.textContent="Mengirim tautan masuk...";var bt=e.target.querySelector(".primary");bt.disabled=true;
+  sb.magic(pending,n,true).then(function(){m.textContent="Tautan masuk sudah dikirim ke "+pending+". Buka email Anda dan klik tautannya."}).catch(function(x){m.className="msg err";m.textContent=x.message}).then(function(){bt.disabled=false});
 });
 $("backEmail").addEventListener("click",function(){$("nameForm").hidden=true;$("emailForm").hidden=false;$("email").focus()});
 function logout(){
-  state.user=null;state.convs=[];state.cur=-1;state.all=false;state.q="";
+  sb.out();state.user=null;state.convs=[];state.cur=-1;state.all=false;state.q="";
   $("q").value="";$("q").hidden=true;renderChat();renderHist();$("email").value="";$("nm").value="";pending="";$("emailForm").hidden=false;$("nameForm").hidden=true;
   location.hash="login";route();
 }
@@ -377,34 +379,11 @@ function renderHist(){
   var m=$("more");m.hidden=items.length<=5||!!q;m.textContent=state.all?"Lihat lebih sedikit":"Lihat semua";
 }
 
-/* GEMINI */
-function getCfg(){
-  if(cfg)return Promise.resolve(cfg);
-  return fetch("keys.json",{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(j){
-    if(!j||!Array.isArray(j.keys))throw new Error("nokey");
-    cfg=j;return j;
-  });
-}
+/* AI (lewat Edge Function Supabase) */
 function ask(hist){
-  return getCfg().then(function(c){
-    var keys=c.keys.filter(function(k){return typeof k==="string"&&/^[\w.-]{20,200}$/.test(k)});
-    if(!keys.length)throw new Error("nokey");
-    var mk={"Sky Lite":"lite","Sky Med":"med","Sky Pro":"pro","Sky Ultra":"ultra"}[MODELS[state.model].n];
-    var gm=(c.models&&c.models[mk])||DEFMODEL[mk];
-    if(!/^[\w.-]{3,60}$/.test(gm))throw new Error("nomodel");
-    var body=JSON.stringify({contents:hist.map(function(m){return{role:m.role,parts:[{text:m.text}]}})});
-    var start=Math.floor(Math.random()*keys.length),i=0;
-    function next(){
-      if(i>=keys.length)throw new Error("allfail");
-      var k=keys[(start+i++)%keys.length];
-      return fetch("https://generativelanguage.googleapis.com/v1beta/models/"+gm+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":k},body:body})
-      .then(function(r){return r.json().then(function(j){
-        var cc=j.candidates&&j.candidates[0]&&j.candidates[0].content;
-        var t=cc&&cc.parts?cc.parts.map(function(p){return p.text||""}).join(""):"";
-        return r.ok&&t?t:next();
-      })},function(){return next()});
-    }
-    return next();
+  return sb.fn("chat",{model:MODELS[state.model].n,messages:hist}).then(function(d){
+    if(!d||!d.text)throw new Error("Sky AI belum bisa menjawab. Coba lagi nanti.");
+    return d.text;
   });
 }
 
@@ -438,8 +417,8 @@ function send(){
   var hist=c.msgs.filter(function(m){return !m.e}).slice(-20).map(function(m){return{role:m.r==="u"?"user":"model",text:m.t}});
   ask(hist).then(function(t){return{t:t}})
   .catch(function(e){
-    var M={nokey:"Belum ada API key. Tambahkan lewat panel admin.",nomodel:"Nama model AI tidak valid. Periksa di panel admin.",allfail:"Semua API key gagal atau kuotanya habis. Coba lagi nanti."};
-    cfg=null;return{t:M[e&&e.message]||"Sky AI belum bisa menjawab. Coba lagi nanti.",e:1};
+    var m=e&&e.message,ok=e&&(e.status||/Project URL|Sky AI/.test(m));
+    return{t:ok?m:"Sky AI belum bisa menjawab. Coba lagi nanti.",e:1};
   })
   .then(function(res){c.msgs.push({r:"a",t:res.t,e:res.e});state.busy=false;if(state.convs[state.cur]===c)renderChat();sync()});
 }
@@ -449,8 +428,13 @@ $("send").addEventListener("click",send);
 $("newChat").addEventListener("click",function(){state.cur=-1;renderChat();renderHist();$("inp").focus();$("side").classList.remove("open")});
 
 renderModel();renderAcc();renderHist();
-if(!location.hash)location.hash="login";
-route();
+sb.init().then(function(u){
+  if(!u){if(!location.hash)location.hash="login";route();return}
+  return sb.rest("profiles?select=name,plan&id=eq."+encodeURIComponent(u.id)).then(function(r){
+    var p=r&&r[0]||{};
+    enter(u.email||"",p.name||String(u.email||"").split("@")[0],Math.max(0,["free","pro","ultra"].indexOf(p.plan)));
+  });
+}).catch(function(e){if(!location.hash)location.hash="login";route();toast(e.message)});
 })();
 </script>
 </body>
