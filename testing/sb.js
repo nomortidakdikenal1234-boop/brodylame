@@ -62,6 +62,13 @@ window.sb = {
       return who();
     });
   },
+  login: function (email, password) {
+    return Promise.resolve().then(function () {
+      ready();
+      return fetch(C.url + "/auth/v1/token?grant_type=password", { method: "POST", headers: hdr(), body: JSON.stringify({ email: email, password: password }) })
+        .then(parse).then(function (d) { if (!d || !d.access_token) throw new Error("Email atau password salah."); setS(d); });
+    });
+  },
   verify: function (email, code) {
     return Promise.resolve().then(function () {
       ready();
