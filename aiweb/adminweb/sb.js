@@ -9,7 +9,7 @@ function hdr(t, x) { var h = { apikey: C.key, "Content-Type": "application/json"
 function parse(r) {
   return r.text().then(function (t) {
     var d = null; try { d = t ? JSON.parse(t) : null; } catch (e) {}
-    if (!r.ok) { var e = new Error((d && (d.error || d.msg || d.message || d.error_description)) || "Kesalahan " + r.status); e.status = r.status; throw e; }
+    if (!r.ok) { var m = (d && (d.error || d.msg || d.message || d.error_description)) || "Kesalahan " + r.status; if (d && d.detail) m += " (" + d.detail + ")"; var e = new Error(m); e.status = r.status; throw e; }
     return d;
   });
 }
@@ -23,6 +23,12 @@ function token() {
 function authed(fn) { return Promise.resolve().then(function () { ready(); return token(); }).then(fn); }
 var back = function () { return encodeURIComponent(location.origin + location.pathname); };
 
+function mailErr(e) {
+  var m = String(e && e.message || "");
+  if (/rate limit|after \d+ seconds|too many/i.test(m)) e.message = "Terlalu sering meminta kode. Tunggu sekitar 60 detik lalu coba lagi.";
+  else if (/error sending|smtp/i.test(m)) e.message = "Email gagal dikirim. Periksa pengaturan SMTP dan template email di Supabase.";
+  throw e;
+}
 var BAD = "Kode atau tautan tidak valid atau sudah kedaluwarsa.";
 function who() {
   return token().then(function (t) {
@@ -78,7 +84,7 @@ window.sb = {
   magic: function (email, name, create) {
     return Promise.resolve().then(function () {
       ready();
-      return fetch(C.url + "/auth/v1/otp?redirect_to=" + back(), { method: "POST", headers: hdr(), body: JSON.stringify({ email: email, create_user: create !== false, data: { name: name || "" } }) }).then(parse);
+      return fetch(C.url + "/auth/v1/otp?redirect_to=" + back(), { method: "POST", headers: hdr(), body: JSON.stringify({ email: email, create_user: create !== false, data: { name: name || "" } }) }).then(parse).catch(mailErr);
     });
   },
   oauth: function (p) {
