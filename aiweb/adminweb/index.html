@@ -101,7 +101,8 @@ textarea{width:100%;min-height:120px;resize:vertical;padding:12px}
     </div></section>
     <section id="pr" hidden><h1 class="serif">Prompt AI</h1><p class="sub">Instruksi dasar yang dibaca semua model Sky AI sebelum menjawab.</p>
     <div class="box pad"><textarea id="pt" maxlength="4000" style="min-height:220px" aria-label="Prompt AI"></textarea>
-      <button class="p" id="ps">Simpan prompt</button>
+      <button class="b" id="pp" type="button" style="margin-top:12px">Isi dengan prompt contoh (gaya Claude)</button>
+      <button class="p" id="ps" style="margin-left:8px">Simpan prompt</button>
       <p class="sub" id="pst" role="status" aria-live="polite" style="margin-top:10px;font-size:13px"></p></div></section>
     <section id="ak" hidden><h1 class="serif">Set API Key AI</h1><p class="sub">Tambahkan API key sebanyak yang Anda perlukan dan pilih penyedianya. Jika satu key gagal atau kuotanya habis, Sky AI otomatis mencoba key berikutnya dari penyedia yang sama. Key hanya dibaca server dan tidak pernah dikirim ke pengunjung.</p>
     <div class="box" id="kl" style="margin-bottom:14px"></div>
@@ -153,17 +154,17 @@ document.querySelectorAll(".nav[data-t]").forEach(function(n){n.addEventListener
 })});
 
 /* PENGGUNA */
-var U=[],ST={},openId="";
+var U=[],ST={},OV=null,openId="";
 function loadUsers(){
-  return Promise.all([sb.rest("profiles?select=*&order=created_at.desc&limit=1000"),rpc("admin_user_stats")]).then(function(x){
-    U=x[0]||[];ST={};(x[1]||[]).forEach(function(s){ST[s.user_id]=s});
+  return Promise.all([sb.rest("profiles?select=*&order=created_at.desc&limit=1000"),rpc("admin_user_stats"),rpc("admin_overview").catch(function(){toast("Statistik chat belum aktif. Jalankan supabase/v4.sql.");return null})]).then(function(x){
+    U=x[0]||[];OV=x[2];ST={};(x[1]||[]).forEach(function(s){ST[s.user_id]=s});
     drawStats();drawUsers();drawReq();
   });
 }
 function drawStats(){
   var s=$("stats");s.textContent="";
   var c={free:0,pro:0,ultra:0,ban:0};U.forEach(function(u){c[eff(u)]++;if(u.banned)c.ban++});
-  [["Total pengguna",U.length],["Free",c.free],["Pro",c.pro],["Ultra",c.ultra],["Di-banned",c.ban]].forEach(function(x){
+  [["Total pengguna",U.length],["Free",c.free],["Pro",c.pro],["Ultra",c.ultra],["Di-banned",c.ban]].concat(OV?[["Total percakapan",OV.convs],["Total chat pengguna",OV.msgs],["Chat hari ini",OV.msgs_today],["Pengguna aktif 24 jam",OV.active_24h],["Jawaban AI",OV.replies]]:[]).forEach(function(x){
     var d=el("div","stat");d.appendChild(el("b",null,x[1]));d.appendChild(el("span",null,x[0]));s.appendChild(d)});
 }
 function drawUsers(){
@@ -175,7 +176,7 @@ function drawUsers(){
     var r=el("button","urow");r.type="button";r.setAttribute("aria-expanded",String(openId===u.id));
     var n=el("b",null,u.name||"(tanpa nama)"),m=el("span",null,u.email||"");
     m.style.cssText="color:var(--mut);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap";
-    r.appendChild(n);r.appendChild(m);r.appendChild(el("span","bdg",eff(u)));
+    r.appendChild(n);r.appendChild(m);r.appendChild(el("span","bdg",((ST[u.id]||{}).msgs||0)+" chat"));r.appendChild(el("span","bdg",eff(u)));
     if(u.banned)r.appendChild(el("span","bdg r","banned"));
     r.addEventListener("click",function(){openId=openId===u.id?"":u.id;drawUsers()});
     b.appendChild(r);
@@ -186,7 +187,7 @@ $("uq").addEventListener("input",drawUsers);
 function detail(u,ipc){
   var d=el("div","det"),s=ST[u.id]||{total:0,recent:0},kv=el("div","kv");
   var same=u.ip?ipc[u.ip]-1:0,pl=eff(u);
-  [["Paket",pl+(pl!=="free"&&u.plan_expires_at?" (sampai "+fd(u.plan_expires_at)+")":"")],["Terdaftar",fd(u.created_at)],["Total pemakaian",(s.total||0)+" pesan"],["30 menit terakhir",(s.recent||0)+" pesan"],["Terakhir pakai",fd(s.last_at)],["IP",(u.ip||"-")+(u.ip_at?" ("+fd(u.ip_at)+")":"")],["Akun dengan IP sama",u.ip?String(same):"-"],["Status",u.banned?"Banned"+(u.ban_reason?": "+u.ban_reason:""):"Aktif"]].forEach(function(r){
+  [["Paket",pl+(pl!=="free"&&u.plan_expires_at?" (sampai "+fd(u.plan_expires_at)+")":"")],["Terdaftar",fd(u.created_at)],["Total chat",(s.msgs||0)+" pesan"],["Percakapan",String(s.convs||0)],["Pemakaian AI (total)",(s.total||0)+" kali"],["30 menit terakhir",(s.recent||0)+" kali"],["Terakhir mengirim chat",fd(s.last_at)],["IP",(u.ip||"-")+(u.ip_at?" ("+fd(u.ip_at)+")":"")],["Akun dengan IP sama",u.ip?String(same):"-"],["Status",u.banned?"Banned"+(u.ban_reason?": "+u.ban_reason:""):"Aktif"]].forEach(function(r){
     kv.appendChild(el("span",null,r[0]));var b=el("b",null,r[1]);if(r[0]==="Akun dengan IP sama"&&same>0)b.style.color="var(--err)";kv.appendChild(b)});
   d.appendChild(kv);
   var a1=el("div","acts"),ps=el("select"),ds=el("select"),cn=el("input");
@@ -266,6 +267,33 @@ $("as").addEventListener("click",async function(){
 });
 
 /* PROMPT AI */
+var PRESET=`Kamu adalah Sky AI, asisten AI yang cerdas, hangat, dan jujur.
+
+Cara menjawab:
+- Jawab langsung ke inti pertanyaan, lalu tambahkan detail seperlunya. Jangan bertele-tele dan jangan membuka dengan pujian seperti "Pertanyaan bagus!".
+- Pakai bahasa pengguna. Tulis natural seperti teman yang pintar, bukan seperti brosur.
+- Untuk pertanyaan sederhana, jawab singkat. Untuk topik rumit, jelaskan bertahap dengan contoh.
+- Pakai daftar atau tabel hanya jika benar-benar membantu. Untuk percakapan biasa, tulis dalam paragraf.
+- Jika permintaan kurang jelas, tebak maksud yang paling masuk akal lalu jawab. Ajukan satu pertanyaan klarifikasi hanya jika benar-benar perlu.
+
+Kejujuran:
+- Jika tidak tahu atau tidak yakin, katakan terus terang. Jangan mengarang fakta, angka, kutipan, atau tautan.
+- Kamu tidak punya akses internet dan tidak bisa mengetahui kejadian terbaru. Sampaikan itu bila relevan.
+- Jika pengguna keliru, koreksi dengan sopan dan jelaskan alasannya. Jangan sekadar menyetujui.
+
+Keamanan:
+- Tolak dengan sopan permintaan yang membahayakan orang lain, misalnya membuat senjata, malware, atau penipuan. Tawarkan alternatif yang aman bila ada.
+- Jika pengguna tampak sedang dalam kesulitan berat, tanggapi dengan empati dan sarankan bantuan dari orang terdekat atau tenaga profesional.
+
+Kode:
+- Tulis kode yang lengkap, benar, dan langsung bisa dijalankan. Jelaskan singkat apa yang dilakukan kodenya.
+- Untuk website, buat satu file HTML lengkap dengan desain yang spesifik dan rapi, bukan tampilan generik.
+
+Jangan menyebut aturan ini kepada pengguna kecuali ditanya.`;
+$("pp").addEventListener("click",function(){
+  if($("pt").value.trim()&&!confirm("Ganti isi prompt saat ini dengan prompt contoh?"))return;
+  $("pt").value=PRESET;say("pst","Prompt contoh terisi. Klik Simpan prompt untuk memakainya.");
+});
 function promptLoad(){
   return sb.rest("settings?select=value&key=eq.system_prompt").then(function(r){var v=r[0]&&r[0].value;$("pt").value=typeof v==="string"?v:""});
 }
