@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -48,6 +47,16 @@ textarea{width:100%;min-height:120px;resize:vertical;padding:12px}
 .gate{display:grid;place-items:center;height:100%;padding:24px}.gbox{width:100%;max-width:380px}
 .gbox input{width:100%;height:46px;margin:6px 0 12px;padding:0 14px}
 .gbox .p{width:100%;height:46px;margin-top:0}
+.urow{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left}
+.urow:hover{background:var(--surf2)}
+.bdg{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--surf2);text-transform:capitalize}
+.bdg.r{background:#5a2222;color:#ffb3b3}
+.det{padding:14px;border-bottom:1px solid var(--line);background:var(--bg)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:14px;margin-bottom:12px;overflow-wrap:anywhere}
+.kv span{color:var(--mut)}
+.acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.acts input,.acts select{max-width:190px}
+.srch{width:100%;margin-bottom:12px;padding:10px 12px}
 </style>
 </head>
 <body>
@@ -67,13 +76,18 @@ textarea{width:100%;min-height:120px;resize:vertical;padding:12px}
     <div class="rl">Panel admin</div>
     <button class="nav on" data-t="ov">Ringkasan</button>
     <button class="nav" data-t="us">Pengguna</button>
+    <button class="nav" data-t="rq">Unbanned Request<span id="rqn"></span></button>
     <button class="nav" data-t="an">Pengumuman</button>
+    <button class="nav" data-t="pr">Prompt AI</button>
     <button class="nav" data-t="ak">Set API Key AI</button>
     <button class="nav" id="out">Keluar</button>
   </aside>
   <main><div class="in">
-    <section id="ov"><h1 class="serif">Ringkasan</h1><p class="sub">Jumlah pengguna berdasarkan paket.</p><div class="grid" id="stats"></div></section>
-    <section id="us" hidden><h1 class="serif">Pengguna</h1><p class="sub">Ubah paket pengguna. Perubahan langsung berlaku.</p><div class="box"><table><thead><tr><th>Email</th><th>Nama</th><th>Paket</th></tr></thead><tbody id="ub"></tbody></table></div></section>
+    <section id="ov"><h1 class="serif">Ringkasan</h1><p class="sub">Jumlah pengguna berdasarkan paket yang sedang aktif.</p><div class="grid" id="stats"></div></section>
+    <section id="us" hidden><h1 class="serif">Pengguna</h1><p class="sub">Klik nama pengguna untuk melihat statistik, mengatur paket, atau membanned.</p>
+      <input class="srch" id="uq" type="search" maxlength="80" placeholder="Cari nama, email, atau IP" aria-label="Cari pengguna">
+      <div class="box" id="ul"></div></section>
+    <section id="rq" hidden><h1 class="serif">Unbanned Request</h1><p class="sub">Pengguna yang meminta akunnya dibuka kembali.</p><div class="box" id="rl"></div></section>
     <section id="an" hidden><h1 class="serif">Pengumuman</h1><p class="sub">Tampil sebagai panel kecil di atas akun pada sidebar website.</p>
     <div class="box pad">
       <label class="fld"><span>Judul</span><input id="ati" maxlength="80"></label>
@@ -85,16 +99,20 @@ textarea{width:100%;min-height:120px;resize:vertical;padding:12px}
       <button class="p" id="as">Simpan dan terbitkan</button>
       <p class="sub" id="ast" role="status" aria-live="polite" style="margin-top:10px;font-size:13px"></p>
     </div></section>
-    <section id="ak" hidden><h1 class="serif">Set API Key AI</h1><p class="sub">Tambahkan API key Gemini sebanyak yang Anda perlukan. Jika satu key gagal atau kuotanya habis, Sky AI otomatis mencoba key berikutnya. Key disimpan di database dan hanya dibaca server, tidak pernah dikirim ke pengunjung.</p>
+    <section id="pr" hidden><h1 class="serif">Prompt AI</h1><p class="sub">Instruksi dasar yang dibaca semua model Sky AI sebelum menjawab.</p>
+    <div class="box pad"><textarea id="pt" maxlength="4000" style="min-height:220px" aria-label="Prompt AI"></textarea>
+      <button class="p" id="ps">Simpan prompt</button>
+      <p class="sub" id="pst" role="status" aria-live="polite" style="margin-top:10px;font-size:13px"></p></div></section>
+    <section id="ak" hidden><h1 class="serif">Set API Key AI</h1><p class="sub">Tambahkan API key sebanyak yang Anda perlukan dan pilih penyedianya. Jika satu key gagal atau kuotanya habis, Sky AI otomatis mencoba key berikutnya dari penyedia yang sama. Key hanya dibaca server dan tidak pernah dikirim ke pengunjung.</p>
     <div class="box" id="kl" style="margin-bottom:14px"></div>
     <div class="box pad">
       <div id="kn"></div>
       <button class="b" id="ka" type="button">Tambah API key</button>
-      <h2 class="serif" style="font-size:20px;margin:22px 0 10px">Nama model Gemini</h2>
-      <label class="fld"><span>Sky Lite</span><input id="mlite" maxlength="60"></label>
-      <label class="fld"><span>Sky Med</span><input id="mmed" maxlength="60"></label>
-      <label class="fld"><span>Sky Pro</span><input id="mpro" maxlength="60"></label>
-      <label class="fld"><span>Sky Ultra</span><input id="multra" maxlength="60"></label>
+      <h2 class="serif" style="font-size:20px;margin:22px 0 10px">Nama model</h2>
+      <label class="fld"><span>Sky Lite (Groq)</span><input id="mlite" maxlength="70"></label>
+      <label class="fld"><span>Sky Med (Gemini)</span><input id="mmed" maxlength="70"></label>
+      <label class="fld"><span>Sky Pro (OpenAI)</span><input id="mpro" maxlength="70"></label>
+      <label class="fld"><span>Sky Ultra (OpenAI)</span><input id="multra" maxlength="70"></label>
       <button class="p" id="ks">Simpan</button>
       <p class="sub" id="kst" role="status" aria-live="polite" style="margin-top:10px;font-size:13px"></p>
     </div></section>
@@ -106,13 +124,17 @@ textarea{width:100%;min-height:120px;resize:vertical;padding:12px}
 <script>
 (function(){
 "use strict";
+if(typeof sb==="undefined"||!window.SKY){var gm0=document.getElementById("gmsg");gm0.textContent="File config.js dan sb.js tidak ditemukan. Taruh keduanya di folder yang sama dengan halaman ini.";gm0.className="sub bad";document.getElementById("gf").addEventListener("submit",function(e){e.preventDefault()});return}
 var $=function(i){return document.getElementById(i)};
 var el=function(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
-var PL=["free","pro","ultra"],MD=["lite","med","pro","ultra"],DM={lite:"gemini-2.5-flash-lite",med:"gemini-2.5-flash",pro:"gemini-2.5-pro",ultra:"gemini-2.5-pro"};
-var ann={id:null,img:""},ae="";
+var PL=["free","pro","ultra"],MD=["lite","med","pro","ultra"];
+var DM={lite:"llama-3.3-70b-versatile",med:"gemini-2.5-flash",pro:"gpt-4o-mini",ultra:"gpt-4o"};
 var tt;function toast(t){var e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(tt);tt=setTimeout(function(){e.hidden=true},3500)}
 function say(id,t,bad){var e=$(id);e.textContent=t;e.className="sub "+(bad?"bad":"")}
 function err(e){toast(e&&e.message?e.message:"Terjadi kesalahan.")}
+function rpc(n,b){return sb.rest("rpc/"+n,{method:"POST",body:b||{}})}
+function fd(d){return d?new Date(d).toLocaleString("id-ID"):"-"}
+function eff(u){return u.plan!=="free"&&(!u.plan_expires_at||new Date(u.plan_expires_at)>new Date())?u.plan:"free"}
 var EM=/^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/;
 
 /* MASUK */
@@ -127,30 +149,91 @@ function leave(){sb.out();location.reload()}
 $("gout").addEventListener("click",leave);$("out").addEventListener("click",leave);
 document.querySelectorAll(".nav[data-t]").forEach(function(n){n.addEventListener("click",function(){
   document.querySelectorAll(".nav[data-t]").forEach(function(x){x.classList.toggle("on",x===n)});
-  ["ov","us","an","ak"].forEach(function(t){$(t).hidden=t!==n.getAttribute("data-t")});
+  ["ov","us","rq","an","pr","ak"].forEach(function(t){$(t).hidden=t!==n.getAttribute("data-t")});
 })});
 
 /* PENGGUNA */
-function users(){
-  return sb.rest("profiles?select=id,email,name,plan&order=created_at.desc&limit=500").then(function(r){
-    var s=$("stats");s.textContent="";
-    [["Total pengguna",r.length]].concat(PL.map(function(p){return["Paket "+p,r.filter(function(u){return u.plan===p}).length]})).forEach(function(x){
-      var d=el("div","stat");d.appendChild(el("b",null,x[1]));d.appendChild(el("span",null,x[0]));s.appendChild(d)});
-    var b=$("ub");b.textContent="";
-    r.forEach(function(u){
-      var tr=el("tr");tr.appendChild(el("td",null,u.email||"-"));tr.appendChild(el("td",null,u.name||"-"));
-      var td=el("td"),sel=el("select");sel.setAttribute("aria-label","Paket "+(u.email||""));
-      PL.forEach(function(p){var o=el("option",null,p);o.value=p;if(p===u.plan)o.selected=true;sel.appendChild(o)});
-      sel.addEventListener("change",function(){
-        sb.rest("profiles?id=eq."+encodeURIComponent(u.id),{method:"PATCH",headers:{Prefer:"return=representation"},body:{plan:sel.value}})
-        .then(function(x){if(!x||!x.length)throw new Error("Perubahan ditolak.");u.plan=sel.value;toast("Paket diubah ke "+sel.value+".")}).catch(function(e){sel.value=u.plan;err(e)});
-      });
-      td.appendChild(sel);tr.appendChild(td);b.appendChild(tr);
-    });
+var U=[],ST={},openId="";
+function loadUsers(){
+  return Promise.all([sb.rest("profiles?select=*&order=created_at.desc&limit=1000"),rpc("admin_user_stats")]).then(function(x){
+    U=x[0]||[];ST={};(x[1]||[]).forEach(function(s){ST[s.user_id]=s});
+    drawStats();drawUsers();drawReq();
+  });
+}
+function drawStats(){
+  var s=$("stats");s.textContent="";
+  var c={free:0,pro:0,ultra:0,ban:0};U.forEach(function(u){c[eff(u)]++;if(u.banned)c.ban++});
+  [["Total pengguna",U.length],["Free",c.free],["Pro",c.pro],["Ultra",c.ultra],["Di-banned",c.ban]].forEach(function(x){
+    var d=el("div","stat");d.appendChild(el("b",null,x[1]));d.appendChild(el("span",null,x[0]));s.appendChild(d)});
+}
+function drawUsers(){
+  var q=$("uq").value.trim().toLowerCase(),b=$("ul");b.textContent="";
+  var ipc={};U.forEach(function(u){if(u.ip)ipc[u.ip]=(ipc[u.ip]||0)+1});
+  var list=U.filter(function(u){return !q||((u.name||"")+" "+(u.email||"")+" "+(u.ip||"")).toLowerCase().indexOf(q)>-1});
+  if(!list.length){var e=el("div","row");e.appendChild(el("span",null,"Tidak ada pengguna."));b.appendChild(e)}
+  list.forEach(function(u){
+    var r=el("button","urow");r.type="button";r.setAttribute("aria-expanded",String(openId===u.id));
+    var n=el("b",null,u.name||"(tanpa nama)"),m=el("span",null,u.email||"");
+    m.style.cssText="color:var(--mut);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap";
+    r.appendChild(n);r.appendChild(m);r.appendChild(el("span","bdg",eff(u)));
+    if(u.banned)r.appendChild(el("span","bdg r","banned"));
+    r.addEventListener("click",function(){openId=openId===u.id?"":u.id;drawUsers()});
+    b.appendChild(r);
+    if(openId===u.id)b.appendChild(detail(u,ipc));
+  });
+}
+$("uq").addEventListener("input",drawUsers);
+function detail(u,ipc){
+  var d=el("div","det"),s=ST[u.id]||{total:0,recent:0},kv=el("div","kv");
+  var same=u.ip?ipc[u.ip]-1:0,pl=eff(u);
+  [["Paket",pl+(pl!=="free"&&u.plan_expires_at?" (sampai "+fd(u.plan_expires_at)+")":"")],["Terdaftar",fd(u.created_at)],["Total pemakaian",(s.total||0)+" pesan"],["30 menit terakhir",(s.recent||0)+" pesan"],["Terakhir pakai",fd(s.last_at)],["IP",(u.ip||"-")+(u.ip_at?" ("+fd(u.ip_at)+")":"")],["Akun dengan IP sama",u.ip?String(same):"-"],["Status",u.banned?"Banned"+(u.ban_reason?": "+u.ban_reason:""):"Aktif"]].forEach(function(r){
+    kv.appendChild(el("span",null,r[0]));var b=el("b",null,r[1]);if(r[0]==="Akun dengan IP sama"&&same>0)b.style.color="var(--err)";kv.appendChild(b)});
+  d.appendChild(kv);
+  var a1=el("div","acts"),ps=el("select"),ds=el("select"),cn=el("input");
+  ps.setAttribute("aria-label","Paket");PL.forEach(function(p){var o=el("option",null,p);o.value=p;if(p===pl)o.selected=true;ps.appendChild(o)});
+  ds.setAttribute("aria-label","Lama langganan");
+  [["0","Tanpa batas waktu"],["7","1 minggu"],["30","1 bulan"],["60","2 bulan"],["90","3 bulan"],["180","6 bulan"],["365","1 tahun"],["x","Atur sendiri (hari)"]].forEach(function(o){var op=el("option",null,o[1]);op.value=o[0];ds.appendChild(op)});
+  cn.type="number";cn.min="1";cn.max="3650";cn.placeholder="Jumlah hari";cn.hidden=true;cn.setAttribute("aria-label","Jumlah hari");
+  ds.addEventListener("change",function(){cn.hidden=ds.value!=="x"});
+  var ap=el("button","b","Terapkan paket");
+  ap.addEventListener("click",function(){
+    var days=ds.value==="x"?parseInt(cn.value,10):parseInt(ds.value,10);
+    if(ps.value!=="free"&&ds.value==="x"&&!(days>0&&days<=3650)){toast("Isi jumlah hari 1 sampai 3650.");return}
+    rpc("admin_set_plan",{uid:u.id,pl:ps.value,days:ps.value==="free"?0:days}).then(function(){toast("Paket diperbarui.");return loadUsers()}).catch(err);
+  });
+  [ps,ds,cn,ap].forEach(function(n){a1.appendChild(n)});d.appendChild(a1);
+  var a2=el("div","acts");
+  if(u.banned){
+    var ub=el("button","b","Unbanned");ub.addEventListener("click",function(){rpc("admin_unban",{uid:u.id}).then(function(){toast("Pengguna di-unbanned.");return loadUsers()}).catch(err)});a2.appendChild(ub);
+  }else{
+    var rs=el("input");rs.maxLength=200;rs.placeholder="Alasan banned";rs.setAttribute("aria-label","Alasan banned");
+    var bb=el("button","b","Banned");bb.addEventListener("click",function(){
+      var r=rs.value.trim();if(!r){toast("Isi alasan banned.");return}
+      rpc("admin_ban",{uid:u.id,reason:r}).then(function(){toast("Pengguna di-banned.");return loadUsers()}).catch(err);
+    });a2.appendChild(rs);a2.appendChild(bb);
+  }
+  d.appendChild(a2);return d;
+}
+function drawReq(){
+  var l=U.filter(function(u){return u.banned&&u.unban_requested_at}),b=$("rl");
+  $("rqn").textContent=l.length?" ("+l.length+")":"";b.textContent="";
+  if(!l.length){var e=el("div","row");e.appendChild(el("span",null,"Tidak ada permintaan."));b.appendChild(e)}
+  l.forEach(function(u){
+    var r=el("div","row"),i=el("div");
+    i.appendChild(el("b",null,(u.name||"(tanpa nama)")+" - "+(u.email||"")));
+    i.appendChild(el("small",null,"Alasan banned: "+(u.ban_reason||"-")));
+    i.appendChild(el("small",null,"Pesan pengguna: "+(u.unban_message||"-")));
+    i.appendChild(el("small",null,"Diminta: "+fd(u.unban_requested_at)));
+    var a=el("div","acts");
+    var y=el("button","b","Unbanned"),n=el("button","b","Tolak");
+    y.addEventListener("click",function(){rpc("admin_unban",{uid:u.id}).then(function(){toast("Pengguna di-unbanned.");return loadUsers()}).catch(err)});
+    n.addEventListener("click",function(){rpc("admin_reject_unban",{uid:u.id}).then(function(){toast("Permintaan ditolak.");return loadUsers()}).catch(err)});
+    a.appendChild(y);a.appendChild(n);r.appendChild(i);r.appendChild(a);b.appendChild(r);
   });
 }
 
 /* PENGUMUMAN */
+var ann={id:null,img:""};
 function modeUi(){var m=$("ap").value;$("fu").hidden=m!=="up";$("fl").hidden=m!=="ln"}
 $("ap").addEventListener("change",modeUi);
 function annLoad(){
@@ -182,21 +265,34 @@ $("as").addEventListener("click",async function(){
   $("as").disabled=false;
 });
 
+/* PROMPT AI */
+function promptLoad(){
+  return sb.rest("settings?select=value&key=eq.system_prompt").then(function(r){var v=r[0]&&r[0].value;$("pt").value=typeof v==="string"?v:""});
+}
+$("ps").addEventListener("click",function(){
+  var v=$("pt").value.trim();if(!v){say("pst","Prompt tidak boleh kosong.",1);return}
+  $("ps").disabled=true;say("pst","Menyimpan...");
+  sb.rest("settings?on_conflict=key",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:{key:"system_prompt",value:v}})
+  .then(function(){say("pst","Prompt tersimpan dan langsung dipakai.")}).catch(function(e){say("pst","Gagal: "+e.message,1)}).then(function(){$("ps").disabled=false});
+});
+
 /* API KEY */
 function mask(k){return k.slice(0,6)+"..."+k.slice(-4)}
 function addRow(){
-  var r=el("div","krow"),i=el("input");i.type="password";i.maxLength=200;i.autocomplete="off";i.setAttribute("aria-label","API key baru");
+  var r=el("div","krow"),pv=el("select"),i=el("input");
+  pv.setAttribute("aria-label","Penyedia");[["gemini","Gemini"],["groq","Groq"],["openai","OpenAI"]].forEach(function(o){var op=el("option",null,o[1]);op.value=o[0];pv.appendChild(op)});
+  pv.style.maxWidth="120px";i.type="password";i.maxLength=200;i.autocomplete="off";i.setAttribute("aria-label","API key baru");
   var s=el("button","b","Lihat");s.type="button";s.addEventListener("click",function(){var h=i.type==="password";i.type=h?"text":"password";s.textContent=h?"Sembunyikan":"Lihat"});
   var d=el("button","b","Hapus");d.type="button";d.addEventListener("click",function(){r.remove()});
-  r.appendChild(i);r.appendChild(s);r.appendChild(d);$("kn").appendChild(r);
+  r.appendChild(pv);r.appendChild(i);r.appendChild(s);r.appendChild(d);$("kn").appendChild(r);
 }
 $("ka").addEventListener("click",addRow);
 function keysLoad(){
-  return Promise.all([sb.rest("ai_keys?select=id,key&order=id"),sb.rest("settings?select=value&key=eq.models")]).then(function(x){
+  return Promise.all([sb.rest("ai_keys?select=id,key,provider&order=id"),sb.rest("settings?select=value&key=eq.models")]).then(function(x){
     var l=$("kl");l.textContent="";
     if(!x[0].length){var e=el("div","row");e.appendChild(el("span",null,"Belum ada API key."));l.appendChild(e)}
     x[0].forEach(function(k){
-      var r=el("div","row");r.appendChild(el("span",null,mask(k.key)));
+      var r=el("div","row");r.appendChild(el("span",null,String(k.provider).toUpperCase()+"  "+mask(k.key)));
       var d=el("button","b","Hapus");d.addEventListener("click",function(){
         if(!confirm("Hapus API key ini?"))return;
         sb.rest("ai_keys?id=eq."+k.id,{method:"DELETE"}).then(keysLoad).catch(err);
@@ -209,12 +305,12 @@ function keysLoad(){
 }
 $("ks").addEventListener("click",async function(){
   var ks=[],seen={},mo={};
-  $("kn").querySelectorAll("input").forEach(function(i){var v=i.value.trim();if(v&&!seen[v]){seen[v]=1;ks.push(v)}});
-  for(var n=0;n<ks.length;n++){if(!/^[\w.-]{20,200}$/.test(ks[n])){say("kst","API key baru ke-"+(n+1)+" tidak valid.",1);return}}
-  for(var q=0;q<MD.length;q++){var mv=$("m"+MD[q]).value.trim();if(!/^[\w.-]{3,60}$/.test(mv)){say("kst","Nama model "+MD[q]+" tidak valid.",1);return}mo[MD[q]]=mv}
+  $("kn").querySelectorAll(".krow").forEach(function(r){var v=r.querySelector("input").value.trim();if(v&&!seen[v]){seen[v]=1;ks.push({key:v,provider:r.querySelector("select").value})}});
+  for(var n=0;n<ks.length;n++){if(!/^[\w.-]{20,200}$/.test(ks[n].key)){say("kst","API key baru ke-"+(n+1)+" tidak valid.",1);return}}
+  for(var q=0;q<MD.length;q++){var mv=$("m"+MD[q]).value.trim();if(!/^[\w.:-]{3,70}$/.test(mv)){say("kst","Nama model "+MD[q]+" tidak valid.",1);return}mo[MD[q]]=mv}
   $("ks").disabled=true;say("kst","Menyimpan...");
   try{
-    if(ks.length)await sb.rest("ai_keys?on_conflict=key",{method:"POST",headers:{Prefer:"resolution=ignore-duplicates,return=minimal"},body:ks.map(function(k){return{key:k}})});
+    if(ks.length)await sb.rest("ai_keys?on_conflict=key",{method:"POST",headers:{Prefer:"resolution=ignore-duplicates,return=minimal"},body:ks});
     await sb.rest("settings?on_conflict=key",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:{key:"models",value:mo}});
     $("kn").textContent="";await keysLoad();say("kst","Tersimpan ("+ks.length+" API key baru).");
   }catch(e){say("kst","Gagal: "+e.message,1)}
@@ -227,7 +323,7 @@ sb.init().then(function(u){
   return sb.rest("profiles?select=is_admin&id=eq."+encodeURIComponent(u.id)).then(function(r){
     if(!r[0]||!r[0].is_admin){say("gmsg","Akun "+u.email+" bukan admin.",1);return}
     $("gate").hidden=true;$("w").hidden=false;
-    return Promise.all([users(),annLoad(),keysLoad()]);
+    return Promise.all([loadUsers(),annLoad(),promptLoad(),keysLoad()]);
   });
 }).catch(function(e){say("gmsg",e.message,1)});
 })();
