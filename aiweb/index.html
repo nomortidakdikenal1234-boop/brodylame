@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: https: file:; base-uri 'none'; form-action 'none'; connect-src https://*.supabase.co">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: https: file:; base-uri 'none'; form-action 'none'; frame-src about: blob:; connect-src https://*.supabase.co">
 <meta name="referrer" content="no-referrer">
 <title>Sky AI Website</title>
 <meta name="description" content="Sky AI Website - Berpikir lebih jauh, bersama Sky!">
@@ -161,6 +161,20 @@ i[data-ic]{display:contents}
 .tabs button{border:1px solid var(--line);background:var(--surf);border-radius:8px;padding:6px 12px}
 .tabs button[aria-pressed="true"]{background:var(--btn);color:var(--btntx)}
 .txt h3{margin:14px 0 6px;font-size:15px}.txt p{margin:0 0 10px;color:var(--mut)}
+.m.a>div{flex:1;min-width:0}
+.cb{margin:10px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surf);width:100%}
+.cb .ch{display:flex;align-items:center;gap:6px;padding:6px 10px;border-bottom:1px solid var(--line);font-size:12px;color:var(--mut)}
+.cb .ch span{flex:1}
+.cb .ch button{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:3px 9px;font-size:12px}
+.cb pre{margin:0;padding:12px;overflow:auto;max-height:360px;font:13px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre;tab-size:2}
+.cb iframe{display:block;width:100%;height:420px;border:0;background:#fff;border-top:1px solid var(--line)}
+.ban{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:grid;place-items:center;padding:24px;text-align:center}
+.ban h2{color:#ff4d4d;font:600 26px system-ui,sans-serif;margin:0 0 8px}
+.ban p{color:#ff8a8a;margin:0 0 18px;overflow-wrap:anywhere}
+.ban .primary{width:auto;padding:0 22px;margin:4px}
+.use{display:grid;grid-template-columns:1fr auto;gap:8px 16px;font-size:14px;color:var(--mut)}
+.use b{text-align:right;color:var(--tx)}
+.plist{display:flex;align-items:center}
 @media(max-width:820px){
 #login{grid-template-columns:1fr}.art{display:none}
 aside{position:fixed;inset:0 auto 0 0;z-index:30;transform:translateX(-100%);transition:transform .2s}
@@ -227,8 +241,8 @@ aside.open{transform:none}
     <button class="nav" id="newChat"><i data-ic="plus"></i>Chat baru</button>
     <button class="nav" id="bSearch"><i data-ic="search"></i>Cari</button>
     <input class="field sm" id="q" type="search" maxlength="60" placeholder="Cari percakapan" aria-label="Cari percakapan" hidden>
-    <button class="nav" data-soon="Code"><i data-ic="code"></i>Code</button>
-    <button class="nav" data-soon="Proyek"><i data-ic="folder"></i>Proyek</button>
+    <button class="nav" id="bCode"><i data-ic="code"></i>Code</button>
+    <button class="nav" id="bProj"><i data-ic="folder"></i>Proyek</button>
     <div class="hist">Percakapan</div>
     <div class="list" id="hist"></div>
     <button class="more" id="more" hidden>Lihat semua</button>
@@ -241,6 +255,8 @@ aside.open{transform:none}
   <main>
     <header>
       <button id="burger" aria-label="Buka menu samping"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <span class="tag" id="modeTag" hidden>Mode Code</span>
+      <button class="mbtn" id="projTag" type="button" hidden aria-label="Keluar dari proyek"></button>
       
     </header>
     <div class="stage" id="stage">
@@ -254,7 +270,7 @@ aside.open{transform:none}
       <div class="box">
         <div class="chip" id="chip" hidden><span id="chipN"></span><button id="chipX" type="button" aria-label="Hapus lampiran">×</button></div>
         <textarea id="inp" rows="1" placeholder="Apa yang bisa Sky bantu hari ini?" aria-label="Pesan"></textarea>
-        <input type="file" id="fileIn" hidden accept=".txt,.md,.js,.ts,.jsx,.tsx,.py,.html,.css,.json,.csv,.java,.c,.cpp,.cs,.go,.rs,.php,.rb,.sql,.sh,.yml,.yaml,.xml,.kt,.swift,.lua">
+        <input type="file" id="fileIn" hidden accept="image/png,image/jpeg,image/webp,.txt,.md,.js,.ts,.jsx,.tsx,.py,.html,.css,.json,.csv,.java,.c,.cpp,.cs,.go,.rs,.php,.rb,.sql,.sh,.yml,.yaml,.xml,.kt,.swift,.lua">
         <div class="row">
           <div class="lft"><button class="ic" id="plus" type="button" aria-label="Lampirkan file atau kode"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><span id="cnt"></span></div>
           <div class="rgt">
@@ -293,6 +309,7 @@ var el=function(t,c){var e=document.createElement(t);if(c)e.className=c;return e
 function ic(k){var s=document.createElementNS(NS,"svg");s.setAttribute("class","i");s.setAttribute("viewBox","0 0 24 24");var p=document.createElementNS(NS,"path");p.setAttribute("d",IC[k]);s.appendChild(p);return s}
 document.querySelectorAll("i[data-ic]").forEach(function(n){n.appendChild(ic(n.getAttribute("data-ic")))});
 var state={user:null,uid:"",plan:0,model:1,busy:false,convs:[],cur:-1,all:false,q:"",att:null,lang:(function(){try{return localStorage.getItem("sky.lang")||"id"}catch(e){return"id"}})()};
+state.mode="chat";state.project=null;state.projects=[];state.exp="";
 
 function show(id){["login","app"].forEach(function(s){$(s).hidden=s!==id})}
 function route(){
@@ -326,7 +343,7 @@ function enter(email,nm,pl){
   state.user=email;state.plan=pl||0;state.model=1;
   $("who").textContent=nm;$("av").textContent=nm.charAt(0).toUpperCase();
   $("aem").textContent=email;$("greet").textContent="Halo, "+nm;
-  renderAcc();renderModel();loadAnn();loadConvs();location.hash="chat";route();
+  renderAcc();renderModel();loadAnn();loadConvs();loadProjects();location.hash="chat";route();
 }
 document.querySelectorAll(".oauth").forEach(function(b){
   b.addEventListener("click",function(){sb.oauth(b.getAttribute("data-p").toLowerCase()).catch(function(e){toast(e.message)})});
@@ -448,6 +465,118 @@ function renderHist(){
   var m=$("more");m.hidden=items.length<=5;m.textContent=state.all?"Lihat lebih sedikit":"Lihat semua";
 }
 
+/* MODE CODE, PROYEK, BAN, TAMPILAN KODE */
+var CODEQ=/\b(kode|coding|ngoding|script|skrip|html|css|javascript|python|php|react|website|landing page|debug|sql)\b|\b(buatkan|bikin|buat)\s+(web|website|bot|aplikasi|game)\b/i;
+function planIdx(p){
+  var i=["free","pro","ultra"].indexOf(p.plan);
+  if(i<1)return 0;
+  if(p.plan_expires_at&&new Date(p.plan_expires_at)<new Date())return 0;
+  return i;
+}
+function setMode(m){
+  state.mode=m;
+  $("modeTag").hidden=m!=="code";$("bCode").classList.toggle("on",m==="code");
+  $("inp").placeholder=m==="code"?"Jelaskan kode atau website yang ingin dibuat":"Apa yang bisa Sky bantu hari ini?";
+  var c=state.convs[state.cur];
+  if(c&&c.mode!==m){c.mode=m;patchConv(c,{mode:m})}
+}
+$("bCode").addEventListener("click",function(){setMode(state.mode==="code"?"chat":"code");toast(state.mode==="code"?"Mode Code aktif.":"Mode Code dimatikan.");$("side").classList.remove("open")});
+function projTagUpdate(){
+  var b=$("projTag");
+  if(state.project){b.hidden=false;b.textContent="Proyek: "+state.project.name+" \u00d7"}else b.hidden=true;
+}
+$("projTag").addEventListener("click",function(){state.project=null;state.cur=-1;projTagUpdate();renderChat();renderHist()});
+function loadProjects(){
+  sb.rest("projects?select=id,name,goal&order=created_at.desc&limit=50").then(function(r){state.projects=r||[]}).catch(function(){});
+}
+function useProject(p){
+  state.project={id:p.id,name:p.name};state.cur=-1;projTagUpdate();renderChat();renderHist();
+  $("side").classList.remove("open");toast("Proyek aktif: "+p.name);
+}
+function openProjects(){
+  dialog("Proyek",function(bd){
+    var list=el("div");
+    function draw(){
+      list.textContent="";
+      if(!state.projects.length){var e=el("p");e.style.color="var(--mut)";e.textContent="Belum ada proyek.";list.appendChild(e)}
+      state.projects.forEach(function(p){
+        var r=el("div","plist"),b=el("button","lang");b.textContent=p.name;b.addEventListener("click",function(){closeDlg();useProject(p)});
+        var d=el("button","ic");d.textContent="\u00d7";d.setAttribute("aria-label","Hapus proyek "+p.name);
+        d.addEventListener("click",function(){
+          if(!confirm("Hapus proyek ini? Percakapannya tetap ada."))return;
+          sb.rest("projects?id=eq."+encodeURIComponent(p.id),{method:"DELETE"}).then(function(){
+            state.projects=state.projects.filter(function(x){return x.id!==p.id});
+            if(state.project&&state.project.id===p.id){state.project=null;projTagUpdate()}
+            draw();
+          }).catch(function(e){toast(e.message)});
+        });
+        r.appendChild(b);r.appendChild(d);list.appendChild(r);
+      });
+    }
+    var l1=el("label");l1.textContent="Nama proyek";l1.style.marginTop="16px";
+    var nm=el("input","field");nm.maxLength=60;nm.placeholder="Contoh: Website toko online";
+    var l2=el("label");l2.textContent="Proyek apa yang ingin dibuat?";
+    var gl=el("textarea","field");gl.maxLength=1000;gl.rows=4;gl.style.cssText="height:auto;padding:12px;resize:vertical";gl.placeholder="Ceritakan tujuan dan kebutuhan proyek Anda";
+    var go=el("button","primary");go.textContent="Buat dan mulai proyek";
+    go.addEventListener("click",function(){
+      var n=nm.value.trim(),g=gl.value.trim();
+      if(!n||!g){toast("Isi nama dan tujuan proyek.");return}
+      go.disabled=true;
+      sb.rest("projects",{method:"POST",headers:{Prefer:"return=representation"},body:{name:n,goal:g}}).then(function(r){
+        state.projects.unshift(r[0]);closeDlg();useProject(r[0]);
+        $("inp").value="Mari mulai proyek ini. Jelaskan langkah pertama yang perlu kita kerjakan.";sync();send();
+      }).catch(function(e){toast(e.message);go.disabled=false});
+    });
+    [list,l1,nm,l2,gl,go].forEach(function(n){bd.appendChild(n)});draw();
+  });
+}
+$("bProj").addEventListener("click",openProjects);
+function showBan(p){
+  var o=el("div","ban");o.id="banov";
+  var w=el("div"),h=el("h2"),r=el("p"),st=el("p");
+  h.textContent="SEDANG DI-BANNED";
+  r.textContent=p.ban_reason?"Alasan: "+p.ban_reason:"Akun Anda dibatasi oleh admin.";
+  st.textContent=p.unban_requested_at?"Permintaan unbanned sudah dikirim. Mohon tunggu admin.":"";
+  var b1=el("button","primary");b1.textContent="Unbanned Request";b1.disabled=!!p.unban_requested_at;
+  b1.addEventListener("click",function(){
+    var m=prompt("Tulis alasan permintaan unbanned (opsional):","");if(m===null)return;
+    b1.disabled=true;
+    sb.rest("rpc/request_unban",{method:"POST",body:{msg:m.slice(0,300)}}).then(function(){st.textContent="Permintaan unbanned terkirim. Mohon tunggu admin."}).catch(function(e){b1.disabled=false;toast(e.message)});
+  });
+  var b2=el("button","primary");b2.textContent="Keluar";b2.addEventListener("click",function(){o.remove();logout()});
+  w.appendChild(h);w.appendChild(r);w.appendChild(st);w.appendChild(b1);w.appendChild(b2);o.appendChild(w);document.body.appendChild(o);
+}
+function extOf(l,c){
+  var m={html:"index.html",htm:"index.html",css:"style.css",js:"script.js",javascript:"script.js",ts:"main.ts",typescript:"main.ts",py:"main.py",python:"main.py",json:"data.json",php:"index.php",java:"Main.java",sql:"query.sql",sh:"script.sh",bash:"script.sh"};
+  l=(l||"").toLowerCase();return m[l]||(/<!doctype html|<html/i.test(c)?"index.html":"kode.txt");
+}
+function codeBlock(box,lang,code){
+  code=code.replace(/\n$/,"");
+  var fn=extOf(lang,code),isHtml=/\.html$/.test(fn)&&/<(!doctype|html|body|div|h1|canvas|script)/i.test(code);
+  var cb=el("div","cb"),ch=el("div","ch"),lb=el("span");lb.textContent=lang||"kode";ch.appendChild(lb);
+  var pre=el("pre"),cd=el("code");cd.textContent=code;pre.appendChild(cd);
+  var fr=null,pv=null;
+  var mk=function(){fr=el("iframe");fr.setAttribute("sandbox","allow-scripts");fr.setAttribute("title","Pratinjau website");fr.srcdoc=code;cb.appendChild(fr)};
+  function btn(t,f){var b=el("button");b.type="button";b.textContent=t;b.addEventListener("click",f);ch.appendChild(b);return b}
+  if(isHtml)pv=btn("Sembunyikan pratinjau",function(){if(fr){fr.remove();fr=null;pv.textContent="Tampilkan pratinjau";return}mk();pv.textContent="Sembunyikan pratinjau"});
+  btn("Salin",function(){
+    var f=navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(code):Promise.reject();
+    f.then(function(){toast("Kode disalin.")},function(){toast("Gagal menyalin. Pilih kode lalu salin manual.")});
+  });
+  btn("Unduh",function(){
+    var u=URL.createObjectURL(new Blob([code],{type:"text/plain;charset=utf-8"})),a=document.createElement("a");
+    a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000);
+  });
+  cb.appendChild(ch);cb.appendChild(pre);box.appendChild(cb);
+  if(isHtml)mk();
+}
+function renderRich(box,text){
+  var re=/```([\w+-]*)[ \t]*\n?([\s\S]*?)```/g,last=0,m;
+  function tx(s){s=s.replace(/^\n+|\n+$/g,"");if(s)box.appendChild(document.createTextNode(s))}
+  while((m=re.exec(text))){tx(text.slice(last,m.index));codeBlock(box,m[1],m[2]);last=re.lastIndex}
+  tx(text.slice(last));
+}
+
 /* DIALOG, MENU PERCAKAPAN, PENGATURAN, BAHASA, INFO, CARI */
 function closePop(){var p=document.querySelector(".pop");if(p)p.remove()}
 document.addEventListener("click",closePop);
@@ -468,6 +597,9 @@ function patchConv(c,body){
 }
 function openConv(i){
   var c=state.convs[i];state.cur=i;$("side").classList.remove("open");
+  setMode(c.mode||"chat");
+  var pj=c.project?state.projects.filter(function(x){return x.id===c.project})[0]:null;
+  state.project=pj?{id:pj.id,name:pj.name}:null;projTagUpdate();
   renderChat();renderHist();
   if(c.loaded)return;
   sb.rest("messages?select=role,content&conversation_id=eq."+encodeURIComponent(c.id)+"&order=id.asc&limit=500").then(function(r){
@@ -539,7 +671,15 @@ function openSettings(){
       b.addEventListener("click",function(){setTheme(o[0]);seg.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed","false")});b.setAttribute("aria-pressed","true")});
       seg.appendChild(b);
     });
-    [l1,nm,sv,inf,l2,seg].forEach(function(n){bd.appendChild(n)});
+    var l3=el("label");l3.textContent="Pemakaian";l3.style.marginTop="18px";
+    var use=el("div","use");use.textContent="Memuat...";
+    sb.rest("rpc/my_usage",{method:"POST",body:{}}).then(function(u){
+      use.textContent="";
+      var rows=[["Paket",PLANS[state.plan]+(state.exp&&state.plan>0?" (sampai "+new Date(state.exp).toLocaleDateString("id-ID")+")":"")],["Total pemakaian",u.total+" pesan"],["Dipakai ("+u.window+" menit terakhir)",u.used+" dari "+u.limit],["Sisa pemakaian",u.remaining+" pesan"]];
+      if(u.reset_at)rows.push(["Cooldown selesai pukul",new Date(u.reset_at).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})]);
+      rows.forEach(function(r){var a=el("span");a.textContent=r[0];var b=el("b");b.textContent=r[1];use.appendChild(a);use.appendChild(b)});
+    }).catch(function(){use.textContent="Pemakaian belum bisa dimuat. Pastikan supabase/v3.sql sudah dijalankan."});
+    [l1,nm,sv,inf,l2,seg,l3,use].forEach(function(n){bd.appendChild(n)});
   });
 }
 var LC=("af sq am ar hy az eu be bn bs bg my ca zh hr cs da nl en et fi fr gl ka de el gu ht ha he hi hu is ig id ga it ja jv kn kk km ko ku ky lo la lv lt lb mk mg ms ml mt mi mr mn ne no or ps fa pl pt pa ro ru sm gd sr sn sd si sk sl so es su sw sv tl tg ta tt te th tr tk uk ur ug uz vi cy xh yi yo zu").split(" ");
@@ -589,8 +729,12 @@ function setAtt(a){state.att=a;$("chip").hidden=!a;if(a)$("chipN").textContent=a
 $("plus").addEventListener("click",function(){$("fileIn").click()});
 $("fileIn").addEventListener("change",function(){
   var f=this.files[0];this.value="";if(!f)return;
+  if(/^image\/(png|jpeg|webp)$/.test(f.type)){
+    if(f.size>1500000){toast("Ukuran foto maksimal 1,5 MB.");return}
+    var fr=new FileReader();fr.onload=function(){setAtt({name:f.name.slice(0,60),img:{mime:f.type,data:String(fr.result).split(",")[1]}})};fr.onerror=function(){toast("Gagal membaca foto.")};fr.readAsDataURL(f);return;
+  }
   if(f.size>102400){toast("Ukuran file maksimal 100 KB.");return}
-  if(f.type.indexOf("image/")===0){toast("Lampiran foto belum didukung. Gunakan file teks atau kode.");return}
+  if(f.type.indexOf("image/")===0){toast("Format foto tidak didukung. Gunakan PNG, JPG, atau WebP.");return}
   f.text().then(function(t){
     if(t.indexOf("\u0000")>-1){toast("File ini bukan teks.");return}
     setAtt({name:f.name.slice(0,60),text:t});
@@ -608,7 +752,7 @@ $("inp").addEventListener("paste",function(e){
 /* RIWAYAT (tersimpan di Supabase) */
 function persist(c,role,text){
   c.q=(c.q||Promise.resolve()).then(function(){
-    return c.id?null:sb.rest("conversations",{method:"POST",headers:{Prefer:"return=representation"},body:{title:c.title}}).then(function(r){c.id=r[0].id});
+    return c.id?null:sb.rest("conversations",{method:"POST",headers:{Prefer:"return=representation"},body:{title:c.title,mode:c.mode||"chat",project_id:c.project||null}}).then(function(r){c.id=r[0].id});
   }).then(function(){
     return sb.rest("messages",{method:"POST",headers:{Prefer:"return=minimal"},body:{conversation_id:c.id,role:role,content:String(text).slice(0,20000)}});
   }).then(function(){
@@ -616,16 +760,19 @@ function persist(c,role,text){
   }).catch(function(){toast("Riwayat gagal disimpan. Pastikan supabase/riwayat.sql sudah dijalankan.")});
 }
 function loadConvs(){
-  sb.rest("conversations?select=id,title,pinned&order=updated_at.desc&limit=100").then(function(r){
+  sb.rest("conversations?select=id,title,pinned,mode,project_id&order=updated_at.desc&limit=100").then(function(r){
     if(state.convs.length)return;
-    state.convs=(r||[]).reverse().map(function(x){return{id:x.id,title:x.title||"Percakapan",msgs:[],loaded:false,pinned:!!x.pinned}});
+    state.convs=(r||[]).reverse().map(function(x){return{id:x.id,title:x.title||"Percakapan",msgs:[],loaded:false,pinned:!!x.pinned,mode:x.mode||"chat",project:x.project_id||null}});
     state.cur=-1;renderChat();renderHist();
   }).catch(function(){});
 }
 
 /* AI (lewat Edge Function Supabase) */
-function ask(hist){
-  return sb.fn("chat",{model:MODELS[state.model].n,messages:hist,lang:lname(state.lang,"en")}).then(function(d){
+function ask(hist,images,c){
+  var body={model:MODELS[state.model].n,messages:hist,lang:lname(state.lang,"en"),mode:state.mode};
+  if(c&&c.project)body.project_id=c.project;
+  if(images)body.images=images;
+  return sb.fn("chat",body).then(function(d){
     if(!d||!d.text)throw new Error("Sky AI belum bisa menjawab. Coba lagi nanti.");
     return d.text;
   });
@@ -635,7 +782,8 @@ function ask(hist){
 function addMsg(cls,text){
   var p=el("div","m "+cls);
   if(cls==="a"){var s=document.createElementNS(NS,"svg");s.setAttribute("class","logo");s.style.width="24px";s.style.height="24px";var u=document.createElementNS(NS,"use");u.setAttribute("href","#mark");s.appendChild(u);p.appendChild(s)}
-  var t=el("div");t.textContent=text;p.appendChild(t);$("chat").appendChild(p);
+  var t=el("div");if(cls==="a")renderRich(t,text);else t.textContent=text;
+  p.appendChild(t);$("chat").appendChild(p);
 }
 function renderChat(){
   var c=state.convs[state.cur];$("chat").textContent="";
@@ -655,16 +803,17 @@ function send(){
   var v=$("inp").value.trim(),at=state.att;
   if((!v&&!at)||state.busy)return;
   if(v.length>2000&&!at){at={name:"message.txt",text:v};v=""}
-  if(!v)v="Tolong baca file terlampir.";
+  if(!v)v=at&&at.img?"Jelaskan foto ini.":"Tolong baca file terlampir.";
+  if(state.mode==="chat"&&CODEQ.test(v)){setMode("code");toast("Permintaan kode dialihkan ke mode Code.")}
   if(state.plan<MODELS[state.model].r){toast(MODELS[state.model].n+" khusus pelanggan "+PLANS[MODELS[state.model].r]+".");return}
-  if(state.cur<0){state.convs.push({title:v.slice(0,40),msgs:[],loaded:true,id:null});state.cur=state.convs.length-1}
-  var c=state.convs[state.cur];var shown=at?v+"\n[Lampiran: "+at.name+"]":v;
-  c.msgs.push({r:"u",t:shown,ai:at?v+"\n\n[File: "+at.name+"]\n"+at.text:v});persist(c,"user",shown);
+  if(state.cur<0){state.convs.push({title:v.slice(0,40),msgs:[],loaded:true,id:null,mode:state.mode,project:state.project?state.project.id:null});state.cur=state.convs.length-1}
+  var c=state.convs[state.cur];var shown=at?v+"\n["+(at.img?"Foto":"Lampiran")+": "+at.name+"]":v;
+  c.msgs.push({r:"u",t:shown,ai:at&&at.text!=null?v+"\n\n[File: "+at.name+"]\n"+at.text:v});persist(c,"user",shown);
   setAtt(null);
   if("Notification" in window&&Notification.permission==="default"){try{Notification.requestPermission()}catch(e){}}
   state.busy=true;$("inp").value="";renderChat();renderHist();sync();
   var hist=c.msgs.filter(function(m){return !m.e}).slice(-20).map(function(m){return{role:m.r==="u"?"user":"model",text:m.ai||m.t}});
-  ask(hist).then(function(t){return{t:t}})
+  ask(hist,at&&at.img?[at.img]:null,c).then(function(t){return{t:t}})
   .catch(function(e){
     var m=e&&e.message,ok=e&&(e.status||/Project URL|Sky AI/.test(m));
     return{t:ok?m:"Sky AI belum bisa menjawab. Coba lagi nanti.",e:1};
@@ -675,16 +824,18 @@ function send(){
 $("inp").addEventListener("input",sync);
 $("inp").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();send()}});
 $("send").addEventListener("click",send);
-$("newChat").addEventListener("click",function(){state.cur=-1;renderChat();renderHist();$("inp").focus();$("side").classList.remove("open")});
+$("newChat").addEventListener("click",function(){state.cur=-1;state.project=null;projTagUpdate();renderChat();renderHist();$("inp").focus();$("side").classList.remove("open")});
 
 renderModel();renderAcc();renderHist();
 sb.init().then(function(u){
   if(!u){if(!location.hash)location.hash="login";route();return}
-  return sb.rest("profiles?select=name,plan&id=eq."+encodeURIComponent(u.id)).then(function(r){
-    var p=r&&r[0]||{};state.uid=u.id;
+  return sb.rest("profiles?select=name,plan,plan_expires_at,banned,ban_reason,unban_requested_at&id=eq."+encodeURIComponent(u.id)).then(function(r){
+    var p=r&&r[0]||{};state.uid=u.id;state.exp=p.plan_expires_at||"";
     var pn="";try{pn=localStorage.getItem("sky.pn")||"";localStorage.removeItem("sky.pn")}catch(e){}
     if(pn){p.name=pn;sb.rest("profiles?id=eq."+encodeURIComponent(u.id),{method:"PATCH",headers:{Prefer:"return=minimal"},body:{name:pn}}).catch(function(){})}
-    enter(u.email||"",p.name||String(u.email||"").split("@")[0],Math.max(0,["free","pro","ultra"].indexOf(p.plan)));
+    enter(u.email||"",p.name||String(u.email||"").split("@")[0],planIdx(p));
+    sb.rest("rpc/touch_me",{method:"POST",body:{}}).catch(function(){});
+    if(p.banned)showBan(p);
   });
 }).catch(function(e){if(!location.hash)location.hash="login";route();toast(e.message)});
 })();
